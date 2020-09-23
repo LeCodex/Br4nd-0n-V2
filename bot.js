@@ -10,10 +10,10 @@ client.on('ready', () => {
 client.on('message', message => {
   if (message.content.startsWith(_prefix)) {
     var args = message.content.substring(1).split(" ");
-    var cmd = args.unshift();
+    var cmd = args.shift();
 
     switch(cmd) {
-      case "ping":
+      case 'ping':
         message.reply('pong');
         break;
       default:
