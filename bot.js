@@ -8,8 +8,8 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
-  if (message.startsWith(_prefix)) {
-    var args = message.split(" ");
+  if (message.content.startsWith(_prefix)) {
+    var args = message.content.split(" ");
     var cmd = args.unshift();
 
     switch(cmd) {
