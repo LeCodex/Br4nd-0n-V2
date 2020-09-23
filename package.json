@@ -1,0 +1,12 @@
+{
+  "name": "Br4n-d0n",
+  "description": "Revival of my first old bot",
+  "version": "1.0.0",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "discord.js": "^12.3.1"
+  }
+}
