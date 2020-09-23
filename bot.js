@@ -9,7 +9,7 @@ client.on('ready', () => {
 
 client.on('message', message => {
   if (message.content.startsWith(_prefix)) {
-    var args = message.content.split(" ");
+    var args = message.content.substring(1).split(" ");
     var cmd = args.unshift();
 
     switch(cmd) {
