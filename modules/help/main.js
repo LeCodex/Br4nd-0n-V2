@@ -16,12 +16,12 @@ class MainClass extends Base {
 
   command(message, args, kwargs) {
     if (args.length) {
-      var name = args.join(" ").toLowerCase();
-      if (Object.keys(this.client.modules).includes(name)) {
-        var mod = this.client.modules[name];
+      var command_text = args.join(" ").toLowerCase();
+      if (Object.keys(this.client.modules).includes(command_text)) {
+        var mod = this.client.modules[command_text];
         var embed = new MessageEmbed().setTitle("[HELP] " + mod.name + " Module").setColor(mod.color).setDescription(mod.description);
         for (var [key, value] of Object.entries(mod.help)) {
-          embed.addField("`" + this.client.config.prefix + mod.command_text + (key.length ? " " + key : "") + "`", value, false)
+          embed.addField("`" + process.env.PREFIX + mod.command_text + (key.length ? " " + key : "") + "`", value, false)
         };
 
         message.reply(embed);
