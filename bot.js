@@ -23,8 +23,8 @@ client.on('ready', () => {
         if (stat.isDirectory()) {
           const mainfile = require(path + '/main.js');
           const mod = new mainfile.MainClass(client);
-          client.modules[mod.name.toLowerCase()] = mod;
-          console.log("Loaded module " + mod.name + " (" + mod.description + "), command text: " + client.config.prefix + mod.command_text + "");
+          client.modules[mod.command_text] = mod;
+          console.log("Loaded module " + mod.name + " (" + mod.description + "), command text: " + process.env.PREFIX + mod.command_text + "");
         }
       }
     } catch(e) {
