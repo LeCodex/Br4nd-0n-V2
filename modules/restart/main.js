@@ -9,8 +9,8 @@ class MainClass extends Base {
       "": "Exits the program"
     };
     this.command_text = "restart";
-    this.color = 0x000000;
-    this.auth = ['240947137750237185'];
+    this.color = 0xffffff;
+    this.auth = [ process.env.ADMIN ];
   }
 
   command(message, args, kwargs) {
