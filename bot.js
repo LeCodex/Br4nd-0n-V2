@@ -1,6 +1,7 @@
 const {Client, MessageEmbed} = require('discord.js');
 const client = new Client();
 
+require('dotenv').config();
 require('toml-require').install();
 
 const fs = require('fs');
