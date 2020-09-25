@@ -1,7 +1,6 @@
 const {Client, MessageEmbed} = require('discord.js');
 const client = new Client();
 
-require('dotenv').config();
 require('toml-require').install();
 
 const fs = require('fs');
@@ -51,3 +50,10 @@ client.on('message', message => {
 });
 
 client.login(process.env.BOT_TOKEN).catch(console.error);
+
+const http = require('http');
+const server = http.createServer((req, res) => {
+  res.writeHead(200);
+  res.end('ok');
+});
+server.listen(3000);
