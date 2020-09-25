@@ -2,11 +2,18 @@
   "name": "Br4n-d0n",
   "description": "Revival of my first old bot",
   "version": "1.0.0",
+  "license": "MIT",
+  "repository": "https://github.com/LeCodex/Br4nd-0n-V2",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
   },
   "dependencies": {
-    "discord.js": "^12.3.1"
+    "concat-stream": "^2.0.0",
+    "discord.js": "^12.3.1",
+    "dotenv": "^8.2.0",
+    "humanize-duration": "^3.23.1",
+    "toml": "^3.0.0",
+    "toml-require": "^1.2.0"
   }
 }
