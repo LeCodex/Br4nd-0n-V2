@@ -42,7 +42,7 @@ class Base {
   }
 
   on_message(message) {
-    if (message.content.startsWith(process.env.PREFIX) && !message.author.bot && message.content.split(" ")[0] === process.env.PREFIX + this.command_text) {
+    if (message.content.startsWith(process.env.PREFIX) && message.content.split(" ")[0] === process.env.PREFIX + this.command_text) {
       this._testForAuth(message);
     }
   }

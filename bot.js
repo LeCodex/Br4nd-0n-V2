@@ -34,20 +34,22 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
-  Object.values(client.modules).forEach((element) => {
-    try {
-      element.on_message(message);
-    } catch(e) {
-      message.channel.send(new MessageEmbed()
-        .setTitle("Error caused by " + element.name + " module")
-        .setColor(0xff0000)
-        .setDescription("```js\n" + e.stack + "```")
-        .setFooter("This message will be deleted in one minute")
-      ).then(message => {
-        message.delete({ timeout: 60000 });
-      });
-    }
-  });
+  if (!message.author.bot) {
+    Object.values(client.modules).forEach((element) => {
+      try {
+        element.on_message(message);
+      } catch(e) {
+        message.channel.send(new MessageEmbed()
+          .setTitle("Error caused by " + element.name + " module")
+          .setColor(0xff0000)
+          .setDescription("```js\n" + e.stack + "```")
+          .setFooter("This message will be deleted in one minute")
+        ).then(message => {
+          message.delete({ timeout: 60000 });
+        });
+      }
+    });
+  }
 });
 
 client.login(process.env.BOT_TOKEN).catch(console.error);
