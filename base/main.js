@@ -13,46 +13,46 @@ class Base {
     this.auth = [];
   }
 
-  _execCommand(message) {
-    if (message.content.startsWith(this.client.config.prefix) && !message.author.bot) {
-      var args = message.content.substring(this.client.config.prefix.length).split(" ");
-      var cmd = args.shift();
-      var kwargs = {};
-      for (var index = args.length - 1; index >= 0; index--) {
-        var element = args[index];
-        if (element.search(/\S+=\S+/) != -1) {
-          var key = element.match(/\S+=/)[0];
-          var value = element.match(/=\S+/)[0];
-          kwargs[key.substring(0, key.length - 1)] = value.substring(1);
-          args.splice(index, 1);
-        }
-      };
-
-      if (cmd == this.command_text) {
-        if (this.auth.length == 0 || this.auth.includes(message.author.id)) {
-          if (this["com_" + args[0]]) {
-            this["com_" + args[0]](message, args, kwargs);
-          } else {
-            this.command(message, args, kwargs);
-          }
-        } else {
-          message.reply("You are not authorized to run this command.");
-        }
+  _testForAuth(message) {
+    var args = message.content.split(" ").slice(1);
+    var kwargs = {};
+    for (var index = args.length - 1; index >= 0; index--) {
+      var element = args[index];
+      if (element.search(/\S+=\S+/) != -1) {
+        var key = element.match(/\S+=/)[0];
+        var value = element.match(/=\S+/)[0];
+        kwargs[key.substring(0, key.length - 1)] = value.substring(1);
+        args.splice(index, 1);
       }
+    };
+
+    if (this.auth.length == 0 || this.auth.includes(message.author.id)) {
+      this._execCommand(message, args, kwargs);
+    } else {
+      message.reply("You are not authorized to run this command.");
+    }
+  }
+
+  _execCommand(message, args, kwargs) {
+    if (this["com_" + args[0]]) {
+      this["com_" + args[0]](message, args, kwargs);
+    } else {
+      this.command(message, args, kwargs);
     }
   }
 
   on_message(message) {
-    this._execCommand(message);
+    if (message.content.startsWith(process.env.PREFIX) && !message.author.bot && message.content.split(" ")[0] === process.env.PREFIX + this.command_text) {
+      this._testForAuth(message);
+    }
   }
 
   _get_save_path() {
-    return this.client.path + "\\saves\\" + this.name.toLowerCase() + "\\"
-  };
+    return this.client.path + "\\saves\\" + this.name.toLowerCase() + "\\";
+  }
 
-  load(name) {
-    var string = fs.readFileSync(this._get_save_path() + name + ".json");
-    return JSON.parse(string);
+  save_exists(name) {
+    return fs.existsSync(this._get_save_path() + name + ".json");
   }
 
   save(name, data) {
@@ -62,8 +62,13 @@ class Base {
     console.log(this.name + " Data Saved");
   }
 
-  save_exists(name) {
-    return fs.existsSync(this._get_save_path() + name + ".json");
+  load(name, fallback) {
+    if (!this.save_exists(name)) {
+      this.save(name, fallback);
+      return fallback
+    }
+    var string = fs.readFileSync(this._get_save_path() + name + ".json");
+    return JSON.parse(string);
   }
 }
 
