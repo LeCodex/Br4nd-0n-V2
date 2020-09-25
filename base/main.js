@@ -57,7 +57,7 @@ class Base {
 
   save(name, data) {
     var string = JSON.stringify(data);
-    if (!fs.existsSync(this._get_save_path())) fs.mkdirSync(this.get_save_path());
+    if (!fs.existsSync(this._get_save_path())) fs.mkdirSync(this._get_save_path());
     fs.writeFile(this._get_save_path() + name + ".json", string, err => {if (err != null) console.log(err)});
     console.log(this.name + " Data Saved");
   }
