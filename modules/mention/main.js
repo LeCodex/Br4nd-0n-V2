@@ -14,27 +14,33 @@ class MainClass extends Base {
     this.color = 0xfffffe;
     this.auth = [ process.env.ADMIN ];
 
-    this.module = this.load("module", "ping");
+    this.moduleList = this.load("modules", {});
   }
 
   command(message, args, kwargs) {
     if (args.length) {
-      this.module = args[0];
-      this.save("module", this.module);
-      message.reply("The linked command is now: `" + process.env.PREFIX + this.module + "`")
+      this.moduleList[message.guild.id] = args[0];
+      this.save("modules", this.moduleList);
+      message.reply("The linked command is now: `" + process.env.PREFIX + this.moduleList[message.guild.id] + "`")
     } else {
-      message.reply("The linked command is currently: `" + process.env.PREFIX + this.module + "`");
+      if (!this.moduleList[message.guild.id]) {
+        this.moduleList[message.guild.id] = "ping";
+        this.save("modules", this.moduleList);
+      }
+      message.reply("The linked command is currently: `" + process.env.PREFIX + this.moduleList[message.guild.id] + "`");
     }
   }
 
   on_message(message) {
     super.on_message(message);
 
-    if (!message.author.bot) {
-      var index = message.content.search(MessageMentions.USERS_PATTERN);
-      if (index == 0 && message.mentions.users.first().id == this.client.user.id && this.client.modules[this.module]) {
-        this.client.modules[this.module]._testForAuth(message);
-      }
+    var index = message.content.search(MessageMentions.USERS_PATTERN);
+    if (!this.moduleList[message.guild.id]) {
+      this.moduleList[message.guild.id] = "ping";
+      this.save("modules", this.moduleList);
+    }
+    if (index == 0 && message.mentions.users.first().id == this.client.user.id && this.client.modules[this.moduleList[message.guild.id]]) {
+      this.client.modules[this.moduleList[message.guild.id]]._testForAuth(message);
     }
   }
 }
