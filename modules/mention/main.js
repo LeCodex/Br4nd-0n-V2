@@ -1,4 +1,4 @@
-const {MessageEmbed, MessageMentions} = require('discord.js');
+const {MessageMentions} = require('discord.js');
 const {Base} = require(module.parent.path + "/base/main.js");
 
 class MainClass extends Base {
@@ -11,7 +11,7 @@ class MainClass extends Base {
       "<module>": "Sets the module the mentions will call"
     };
     this.command_text = "mention";
-    this.color = 0xfffffe;
+    this.color = 0x222222;
     this.auth = [ process.env.ADMIN ];
 
     this.moduleList = this.load("modules", {});
