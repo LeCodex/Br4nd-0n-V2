@@ -27,13 +27,13 @@ class Base {
     };
 
     if (this.auth.length == 0 || this.auth.includes(message.author.id)) {
-      this._execCommand(message, args, kwargs);
+      this._executeCommand(message, args, kwargs);
     } else {
       message.reply("You are not authorized to run this command.");
     }
   }
 
-  _execCommand(message, args, kwargs) {
+  _executeCommand(message, args, kwargs) {
     if (this["com_" + args[0]]) {
       this["com_" + args[0]](message, args, kwargs);
     } else {
