@@ -5,7 +5,7 @@ class MainClass extends Base {
   constructor(client) {
     super(client);
     this.name = "Rules";
-    this.description = "Checks if the user read the rules by asking them to type a specific word before giving them a validation role";
+    this.description = "Aloows for rule verification by asking for a word";
     this.help = {
       "": "Shows current parameters",
       "role <role mention>": "Sets the role to be attributed",
@@ -88,8 +88,9 @@ class MainClass extends Base {
     var data = this.data[message.guild.id];
     if (!data.role || !data.channel || !data.words) return;
 
-    if (message.channel.id == data.channel && data.words.includes(message.content)) {
-      message.member.roles.add(data.role);
+    if (message.channel.id == data.channel) {
+      if (data.words.includes(message.content)) message.member.roles.add(data.role);
+      message.delete();
     }
   }
 }
