@@ -10,7 +10,10 @@ class MainClass extends Base {
       "": "Shows current parameters",
       "role <role mention>": "Sets the role to be attributed",
       "channel <channel mention>": "Sets the channel in which the word must be typed",
-      "words <word list>": "Set all acceptable words"
+      "words <word list>": "Set all acceptable words",
+      "welcome <channel mention>": "Sets the welcome message. %u will be replaced by the user",
+      "welcome_channel <channel mention>": "Sets the channel in which the welcome message will be sent",
+      "<subcommmand> reset": "Resets the given value"
     };
     this.command_text = "rules";
     this.color = 0xffff00;
@@ -21,25 +24,32 @@ class MainClass extends Base {
 
   check_if_data_exists(message) {
     if (!this.data[message.guild.id]) {
-      this.data[message.guild.id] = {
-        role: undefined,
-        channel: undefined,
-        words: undefined
-      }
+      this.data[message.guild.id] = {}
       this.save("data", this.data);
     }
   }
 
   command(message, args, kwargs) {
     this.check_if_data_exists(message);
-    var channel = this.client.channels.cache.get(this.data[message.guild.id].channel);
-    var role = message.guild.roles.cache.get(this.data[message.guild.id].role);
+    var data = this.data[message.guild.id];
+    var channel = this.client.channels.cache.get(data.channel);
+    var welcome_channel = this.client.channels.cache.get(data.welcome_channel);
+    var role = message.guild.roles.cache.get(data.role);
 
-    message.reply("The user must type " + this.data[message.guild.id].words + " in " + (channel ? channel.toString() : channel) + " to get the role " + (role ? role.toString() : role));
+    message.reply(data.words && channel && role ? "The user must type " + data.words + " in " + channel.toString() + " to get the role " + role.toString()
+      + (data.welcome_message && welcome_channel ? "\nThe bot will send " + data.welcome_message + " in " + welcome_channel.toString() : "\nWelcome message not fully parametered")
+      : "Some parameters are missing");
   }
 
   com_role(message, args, kwargs) {
     this.check_if_data_exists(message);
+
+    if (args[1] == "reset") {
+      this.data[message.guild.id].role = undefined;
+      message.reply("Reset");
+      this.save("data", this.data);
+      return;
+    }
 
     if (!message.mentions.roles.array().length) {
       message.reply("Missing role mention");
@@ -55,6 +65,13 @@ class MainClass extends Base {
   com_channel(message, args, kwargs) {
     this.check_if_data_exists(message);
 
+    if (args[1] == "reset") {
+      this.data[message.guild.id].channel = undefined;
+      message.reply("Reset");
+      this.save("data", this.data);
+      return;
+    }
+
     if (!message.mentions.channels.array().length) {
       message.reply("Missing channel mention");
     } else {
@@ -68,6 +85,13 @@ class MainClass extends Base {
   com_words(message, args, kwargs) {
     this.check_if_data_exists(message);
 
+    if (args[1] == "reset") {
+      this.data[message.guild.id].words = undefined;
+      message.reply("Reset");
+      this.save("data", this.data);
+      return;
+    }
+
     if (args.length == 1) {
       message.reply("Missing words");
     } else {
@@ -76,7 +100,46 @@ class MainClass extends Base {
 
       this.save("data", this.data);
     }
+  }
 
+  com_welcome(message, args, kwargs) {
+    this.check_if_data_exists(message);
+
+    if (args[1] == "reset") {
+      this.data[message.guild.id].welcome_message = undefined;
+      message.reply("Reset");
+      this.save("data", this.data);
+      return;
+    }
+
+    if (args.length == 1) {
+      message.reply("Missing welcome message");
+    } else {
+      this.data[message.guild.id].welcome_message = args.slice(1).join(" ");
+      message.reply("Welcome message is now set to " + this.data[message.guild.id].welcome_message);
+
+      this.save("data", this.data);
+    }
+  }
+
+  com_welcome_channel(message, args, kwargs) {
+    this.check_if_data_exists(message);
+
+    if (args[1] == "reset") {
+      this.data[message.guild.id].welcome_channel = undefined;
+      message.reply("Reset");
+      this.save("data", this.data);
+      return;
+    }
+
+    if (!message.mentions.channels.array().length) {
+      message.reply("Missing channel mention");
+    } else {
+      this.data[message.guild.id].welcome_channel = message.mentions.channels.first().id;
+      message.reply("Welcome message's channel is now set to " + message.mentions.channels.first().toString());
+
+      this.save("data", this.data);
+    }
   }
 
   on_message(message) {
@@ -89,8 +152,17 @@ class MainClass extends Base {
     if (!data.role || !data.channel || !data.words) return;
 
     if (message.channel.id == data.channel) {
-      if (data.words.includes(message.content)) message.member.roles.add(data.role);
-      message.delete();
+      if (data.words.includes(message.content)) {
+        message.member.roles.add(data.role).catch(e => this.client.error(message.channel, "Rules", e));
+
+        if (data.welcome_message && data.welcome_channel) {
+          var channel = this.client.channels.cache.get(data.welcome_channel);
+
+          if (channel) channel.send(new MessageEmbed()
+            .setDescription(data.welcome_message.replace("%u", message.author.toString())));
+        }
+      }
+      message.delete().catch(e => this.client.error(message.channel, "Rules", e));
     }
   }
 }
