@@ -39,18 +39,22 @@ client.on('message', message => {
       try {
         element.on_message(message);
       } catch(e) {
-        message.channel.send(new MessageEmbed()
-          .setTitle("Error caused by " + element.name + " module")
-          .setColor(0xff0000)
-          .setDescription("```js\n" + e.stack + "```")
-          .setFooter("This message will be deleted in one minute")
-        ).then(message => {
-          message.delete({ timeout: 60000 });
-        });
+        client.error(message.channel, element.name, e);
       }
     });
   }
 });
+
+client.error = function(channel, name, e) {
+  channel.send(new MessageEmbed()
+    .setTitle("Error caused by " + name + " module")
+    .setColor(0xff0000)
+    .setDescription("```js\n" + e.stack + "```")
+    .setFooter("This message will be deleted in one minute")
+  ).then(message => {
+    message.delete({ timeout: 60000 });
+  });
+}
 
 client.login(process.env.BOT_TOKEN).catch(console.error);
 
