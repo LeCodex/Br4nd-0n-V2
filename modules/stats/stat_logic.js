@@ -64,7 +64,7 @@ class StatLogic {
       .then(async () => {for (var r of emojiList) await this.message.react(r)})
       .then(() => this.message.awaitReactions((reaction, user) => emojiList.includes(reaction.emoji.name) && user.id === this.author.id, { max: 1 }))
       .then(c => this.processScoreboardChoice(c))
-      .catch(console.error);
+      .catch(e => this.client.error(this.message.channel, "Stats", e));
   }
 
   processScoreboardChoice(collection) {
@@ -85,7 +85,7 @@ class StatLogic {
             this.mainclass.save("stats", this.mainclass.stats);
             this.resetScoreboardEmbed();
           })
-          .catch(console.error);
+          .catch(e => this.client.error(this.message.channel, "Stats", e));
         break;
       case "📩":
         var description = "";
@@ -118,12 +118,12 @@ class StatLogic {
                   this.mainclass.save("stats", this.mainclass.stats);
                   this.chooseCriteria(criteria);
                 })
-                .catch(console.error);
+                .catch(e => this.client.error(this.message.channel, "Stats", e));
             } else {
               this.chooseCriteria(this.scoreboard.criterias[numberEmojis.indexOf(rc.firstKey())]);
             }
           })
-          .catch(console.error);
+          .catch(e => this.client.error(this.message.channel, "Stats", e));
         break;
       case "🗑️":
         embed.setDescription("🗑️ __Do you really want to delete this scoreboard?__");
@@ -148,7 +148,7 @@ class StatLogic {
               this.resetScoreboardEmbed();
             }
           })
-          .catch(console.error);
+          .catch(e => this.client.error(this.message.channel, "Stats", e));
         break;
     }
   }
@@ -172,7 +172,7 @@ class StatLogic {
         this.mainclass.save("stats", this.mainclass.stats);
         this.choosePlayers(criteria, players);
       })
-      .catch(console.error);
+      .catch(e => this.client.error(this.message.channel, "Stats", e));
   }
 
   choosePlayers(criteria, players) {
@@ -199,7 +199,7 @@ class StatLogic {
           this.resetScoreboardEmbed();
         }
       })
-      .catch(console.error);
+      .catch(e => this.client.error(this.message.channel, "Stats", e));
   }
 
   close() {

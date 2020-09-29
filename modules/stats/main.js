@@ -55,4 +55,4 @@ class MainClass extends Base {
   }
 }
 
-module.exports = exports = {MainClass}
+module.exports = exports = {MainClass};
