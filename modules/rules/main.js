@@ -5,7 +5,7 @@ class MainClass extends Base {
   constructor(client) {
     super(client);
     this.name = "Rules";
-    this.description = "Aloows for rule verification by asking for a word";
+    this.description = "Allows for rule verification by asking for a word";
     this.help = {
       "": "Shows current parameters",
       "role <role mention>": "Sets the role to be attributed",
