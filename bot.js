@@ -46,6 +46,7 @@ client.on('message', message => {
 });
 
 client.error = function(channel, name, e) {
+  console.error("Error caused by " + name + " module: ", e);
   channel.send(new MessageEmbed()
     .setTitle("Error caused by " + name + " module")
     .setColor(0xff0000)
