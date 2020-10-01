@@ -1,6 +1,13 @@
 const fs = require('fs');
+const {MessageEmbed} = require('discord.js');
 
 class Base {
+  /*
+    MainClass(client)
+    Instantiates the module class.
+
+    @param {Client} client The Discord.js bot client
+  */
   constructor(client) {
     this.client = client;
     this.name = "[TODO] Add name";
@@ -11,6 +18,10 @@ class Base {
     this.command_text = "";
     this.color = 0xffffff;
     this.auth = [];
+  }
+
+  get NUMBER_EMOJIS() {
+    return ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
   }
 
   _testForAuth(message) {
@@ -45,6 +56,50 @@ class Base {
     if (message.content.startsWith(process.env.PREFIX) && message.content.split(" ")[0] === process.env.PREFIX + this.command_text) {
       this._testForAuth(message);
     }
+  }
+
+  async sendChoice(channel, content, emojis, confirmation_emoji, collect_function, remove_function, confirmation_condition, end_function, options = {}) {
+    if (!remove_function) remove_function = collect_function;
+
+    return await channel.send(content)
+      .then(async m => {for (var r of emojis) await m.react(r); return m})
+      .then(m => {
+        emojis.push(confirmation_emoji);
+        var collection = m.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name) && !user.bot, { dispose: true });
+
+        function updateConfirmationEmoji(base, can_confirm) {
+          if (can_confirm) {
+            m.react(confirmation_emoji);
+          } else {
+            var r = m.reactions.cache.get(confirmation_emoji);
+            if (r) r.users.remove(base.client.user);
+          }
+        };
+
+        collection.on('collect', (reaction, user) => {
+          if (reaction.emoji.name === confirmation_emoji) {
+            if (confirmation_condition(reaction, user) && m.reactions.cache.get(confirmation_emoji).me) collection.stop();
+          } else {
+            var can_confirm = collect_function(collection, reaction, user);
+            updateConfirmationEmoji(this, can_confirm);
+          }
+        });
+
+        collection.on('remove', (reaction, user) => {
+          if (reaction.emoji.name != confirmation_emoji) {
+            var can_confirm = remove_function(collection, reaction, user);
+            updateConfirmationEmoji(this, can_confirm);
+          }
+        });
+
+        collection.on('end', (collected) => {
+          if (!options.dontDelete) collection.message.delete();
+          end_function(collection, collected);
+        });
+
+        return m;
+      })
+      .catch(e => this.client.error(channel, this.name, e));
   }
 
   _get_save_path() {
