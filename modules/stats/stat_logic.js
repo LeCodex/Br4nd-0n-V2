@@ -89,9 +89,8 @@ class StatLogic {
         break;
       case "📩":
         var description = "";
-        var numberEmojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
         this.scoreboard.criterias.forEach((element, i) => {
-          description += "\n • " + numberEmojis[i] + " " + element;
+          description += "\n • " + this.mainclass.NUMBER_EMOJIS[i] + " " + element;
         });
 
         numberEmojis.splice(this.scoreboard.criterias.length);
