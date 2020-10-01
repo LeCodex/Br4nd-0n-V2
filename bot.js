@@ -34,7 +34,7 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
-  if (!message.author.bot) {
+  if (!message.author.bot && message.guild) {
     Object.values(client.modules).forEach((element) => {
       try {
         element.on_message(message);
