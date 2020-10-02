@@ -33,7 +33,6 @@ class MainClass extends Base {
       green: (emojis.get("472453002238754857") || "🟢").toString(),
       special: (emojis.get("472452927802310676") || "⚪").toString()
     };
-    this.CUP_EMOJI = (emojis.get("472452819127894047") || "☕").toString();
   }
 
   getRankEmoji(index) {
@@ -92,7 +91,7 @@ class MainClass extends Base {
         .setTitle("[MONTPARTASSE] Classement")
         .setColor(this.color)
         .addField("Joueurs", sorted.map((e, i) => this.getRankEmoji(i) + " **" + (i + 1) + ".** " + e.user.toString()).join("\n"), true)
-        .addField("Scores", sorted.map(e => e.score + " " + this.CUP_EMOJI).join("\n"), true)
+        .addField("Scores", sorted.map(e => e.score + " " + this.COLOR_EMOJIS.special).join("\n"), true)
       )
     }
   }
@@ -102,7 +101,7 @@ class MainClass extends Base {
       var game = this.games[message.channel.id];
       if (game.stackMessage) game.stackMessage.delete();
       game.stackMessage = null;
-      game.sendStack();
+      game.sendStack("Message renvoyé").then(() => game.save());
     }
   }
 

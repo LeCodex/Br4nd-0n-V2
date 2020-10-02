@@ -64,7 +64,7 @@ class Game {
     this.save();
   }
 
-  sendStack(info, description) {
+  async sendStack(info, description = "") {
     var content = new MessageEmbed()
       .setTitle("[MONTPARTASSE] " + info)
       .setDescription(this.stack.map(e => e.emoji + " " + e.player.user.toString()).join("\n") + "\n\n" + description)
@@ -74,7 +74,7 @@ class Game {
     if (this.stackMessage) {
       this.stackMessage.edit(content);
     } else {
-      this.channel.send(content).then(m => {this.stackMessage = m;});
+      await this.channel.send(content).then(m => {this.stackMessage = m;});
     }
   }
 
@@ -163,30 +163,42 @@ class Game {
         player: e.player.user.id
       }}),
       specialCups: this.specialCups.map(e => e.constructor.name),
-      lastPlayed: this.lastPlayed
+      lastPlayed: this.lastPlayed,
+      needRefill: this.needRefill,
+      stackMessage: this.stackMessage ? this.stackMessage.id : null,
+      paused: this.paused
     };
 
     for (var [k, e] of Object.entries(this.players)) {
       object.players[k] = {
         hand: e.hand.map(e => e.constructor.name),
         score: e.score,
-        user: e.user.id
+        user: e.user.id,
+        handMessage: e.handMessage ? e.handMessage.id : null,
+        handChannel: e.handMessage ? e.handMessage.channel.id : null
       }
     };
 
     return object;
   }
 
-  deserialize(object) {
+  async deserialize(object) {
     this.channel = this.client.channels.cache.get(object.channel);
     this.players = {};
     this.specialCups = object.specialCups.map(e => new Cups[e](this.mainclass, null));
     this.lastPlayed = object.lastPlayed;
+    this.needRefill = object.needRefill;
+    this.paused = object.paused;
+    this.stackMessage = null;
+    if (object.stackMessage) this.stackMessage = await this.channel.messages.fetch(object.stackMessage);
 
     for (var [k, e] of Object.entries(object.players)) {
       var p = new Player(this.client.users.cache.get(e.user), this, true);
       p.score = e.score;
       p.hand = e.hand.map(f => new Cups[f](this.mainclass, p));
+      p.handMessage = null;
+      var channel = await this.client.channels.fetch(e.handChannel);
+      if (e.handMessage) p.handMessage = await channel.messages.fetch(e.handMessage);
       this.players[k] = p;
     };
 

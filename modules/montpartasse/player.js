@@ -25,7 +25,7 @@ class Player {
     return "Vous avez pioché " + amount + " tasses";
   }
 
-  sendHand(game, message = "") {
+  async sendHand(game, message = "") {
     var content = new MessageEmbed()
       .setTitle("[MONTPARTASSE] Votre main")
       .setDescription(message + "\n\n" + this.hand.map((e, i) => "**" + (i + 1) + ".** __" + e.emoji + " " + e.name + (e.description? ":__ " + e.description: "__")).join("\n"))
@@ -34,7 +34,7 @@ class Player {
     if (this.handMessage) {
       this.handMessage.edit(content);
     } else {
-      this.user.send(content).then(m => {this.handMessage = m;});
+      await this.user.send(content).then(m => {this.handMessage = m;});
     }
   }
 
@@ -56,13 +56,11 @@ class Player {
     var effect_return = "";
     if (cup.effect) effect_return = cup.effect(game);
 
-    game.sendStack("Tasse de " + this.user.username, effect_return);
-
-    var message = "";
-    if (!this.hand.length) message = this.draw(game, 5);
-    this.sendHand(game, message);
-
-    game.checkStackEnd(this);
+    game.sendStack("Tasse de " + this.user.username, effect_return).then(() => {
+      var message = "";
+      // if (!this.hand.length) message = this.draw(game, 5);
+      this.sendHand(game, message).then(() => game.checkStackEnd(this)).catch(console.error);
+    }).catch(console.error);
   }
 }
 
