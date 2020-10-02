@@ -9,7 +9,7 @@ class Player {
     this.score = 0;
 
     if (!reload) {
-      var message = this.draw(game, 5);
+      var message = this.draw(game, 20);
       this.sendHand(game, message);
     }
   }

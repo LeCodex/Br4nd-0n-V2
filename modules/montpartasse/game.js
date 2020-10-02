@@ -141,10 +141,12 @@ class Game {
 
   refillHands() {
     this.needRefill = true;
+    var max = 20;
+    var max_refill = 10;
 
     for (var player of Object.values(this.players)) {
-      if (5 - player.hand.length > 0) {
-        var message = player.draw(this, 5 - player.hand.length);
+      if (max - player.hand.length > 0) {
+        var message = player.draw(this, Math.min(max_refill, max - player.hand.length));
         player.sendHand(this, message);
       }
     }

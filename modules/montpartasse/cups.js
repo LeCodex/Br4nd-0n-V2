@@ -110,7 +110,7 @@ class PaintCup extends Cup {
     super(mainclass, player, "472452972744409108", "🎨");
 
     this.name = "Tasse de Peinture";
-    this.description = "Change la dernière en une tasse d'une couleur de base aléatoire";
+    this.description = "Change la dernière tasse en une tasse d'une couleur aléatoire";
     this.color = "special";
   }
 
