@@ -45,9 +45,9 @@ class MainClass extends Base {
       var game = this.games[message.channel.id]
       if (game.paused) return;
 
-      var now = Date.now();
+      var now = new Date();
       if (game.lastTimestamp.getHours() < 12 && now.getHours() >= 12 || game.lastTimestamp.getHours() >= 12 && now.getHours() < 12 || game.lastTimestamp.getDate() != now.getDate()) game.refillHands();
-      game.lastTimestamp = Date.now();
+      game.lastTimestamp = new Date();
 
       if (game.players[message.author.id]) {
         var player = game.players[message.author.id];
@@ -130,7 +130,7 @@ class MainClass extends Base {
     if (message.author.id === process.env.ADMIN) {
       if (this.games[message.channel.id]) {
         this.games[message.channel.id].refillHands();
-        this.games[message.channel.id].lastTimestamp = Date.now();
+        this.games[message.channel.id].lastTimestamp = new Date();
         message.reply("Refilled");
       };
     }

@@ -24,7 +24,7 @@ class Game {
     this.paused = false;
     this.stackMessage = null;
     this.needRefill = false;
-    this.lastTimestamp = Date.now();
+    this.lastTimestamp = new Date();
 
     if (message) {
       this.channel = message.channel;
