@@ -148,6 +148,8 @@ class Game {
         player.sendHand(this, message);
       }
     }
+
+    this.save();
   }
 
   serialize() {
