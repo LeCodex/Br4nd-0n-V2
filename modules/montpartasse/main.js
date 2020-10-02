@@ -27,12 +27,17 @@ class MainClass extends Base {
     var emojis = this.client.emojis.cache;
     this.COLOR_EMOJIS = {
       blue: (emojis.get("472452877391233025") || "🔵").toString() ,
-      orange: (emojis.get("472453014020685824") || "🟠").toString(),
-      purple: (emojis.get("472452943950643210") || "🟣").toString(),
+      orange: (emojis.get("472452943950643210") || "🟠").toString(),
+      purple: (emojis.get("472453014020685824") || "🟣").toString(),
       green: (emojis.get("472453002238754857") || "🟢").toString(),
       special: (emojis.get("472452927802310676") || "⚪").toString()
     };
     this.CUP_EMOJI = (emojis.get("472452819127894047") || "☕").toString();
+  }
+
+  getRankEmoji(index) {
+    if (index < 3) return ["🥇", "🥈", "🥉"][index];
+    return "🏅";
   }
 
   command(message, args, kwargs) {
@@ -43,7 +48,7 @@ class MainClass extends Base {
         var player = game.players[message.author.id];
         if (args.length) {
           if (player.hand.map(e => e.emoji).indexOf(args[0]) != -1) {
-            player.playCup(game, player.hand.map(e => e.emoji).indexOf(args[0]));
+            player.playCup(game, player.hand.map(e => e.emoji).indexOf(args[0]) + 1);
           } else if (!isNaN(Number(args[0]))) {
             var index = Number(args[0]);
             if (index > 0 && index <= player.hand.length) player.playCup(game, index);
@@ -51,6 +56,7 @@ class MainClass extends Base {
             message.author.send("Vous n'avez pas cette tasse dans votre main");
           }
         } else {
+          game.players[message.author.id].handMessage = null;
           game.players[message.author.id].sendHand(game);
           message.reply("Votre main vous a été envoyée");
         }
@@ -65,13 +71,13 @@ class MainClass extends Base {
   com_rank(message, args, kwargs) {
     if (this.games[message.channel.id]) {
       var game = this.games[message.channel.id]
-      var sorted = Object.values(game.players).sort((a, b) => a.score > b.score);
+      var sorted = Object.values(game.players).sort((a, b) => b.score - a.score);
 
       message.reply(
         new MessageEmbed()
         .setTitle("[MONTPARTASSE] Classement")
         .setColor(this.color)
-        .addField("Joueurs", sorted.map((e, i) => "**" + (i + 1) + ".** " + e.user.toString()).join("\n"), true)
+        .addField("Joueurs", sorted.map((e, i) => this.getRankEmoji(i) + " **" + (i + 1) + ".** " + e.user.toString()).join("\n"), true)
         .addField("Scores", sorted.map(e => e.score + " " + this.CUP_EMOJI).join("\n"), true)
       )
     }

@@ -123,7 +123,7 @@ class Game {
     for (var [player_id, colors] of Object.entries(played_colors)) {
       if (colors.length > 0) {
         this.players[player_id].score += colors.length;
-        description += this.players[player_id].toString() + " gagne **" + colors.length + (colors.length > 1 ? "** points\n" : "point (" + colors.sort().map(e => this.mainclass.COLOR_EMOJIS[e]).join(", ") + ")\n");
+        description += this.players[player_id].user.toString() + " gagne **" + colors.length + (colors.length > 1 ? " points" : " point") + "** (" + colors.sort().map(e => this.mainclass.COLOR_EMOJIS[e]).join(", ") + ")\n";
       }
     }
 
@@ -132,7 +132,7 @@ class Game {
       return buffer;
     }, "");
 
-    this.newStack(description + (trigger_returns.length ? "\n\n" + trigger_returns + "\n" : "\n\n"));
+    this.newStack(description + (trigger_returns.length ? "\n" + trigger_returns : "") + "\n");
   }
 
   serialize() {

@@ -90,7 +90,7 @@ class RainbowCup extends Cup {
 
 class GoldenCup extends Cup {
   constructor(mainclass, player) {
-    super(mainclass, player, "666367471648768029", "📀");
+    super(mainclass, player, "472452835242541076", "📀");
 
     this.name = "Tasse Dorée";
     this.description = "Pioche une tasse";
@@ -143,7 +143,7 @@ class CactusCup extends Cup {
 
 class StealCup extends Cup {
   constructor(mainclass, player) {
-    super(mainclass, player, "472452982081060864", "🕵");
+    super(mainclass, player, "472453023969312772", "🕵");
 
     this.name = "Tasse Vol";
     this.description = "La prochaine pile commence avec la tasse d'en dessous";
@@ -191,11 +191,19 @@ class FireCup extends Cup {
     this.color = "special";
   }
 
-  effect(game) {
-    var effect_cups = game.stack.filter(e => e.effect);
-    if (effect_cups.length == 1) return "💧 Il n'y a pas d'autre tasse avec un effet dans la pile 💧";
+  effect(game, index = 0) {
+    var first_effect_cup = null;
 
-    return "🔥 ️La Tasse de Feu est brûlante! Au point qu'elle a déclenchée de nouveau l'effet de la " + effect_cups[1].fullName + "! 🔥\n" + effect_cups[1].effect(game);
+    for (var i = index + 1; i < game.stack.length; i ++) {
+      if (game.stack[i].effect) {
+        first_effect_cup = game.stack[i];
+        index = i;
+        break;
+      }
+    }
+
+    if (!first_effect_cup) return "💧 Il n'y a pas d'autre tasse avec un effet dans la pile 💧";
+    return "🔥 ️La Tasse de Feu est brûlante! Au point qu'elle a déclenchée de nouveau l'effet de la " + first_effect_cup.fullName + "! 🔥\n" + first_effect_cup.effect(game, index);
   }
 }
 

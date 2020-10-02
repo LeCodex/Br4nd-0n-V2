@@ -5,6 +5,7 @@ class Player {
   constructor(user, game, reload = false) {
     this.user = user;
     this.hand = [];
+    this.handMessage = null;
     this.score = 0;
 
     if (!reload) {
@@ -25,12 +26,16 @@ class Player {
   }
 
   sendHand(game, message = "") {
-    this.user.send(
-      new MessageEmbed()
+    var content = new MessageEmbed()
       .setTitle("[MONTPARTASSE] Votre main")
       .setDescription(message + "\n\n" + this.hand.map((e, i) => game.mainclass.NUMBER_EMOJIS[i] + " __" + e.emoji + " " + e.name + (e.description? ":__ " + e.description: "__")).join("\n"))
-      .setColor(game.mainclass.color)
-    );
+      .setColor(game.mainclass.color);
+
+    if (this.handMessage) {
+      this.handMessage.edit(content);
+    } else {
+      this.user.send(content).then(m => {this.handMessage = m;});
+    }
   }
 
   playCup(game, index) {
