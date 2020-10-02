@@ -31,7 +31,8 @@ class MainClass extends Base {
       orange: (emojis.get("472452943950643210") || "🟠").toString(),
       purple: (emojis.get("472453014020685824") || "🟣").toString(),
       green: (emojis.get("472453002238754857") || "🟢").toString(),
-      special: (emojis.get("472452927802310676") || "⚪").toString()
+      special: (emojis.get("472452927802310676") || "⚪").toString(),
+      all: (emojis.get("666367471648768029") || "🌈").toString()
     };
   }
 

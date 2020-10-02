@@ -60,7 +60,7 @@ class Game {
       .setTitle("[MONTPARTASSE] Nouvelle pile")
       .setDescription(description + "La table est nettoyée, les morceaux jetés, et les points comptés. " + (this.needRefill ? "__**Les mains ont été de nouveau remplies! Voici les trois nouvelles tasses spéciales!**__" : "Que le jeu continue!"))
       .setColor(this.mainclass.color)
-      .addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n"))
+      .addField("Tasses spéciales", this.specialCups.length ? this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n") : "❌ Aucune")
     );
 
     this.needRefill = false;
@@ -123,15 +123,18 @@ class Game {
       if (player_id != player.user.id) {
         played_colors[player_id] = [];
         for (var cup of this.stack.filter(e => e.player.user.id === player_id)) {
-          if (!played_colors[player_id].includes(cup.color) && cup.color != "all") played_colors[player_id].push(cup.color);
+          if (!played_colors[player_id].includes(cup.color) || cup.color === "all") played_colors[player_id].push(cup.color);
         }
       }
     }
 
     for (var [player_id, colors] of Object.entries(played_colors)) {
       if (colors.length > 0) {
+        var rainbow_count = colors.filter(e => e == "all").length;
         this.players[player_id].score += colors.length;
-        description += this.players[player_id].user.toString() + " gagne **" + colors.length + (colors.length > 1 ? " points" : " point") + "** (" + colors.sort().map(e => this.mainclass.COLOR_EMOJIS[e]).join(", ") + ")\n";
+        description += this.players[player_id].user.toString() + " gagne **" + colors.length + (colors.length > 1 ? " points" : " point")
+          + "** (" + colors.filter(e => e != "all").sort().map(e => this.mainclass.COLOR_EMOJIS[e]).join(", ")
+          + (rainbow_count ? " +" + rainbow_count + this.mainclass.COLOR_EMOJIS.all : "") + ")\n";
       }
     }
 
