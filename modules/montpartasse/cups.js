@@ -98,9 +98,9 @@ class GoldenCup extends Cup {
   }
 
   effect(game) {
-    this.player.draw(game, 1);
+    game.stack[0].player.draw(game, 1);
 
-    return "⏫ " + this.player.user.toString() + " a échangé sa tasse dorée pour une nouvelle tasse dans sa main! ⏫";
+    return "⏫ " + game.stack[0].player.user.toString() + " a pioché une tasse! ⏫";
   }
 }
 

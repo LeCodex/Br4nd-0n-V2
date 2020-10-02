@@ -40,7 +40,7 @@ class Player {
 
   playCup(game, index) {
     if (game.lastPlayed === this.user.id && !game.mainclass.debug) {
-      game.channel.send(
+      this.user.send(
         new MessageEmbed()
         .setTitle("[MONTPARTASSE] Lancer raté")
         .setDescription("Vous venez de lancer une tasse, attendez que quelqu'un d'autre joue avant!")

@@ -44,16 +44,29 @@ class MainClass extends Base {
     if (this.games[message.channel.id]) {
       var game = this.games[message.channel.id]
       if (game.paused) return;
+
+      var now = Date.now();
+      if (game.lastTimestamp.getHours() < 12 && now.getHours() >= 12 || game.lastTimestamp.getHours() >= 12 && now.getHours() < 12 || game.lastTimestamp.getDate() != now.getDate()) game.refillHands();
+      game.lastTimestamp = Date.now();
+
       if (game.players[message.author.id]) {
         var player = game.players[message.author.id];
         if (args.length) {
-          if (player.hand.map(e => e.emoji).indexOf(args[0]) != -1) {
-            player.playCup(game, player.hand.map(e => e.emoji).indexOf(args[0]) + 1);
-          } else if (!isNaN(Number(args[0]))) {
-            var index = Number(args[0]);
-            if (index > 0 && index <= player.hand.length) player.playCup(game, index);
+          if (!player.hand.length) {
+            message.author.send("Votre main est vide");
           } else {
-            message.author.send("Vous n'avez pas cette tasse dans votre main");
+            if (player.hand.map(e => e.emoji).indexOf(args[0]) != -1) {
+              player.playCup(game, player.hand.map(e => e.emoji).indexOf(args[0]) + 1);
+            } else if (!isNaN(Number(args[0]))) {
+              var index = Number(args[0]);
+              if (index > 0 && index <= player.hand.length) {
+                player.playCup(game, index);
+              } else {
+                message.author.send("Index invalide");
+              }
+            } else {
+              message.author.send("Vous n'avez pas cette tasse dans votre main");
+            }
           }
         } else {
           game.players[message.author.id].handMessage = null;
@@ -111,6 +124,16 @@ class MainClass extends Base {
         message.reply("Deleted");
       };
     };
+  }
+
+  com_refill(message, args, kwargs) {
+    if (message.author.id === process.env.ADMIN) {
+      if (this.games[message.channel.id]) {
+        this.games[message.channel.id].refillHands();
+        this.games[message.channel.id].lastTimestamp = Date.now();
+        message.reply("Refilled");
+      };
+    }
   }
 
   com_debug(message, args, kwargs) {

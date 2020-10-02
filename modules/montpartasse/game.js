@@ -23,6 +23,8 @@ class Game {
     this.lastPlayed = "";
     this.paused = false;
     this.stackMessage = null;
+    this.needRefill = false;
+    this.lastTimestamp = Date.now();
 
     if (message) {
       this.channel = message.channel;
@@ -41,24 +43,20 @@ class Game {
   newStack(description = "") {
     this.stackMessage = null;
     this.stack = [...this.nextStack];
-    this.specialCups = [];
-    var cups = shuffle(Object.keys(Cups).slice(4));
 
-    for (var i = 0; i < 3; i ++) {
-      this.specialCups.push(new Cups[cups.pop()](this, null));
-    }
+    if (this.needRefill) {
+      this.specialCups = [];
+      var cups = shuffle(Object.keys(Cups).slice(4));
 
-    for (var player of Object.values(this.players)) {
-      if (5 - player.hand.length > 0) {
-        var message = player.draw(this, 5 - player.hand.length);
-        player.sendHand(this, message);
+      for (var i = 0; i < 3; i ++) {
+        this.specialCups.push(new Cups[cups.pop()](this, null));
       }
     }
 
     this.channel.send(
       new MessageEmbed()
       .setTitle("[MONTPARTASSE] Nouvelle pile")
-      .setDescription(description + "La table est nettoyée, les morceaux jetés, et les points comptés. Voici les trois nouvelles tasses spéciales pour cette pile!")
+      .setDescription(description + "La table est nettoyée, les morceaux jetés, et les points comptés. " + (this.needRefill ? "__**Les mains ont été de nouveau remplies! Voici les trois nouvelles tasses spéciales!**__" : "Que le jeu continue!"))
       .setColor(this.mainclass.color)
       .addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n"))
     );
@@ -139,6 +137,17 @@ class Game {
     }, "");
 
     this.newStack(description + (trigger_returns.length ? "\n" + trigger_returns : "") + "\n");
+  }
+
+  refillHands() {
+    this.needRefill = true;
+
+    for (var player of Object.values(this.players)) {
+      if (5 - player.hand.length > 0) {
+        var message = player.draw(this, 5 - player.hand.length);
+        player.sendHand(this, message);
+      }
+    }
   }
 
   serialize() {
