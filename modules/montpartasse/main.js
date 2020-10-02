@@ -145,6 +145,37 @@ class MainClass extends Base {
     }
   }
 
+  com_enable(message, args, kwargs) {
+    if (message.author.id === process.env.ADMIN) {
+      if (this.games[message.channel.id]) {
+        this.games[message.channel.id].enabled.push(...args.slice(1).filter(e => !this.games[message.channel.id].enabled.includes(e)));
+        this.games[message.channel.id].save();
+        message.reply("Enabled: "+ this.games[message.channel.id].enabled);
+      };
+    }
+  }
+
+  com_newStack(message, args, kwargs) {
+    if (message.author.id === process.env.ADMIN) {
+      if (this.games[message.channel.id]) {
+        this.games[message.channel.id].needRefill = true;
+        this.games[message.channel.id].newStack();
+      };
+    }
+  }
+
+  com_disable(message, args, kwargs) {
+    if (message.author.id === process.env.ADMIN) {
+      if (this.games[message.channel.id]) {
+        for (var cup of args.slice(1)) {
+          if (this.games[message.channel.id].enabled.includes(cup)) this.games[message.channel.id].enabled.splice(this.games[message.channel.id].enabled.indexOf(cup), 1);
+        }
+        this.games[message.channel.id].save();
+        message.reply("Disabled: " + this.games[message.channel.id].enabled);
+      };
+    }
+  }
+
   com_debug(message, args, kwargs) {
     if (message.author.id === process.env.ADMIN) {
       this.debug = !this.debug

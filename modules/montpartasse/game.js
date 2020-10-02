@@ -25,6 +25,7 @@ class Game {
     this.stackMessage = null;
     this.needRefill = false;
     this.lastTimestamp = new Date();
+    this.enabled = Object.keys(Cups).slice(4);
 
     if (message) {
       this.needRefill = true;
@@ -47,9 +48,9 @@ class Game {
 
     if (this.needRefill) {
       this.specialCups = [];
-      var cups = shuffle(Object.keys(Cups).slice(4));
+      var cups = shuffle([...this.enabled]);
 
-      for (var i = 0; i < 3; i ++) {
+      for (var i = 0; i < Math.min(this.enabled.length, 3); i ++) {
         this.specialCups.push(new Cups[cups.pop()](this, null));
       }
     }
@@ -169,7 +170,8 @@ class Game {
       lastPlayed: this.lastPlayed,
       needRefill: this.needRefill,
       stackMessage: this.stackMessage ? this.stackMessage.id : null,
-      paused: this.paused
+      paused: this.paused,
+      enabled: this.enabled
     };
 
     for (var [k, e] of Object.entries(this.players)) {
@@ -192,6 +194,7 @@ class Game {
     this.lastPlayed = object.lastPlayed;
     this.needRefill = object.needRefill;
     this.paused = object.paused;
+    this.enabled = object.enabled;
     this.stackMessage = null;
     if (object.stackMessage) this.stackMessage = await this.channel.messages.fetch(object.stackMessage);
 
