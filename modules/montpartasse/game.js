@@ -179,6 +179,12 @@ class Game {
     object.games[this.channel.id] = this.serialize();
     this.mainclass.save("games", object);
   }
+
+  delete_save() {
+    var object = this.mainclass.load("games");
+    delete object.games[this.channel.id];
+    this.mainclass.save("games", object);
+  }
 }
 
 module.exports = exports = Game;

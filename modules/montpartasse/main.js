@@ -26,13 +26,13 @@ class MainClass extends Base {
 
     var emojis = this.client.emojis.cache;
     this.COLOR_EMOJIS = {
-      blue: emojis.get("472452877391233025") || "🔵",
-      orange: emojis.get("472453014020685824") || "🟠",
-      purple: emojis.get("472452943950643210") || "🟣",
-      green: emojis.get("472453002238754857") || "🟢",
-      special: emojis.get("472452927802310676") || "⚪"
+      blue: (emojis.get("472452877391233025") || "🔵").toString() ,
+      orange: (emojis.get("472453014020685824") || "🟠").toString(),
+      purple: (emojis.get("472452943950643210") || "🟣").toString(),
+      green: (emojis.get("472453002238754857") || "🟢").toString(),
+      special: (emojis.get("472452927802310676") || "⚪").toString()
     };
-    this.CUP_EMOJI = emojis.get("472452819127894047") || "☕";
+    this.CUP_EMOJI = (emojis.get("472452819127894047") || "☕").toString();
   }
 
   command(message, args, kwargs) {
@@ -93,6 +93,16 @@ class MainClass extends Base {
       if (this.games[message.channel.id]) {
         this.games[message.channel.id].paused = true;
         message.reply("Paused");
+      };
+    };
+  }
+
+  com_delete(message, args, kwargs) {
+    if (message.author.id === process.env.ADMIN) {
+      if (this.games[message.channel.id]) {
+        this.games[message.channel.id].delete_save();
+        delete this.games[message.channel.id];
+        message.reply("Deleted");
       };
     };
   }

@@ -1,6 +1,6 @@
 class Cup {
   constructor(mainclass, player, id, fallback) {
-    this.emoji = mainclass.client.emojis.cache.get(id) || fallback;
+    this.emoji = (mainclass.client.emojis.cache.get(id) || fallback).toString();
     this.player = player;
   }
 
