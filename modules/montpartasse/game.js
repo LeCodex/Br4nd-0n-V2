@@ -22,6 +22,7 @@ class Game {
     this.players = {};
     this.lastPlayed = "";
     this.paused = false;
+    this.stackMessage = null;
 
     if (message) {
       this.channel = message.channel;
@@ -38,6 +39,7 @@ class Game {
   }
 
   newStack(description = "") {
+    this.stackMessage = null;
     this.stack = [...this.nextStack];
     this.specialCups = [];
     var cups = shuffle(Object.keys(Cups).slice(4));
@@ -65,13 +67,17 @@ class Game {
   }
 
   sendStack(info, description) {
-    this.channel.send(
-      new MessageEmbed()
+    var content = new MessageEmbed()
       .setTitle("[MONTPARTASSE] " + info)
       .setDescription(this.stack.map(e => e.emoji + " " + e.player.user.toString()).join("\n") + "\n\n" + description)
       .setColor(this.mainclass.color)
-      .addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n"))
-    );
+      .addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n"));
+
+    if (this.stackMessage) {
+      this.stackMessage.edit(content);
+    } else {
+      this.channel.send(content).then(m => {this.stackMessage = m;});
+    }
   }
 
   checkStackEnd(player) {

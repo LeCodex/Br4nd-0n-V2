@@ -58,14 +58,14 @@ class MainClass extends Base {
         } else {
           game.players[message.author.id].handMessage = null;
           game.players[message.author.id].sendHand(game);
-          message.reply("Votre main vous a été envoyée");
         }
       } else {
         game.players[message.author.id] = new Player(message.author, game);
-        message.reply("Vous avez rejoint la partie!");
         game.save();
       }
     }
+
+    message.delete();
   }
 
   com_rank(message, args, kwargs) {
