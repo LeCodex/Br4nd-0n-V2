@@ -227,4 +227,20 @@ class MagnetCup extends Cup {
 }
 
 
-module.exports = exports = {BlueCup, PurpleCup, OrangeCup, GreenCup, BombCup, RainbowCup, GoldenCup, PaintCup, CactusCup, StealCup, GhostCup, FireCup, MagnetCup}
+class ReverseCup extends Cup {
+  constructor(mainclass, player) {
+    super(mainclass, player, "666755013485527044", "🔄");
+
+    this.name = "Tasse Essat";
+    this.description = "Inverse toute la pile";
+    this.color = "special";
+  }
+
+  effect(game) {
+    game.stack.reverse();
+    return "🔄 La pile a été toute renversée! 🔄";
+  }
+}
+
+
+module.exports = exports = {BlueCup, PurpleCup, OrangeCup, GreenCup, BombCup, RainbowCup, GoldenCup, PaintCup, CactusCup, StealCup, GhostCup, FireCup, MagnetCup, ReverseCup}
