@@ -27,6 +27,7 @@ class Game {
     this.lastTimestamp = new Date();
 
     if (message) {
+      this.needRefill = true;
       this.channel = message.channel;
       this.newStack();
     }
@@ -60,6 +61,8 @@ class Game {
       .setColor(this.mainclass.color)
       .addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n"))
     );
+
+    this.needRefill = false;
 
     this.save();
   }
