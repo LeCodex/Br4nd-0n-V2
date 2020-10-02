@@ -28,7 +28,7 @@ class Player {
   sendHand(game, message = "") {
     var content = new MessageEmbed()
       .setTitle("[MONTPARTASSE] Votre main")
-      .setDescription(message + "\n\n" + this.hand.map((e, i) => game.mainclass.NUMBER_EMOJIS[i] + " __" + e.emoji + " " + e.name + (e.description? ":__ " + e.description: "__")).join("\n"))
+      .setDescription(message + "\n\n" + this.hand.map((e, i) => "**" + (i + 1) + ".** __" + e.emoji + " " + e.name + (e.description? ":__ " + e.description: "__")).join("\n"))
       .setColor(game.mainclass.color);
 
     if (this.handMessage) {

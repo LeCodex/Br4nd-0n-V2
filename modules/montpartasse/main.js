@@ -11,7 +11,8 @@ class MainClass extends Base {
     this.help = {
       "": "Reçoit une main ou voit sa propre main",
       "<nombre ou emoji>": "Joue une tasse",
-      "rank": "Envoies le classement de la partie"
+      "rank": "Envoies le classement de la partie",
+      "show": "Redescends le message d'info de la partie"
     };
     this.command_text = "montpartasse";
     this.color = 0xFF69B4;
@@ -83,7 +84,7 @@ class MainClass extends Base {
 
   com_rank(message, args, kwargs) {
     if (this.games[message.channel.id]) {
-      var game = this.games[message.channel.id]
+      var game = this.games[message.channel.id];
       var sorted = Object.values(game.players).sort((a, b) => b.score - a.score);
 
       message.reply(
@@ -93,6 +94,15 @@ class MainClass extends Base {
         .addField("Joueurs", sorted.map((e, i) => this.getRankEmoji(i) + " **" + (i + 1) + ".** " + e.user.toString()).join("\n"), true)
         .addField("Scores", sorted.map(e => e.score + " " + this.CUP_EMOJI).join("\n"), true)
       )
+    }
+  }
+
+  com_show(message, args, kwargs) {
+    if (this.games[message.channel.id]) {
+      var game = this.games[message.channel.id];
+      if (game.stackMessage) game.stackMessage.delete();
+      game.stackMessage = null;
+      game.sendStack();
     }
   }
 
