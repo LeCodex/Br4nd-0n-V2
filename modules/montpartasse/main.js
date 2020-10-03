@@ -51,32 +51,32 @@ class MainClass extends Base {
       if (game.lastTimestamp.get('hour') < 12 && now.get('hour') >= 12 || game.lastTimestamp.get('hour') >= 12 && now.get('hour') < 12 || game.lastTimestamp.get('day') != now.get('day')) game.refillHands();
       game.lastTimestamp = DateTime.local().setZone("Europe/Paris");
 
-      if (game.players[message.author.id]) {
-        var player = game.players[message.author.id];
-        if (args.length) {
-          if (!player.hand.length) {
-            message.author.send("Votre main est vide");
-          } else {
-            if (player.hand.map(e => e.emoji).indexOf(args[0]) != -1) {
-              player.playCup(game, player.hand.map(e => e.emoji).indexOf(args[0]) + 1);
-            } else if (!isNaN(Number(args[0]))) {
-              var index = Number(args[0]);
-              if (index > 0 && index <= player.hand.length) {
-                player.playCup(game, index);
-              } else {
-                message.author.send("Index invalide");
-              }
-            } else {
-              message.author.send("Vous n'avez pas cette tasse dans votre main");
-            }
-          }
-        } else {
-          game.players[message.author.id].handMessage = null;
-          game.players[message.author.id].sendHand(game);
-        }
-      } else {
+      if (!game.players[message.author.id]) {
         game.players[message.author.id] = new Player(message.author, game);
         game.save();
+      }
+
+      var player = game.players[message.author.id];
+      if (args.length) {
+        if (!player.hand.length) {
+          message.author.send("Votre main est vide");
+        } else {
+          if (player.hand.map(e => e.emoji).indexOf(args[0]) != -1) {
+            player.playCup(game, player.hand.map(e => e.emoji).indexOf(args[0]) + 1);
+          } else if (!isNaN(Number(args[0]))) {
+            var index = Number(args[0]);
+            if (index > 0 && index <= player.hand.length) {
+              player.playCup(game, index);
+            } else {
+              message.author.send("Index invalide");
+            }
+          } else {
+            message.author.send("Vous n'avez pas cette tasse dans votre main");
+          }
+        }
+      } else {
+        game.players[message.author.id].handMessage = null;
+        game.players[message.author.id].sendHand(game);
       }
     }
 
