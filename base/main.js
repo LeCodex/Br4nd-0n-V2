@@ -136,7 +136,7 @@ class Base {
     }
     var string = "";
     if (process.env.REPLIT_DB_URL) {
-      string = await db.get(this.name.toLowerCase() + "/" + name);
+      string = await db.get(this.name.toLowerCase() + "/" + name, { raw: true });
     } else {
       string = fs.readFileSync(this._getSavePath() + name + ".json");
     }
