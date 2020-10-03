@@ -18,13 +18,14 @@ class MainClass extends Base {
     this.command_text = "montpartasse";
     this.color = 0xFF69B4;
 
-    var object = this.load("games", { games : {}, debug: false });
-    this.games = {};
-    for (var [channel_id, object] of Object.entries(object.games)) {
-      this.games[channel_id] = new Game(this)
-      this.games[channel_id].reload(object);
-    }
-    this.debug = object.debug;
+    this.load("games", { games : {}, debug: false }).then(object => {
+      this.games = {};
+      for (var [channel_id, object] of Object.entries(object.games)) {
+        this.games[channel_id] = new Game(this)
+        this.games[channel_id].reload(object);
+      }
+      this.debug = object.debug;
+    });
 
     var emojis = this.client.emojis.cache;
     this.COLOR_EMOJIS = {
@@ -190,10 +191,11 @@ class MainClass extends Base {
   com_debug(message, args, kwargs) {
     if (message.author.id === process.env.ADMIN) {
       this.debug = !this.debug
-      var object = this.load("games");
-      object.debug = this.debug;
-      this.save("games", object);
-      message.reply(this.debug);
+      this.load("games").then(object =>{
+        object.debug = this.debug;
+        this.save("games", object);
+        message.reply(this.debug);
+      });
     }
   }
 }

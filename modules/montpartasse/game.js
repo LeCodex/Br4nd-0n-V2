@@ -221,15 +221,17 @@ class Game {
   }
 
   save() {
-    var object = this.mainclass.load("games");
-    object.games[this.channel.id] = this.serialize();
-    this.mainclass.save("games", object);
+    this.mainclass.load("games").then(object => {
+      object.games[this.channel.id] = this.serialize();
+      this.mainclass.save("games", object);
+    });
   }
 
   delete_save() {
-    var object = this.mainclass.load("games");
-    delete object.games[this.channel.id];
-    this.mainclass.save("games", object);
+    this.mainclass.load("games").then(object => {
+      delete object.games[this.channel.id];
+      this.mainclass.save("games", object);
+    });
   }
 }
 

@@ -15,7 +15,7 @@ class MainClass extends Base {
     this.command_text = "stats";
     this.color = 0x990099;
 
-    this.stats = this.load("stats", {});
+    this.load("stats", {}).then(e => {this.stats = e;});
     this.statLogics = [];
   }
 

@@ -14,7 +14,7 @@ class MainClass extends Base {
     this.color = 0x222222;
     this.auth = [ process.env.ADMIN ];
 
-    this.moduleList = this.load("modules", {});
+    this.load("modules", {}).then(e => {this.moduleList = e;});
   }
 
   command(message, args, kwargs) {

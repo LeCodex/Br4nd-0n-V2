@@ -19,7 +19,7 @@ class MainClass extends Base {
     this.color = 0xffff00;
     this.auth = [ process.env.ADMIN ];
 
-    this.data = this.load("data", {});
+    this.load("data", {}).then(e => {this.data = e;});
   }
 
   check_if_data_exists(message) {
