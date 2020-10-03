@@ -1,4 +1,5 @@
 const {MessageEmbed} = require('discord.js');
+const {DateTime} = require('luxon');
 const {Base} = require(module.parent.path + "/base/main.js");
 const Game = require("./game.js");
 const Player = require("./player.js");
@@ -46,9 +47,9 @@ class MainClass extends Base {
       var game = this.games[message.channel.id]
       if (game.paused) return;
 
-      var now = new Date();
-      if (game.lastTimestamp.getHours() < 12 && now.getHours() >= 12 || game.lastTimestamp.getHours() >= 12 && now.getHours() < 12 || game.lastTimestamp.getDate() != now.getDate()) game.refillHands();
-      game.lastTimestamp = new Date();
+      var now = DateTime.local().setZone("Europe/Paris");
+      if (game.lastTimestamp.get('hour') < 12 && now.get('hour') >= 12 || game.lastTimestamp.get('hour') >= 12 && now.get('hour') < 12 || game.lastTimestamp.get('day') != now.get('day')) game.refillHands();
+      game.lastTimestamp = DateTime.local().setZone("Europe/Paris");
 
       if (game.players[message.author.id]) {
         var player = game.players[message.author.id];
@@ -140,7 +141,7 @@ class MainClass extends Base {
     if (message.author.id === process.env.ADMIN) {
       if (this.games[message.channel.id]) {
         this.games[message.channel.id].refillHands();
-        this.games[message.channel.id].lastTimestamp = new Date();
+        this.games[message.channel.id].lastTimestamp = DateTime.local().setZone("Europe/Paris");
         message.reply("Refilled");
       };
     }

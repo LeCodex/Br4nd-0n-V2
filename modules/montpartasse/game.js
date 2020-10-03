@@ -1,4 +1,5 @@
 const {MessageEmbed} = require('discord.js');
+const {DateTime} = require('luxon');
 const Cups = require('./cups.js');
 const Player = require('./player.js');
 
@@ -24,7 +25,7 @@ class Game {
     this.paused = false;
     this.stackMessage = null;
     this.needRefill = false;
-    this.lastTimestamp = new Date();
+    this.lastTimestamp = DateTime.local().setZone("Europe/Paris");
     this.enabled = Object.keys(Cups).slice(4);
 
     if (message) {
