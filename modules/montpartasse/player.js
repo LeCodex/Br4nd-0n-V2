@@ -8,10 +8,7 @@ class Player {
     this.handMessage = null;
     this.score = 0;
 
-    if (!reload) {
-      var message = this.draw(game, 20);
-      this.sendHand(game, message);
-    }
+    if (!reload) var message = this.draw(game, 20);
   }
 
   draw(game, amount) {
