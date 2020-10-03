@@ -37,8 +37,8 @@ class MainClass extends Base {
     };
   }
 
-  getRankEmoji(index) {
-    if (index < 3) return ["🥇", "🥈", "🥉"][index];
+  getRankEmoji(rank) {
+    if (rank < 4) return ["🥇", "🥈", "🥉"][rank - 1];
     return "🏅";
   }
 
@@ -92,8 +92,15 @@ class MainClass extends Base {
         new MessageEmbed()
         .setTitle("[MONTPARTASSE] Classement")
         .setColor(this.color)
-        .addField("Joueurs", sorted.map((e, i) => this.getRankEmoji(i) + " **" + (i + 1) + ".** " + e.user.toString()).join("\n"), true)
-        .addField("Scores", sorted.map(e => e.score + " " + this.COLOR_EMOJIS.special).join("\n"), true)
+        .addField("Joueurs", sorted.reduce((buffer, e) => {
+          if (e.score < buffer.lastScore) {
+            buffer.lastScore = e.score;
+            buffer.rank++;
+          }
+          buffer.message += this.getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + e.user.toString() + "\n";
+          return buffer;
+        }, {message: "", rank: 0, lastScore: Infinity}).message, true)
+        .addField("Scores", sorted.map(e => e.score + " " + this.COLOR_EMOJIS.special).join("\n").message, true)
       )
     }
   }
@@ -101,9 +108,11 @@ class MainClass extends Base {
   com_show(message, args, kwargs) {
     if (this.games[message.channel.id]) {
       var game = this.games[message.channel.id];
-      if (game.stackMessage) game.stackMessage.delete();
-      game.stackMessage = null;
-      game.sendStack("Message renvoyé").then(() => game.save());
+      if (game.stackMessage) {
+        game.stackMessage.delete();
+        game.stackMessage = null;
+        game.sendStack("Tasse de " + game.players[game.lastPlayed].user.username).then(() => game.save());
+      }
     }
   }
 

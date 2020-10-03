@@ -117,7 +117,7 @@ class Game {
     var description = "La pile s'est effrondée! Oh non!\n";
     var last_player_score_gain = this.stack.filter(e => e.player.user.id === player.user.id).length;
     player.score += last_player_score_gain;
-    description += player.user.toString() + ", vous gagnez **" + last_player_score_gain + "** points (1 pour chaque tasse que vous avez joué). Les autres, vous gagnez 1 point pour chaque couleur que vous avez joué!\n\n"
+    description += player.user.toString() + ", vous gagnez **" + last_player_score_gain + (last_player_score_gain > 1 ? " points" : " point") + "** (1 pour chaque tasse que vous avez joué). Les autres, vous gagnez 1 point pour chaque couleur que vous avez joué!\n\n"
 
     var played_colors = {}
     for (var player_id of Object.keys(this.players)) {

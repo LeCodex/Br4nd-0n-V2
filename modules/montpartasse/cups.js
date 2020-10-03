@@ -98,9 +98,9 @@ class GoldenCup extends Cup {
   }
 
   effect(game) {
-    game.stack[0].player.draw(game, 1);
+    game.players[game.lastPlayed].draw(game, 1);
 
-    return "⏫ " + game.stack[0].player.user.toString() + " a pioché une tasse! ⏫";
+    return "⏫ " + game.players[game.lastPlayed].user.toString() + " a pioché une tasse! ⏫";
   }
 }
 
