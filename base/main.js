@@ -110,7 +110,9 @@ class Base {
 
   save_exists(name) {
     if (process.env.REPLIT_DB_URL) {
-      return db.list(this.name.toLowerCase() + "/").then(keys => keys.includes(name));
+      var ret = db.list().then(keys => keys.includes(this.name.toLowerCase() + "/" + name));
+      console.log(ret);
+      return ret;
     } else {
       return fs.existsSync(this._get_save_path() + name + ".json");
     }
