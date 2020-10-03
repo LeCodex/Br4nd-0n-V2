@@ -59,7 +59,7 @@ class Game {
     this.channel.send(
       new MessageEmbed()
       .setTitle("[MONTPARTASSE] Nouvelle pile")
-      .setDescription(description + "La table est nettoyée, les morceaux jetés, et les points comptés. " + (this.needRefill ? "__**Les mains ont été de nouveau remplies! Voici les trois nouvelles tasses spéciales!**__" : "Que le jeu continue!"))
+      .setDescription(description + "La table est nettoyée, les morceaux jetés, et les points comptés. " + (this.needRefill ? "__**Les mains ont été de nouveau remplies durant la partie! Voici les trois nouvelles tasses spéciales!**__" : "Que le jeu continue!"))
       .setColor(this.mainclass.color)
       .addField("Tasses spéciales", this.specialCups.length ? this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n") : "❌ Aucune")
     );
@@ -135,7 +135,7 @@ class Game {
         this.players[player_id].score += colors.length;
         description += this.players[player_id].user.toString() + " gagne **" + colors.length + (colors.length > 1 ? " points" : " point")
           + "** (" + colors.filter(e => e != "all").sort().map(e => this.mainclass.COLOR_EMOJIS[e]).join(", ")
-          + (rainbow_count ? " +" + rainbow_count + this.mainclass.COLOR_EMOJIS.all : "") + ")\n";
+          + (rainbow_count ? " + " + this.mainclass.COLOR_EMOJIS.all.repeat(rainbow_count) : "") + ")\n";
       }
     }
 
