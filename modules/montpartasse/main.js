@@ -48,7 +48,7 @@ class MainClass extends Base {
       if (game.paused) return;
 
       var now = DateTime.local().setZone("Europe/Paris");
-      if (game.lastTimestamp.get('hour') < 12 && now.get('hour') >= 12 || game.lastTimestamp.get('hour') >= 12 && now.get('hour') < 12 || game.lastTimestamp.get('day') != now.get('day')) game.refillHands();
+      if (game.lastTimestamp.get('hour') < 12 && now.get('hour') >= 12 || game.lastTimestamp.get('hour') >= 12 && now.get('hour') < 12 || game.lastTimestamp.get('day') != now.get('day')) game.refill();
       game.lastTimestamp = DateTime.local().setZone("Europe/Paris");
 
       if (!game.players[message.author.id]) {
@@ -149,7 +149,7 @@ class MainClass extends Base {
   com_refill(message, args, kwargs) {
     if (message.author.id === process.env.ADMIN) {
       if (this.games[message.channel.id]) {
-        this.games[message.channel.id].refillHands();
+        this.games[message.channel.id].refill();
         this.games[message.channel.id].lastTimestamp = DateTime.local().setZone("Europe/Paris");
         message.reply("Refilled");
       };

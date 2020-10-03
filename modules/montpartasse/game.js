@@ -29,8 +29,8 @@ class Game {
     this.enabled = Object.keys(Cups).slice(4);
 
     if (message) {
-      this.needRefill = true;
       this.channel = message.channel;
+      this.rerollSpecials();
       this.newStack();
     }
   }
@@ -47,24 +47,13 @@ class Game {
     this.stackMessage = null;
     this.stack = [...this.nextStack];
 
-    if (this.needRefill) {
-      this.specialCups = [];
-      var cups = shuffle([...this.enabled]);
-
-      for (var i = 0; i < Math.min(this.enabled.length, 3); i ++) {
-        this.specialCups.push(new Cups[cups.pop()](this, null));
-      }
-    }
-
     this.channel.send(
       new MessageEmbed()
       .setTitle("[MONTPARTASSE] Nouvelle pile")
-      .setDescription(description + "La table est nettoyée, les morceaux jetés, et les points comptés. " + (this.needRefill ? "__**Les mains ont été de nouveau remplies durant la partie! Voici les trois nouvelles tasses spéciales!**__" : "Que le jeu continue!"))
+      .setDescription(description + "La table est nettoyée, les morceaux jetés, et les points comptés. Que le jeu continue!")
       .setColor(this.mainclass.color)
       .addField("Tasses spéciales", this.specialCups.length ? this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n") : "❌ Aucune")
     );
-
-    this.needRefill = false;
 
     this.save();
   }
@@ -147,8 +136,18 @@ class Game {
     this.newStack(description + (trigger_returns.length ? "\n" + trigger_returns : "") + "\n");
   }
 
-  refillHands() {
-    this.needRefill = true;
+  rerollSpecials() {
+    this.specialCups = [];
+    var cups = shuffle([...this.enabled]);
+
+    for (var i = 0; i < Math.min(this.enabled.length, 3); i ++) {
+      this.specialCups.push(new Cups[cups.pop()](this, null));
+    }
+  }
+
+  refill() {
+    this.rerollSpecials();
+
     var max = 20;
     var max_refill = 10;
 
@@ -158,6 +157,14 @@ class Game {
         player.sendHand(this, message);
       }
     }
+
+    this.channel.send(
+      new MessageEmbed()
+      .setTitle("[MONTPARTASSE] Nouvelle tournée")
+      .setDescription("**Les mains ont été de nouveau remplies! Voici les trois nouvelles tasses spéciales!**")
+      .setColor(this.mainclass.color)
+      .addField("Tasses spéciales", this.specialCups.length ? this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n") : "❌ Aucune")
+    );
 
     this.save();
   }
@@ -172,7 +179,6 @@ class Game {
       }}),
       specialCups: this.specialCups.map(e => e.constructor.name),
       lastPlayed: this.lastPlayed,
-      needRefill: this.needRefill,
       stackMessage: this.stackMessage ? this.stackMessage.id : null,
       paused: this.paused,
       enabled: this.enabled
@@ -196,7 +202,6 @@ class Game {
     this.players = {};
     this.specialCups = object.specialCups.map(e => new Cups[e](this.mainclass, null));
     this.lastPlayed = object.lastPlayed;
-    this.needRefill = object.needRefill;
     this.paused = object.paused;
     this.enabled = object.enabled;
     this.stackMessage = null;
