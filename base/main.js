@@ -119,14 +119,16 @@ class Base {
   }
 
   save(name, data) {
-    var string = JSON.stringify(data);
     if (process.env.REPLIT_DB_URL) {
-      db.set(this.name.toLowerCase() + "/" + name, string);
+      db.set(this.name.toLowerCase() + "/" + name, data).then(() => {
+        db.get(this.name.toLowerCase() + "/" + name, { raw: true }).then(e => {console.log(this.name + " Database Saved : " + e);});
+      });
     } else {
+      var string = JSON.stringify(data);
       if (!fs.existsSync(this._getSavePath())) fs.mkdirSync(this._getSavePath());
       fs.writeFile(this._getSavePath() + name + ".json", string, err => {if (err != null) console.log(err)});
+      console.log(this.name + " JSON Data Saved");
     }
-    console.log(this.name + " Data Saved");
   }
 
   async load(name, fallback) {
@@ -134,13 +136,12 @@ class Base {
       this.save(name, fallback);
       return fallback;
     }
-    var string = "";
     if (process.env.REPLIT_DB_URL) {
-      string = await db.get(this.name.toLowerCase() + "/" + name, { raw: true });
+      return await db.get(this.name.toLowerCase() + "/" + name);
     } else {
-      string = fs.readFileSync(this._getSavePath() + name + ".json");
+      var string = fs.readFileSync(this._getSavePath() + name + ".json");
+      return JSON.parse(string);
     }
-    return JSON.parse(string);
   }
 }
 
