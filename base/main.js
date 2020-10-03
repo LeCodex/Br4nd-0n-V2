@@ -109,7 +109,11 @@ class Base {
   }
 
   save_exists(name) {
-    return fs.existsSync(this._get_save_path() + name + ".json");
+    if (process.env.REPLIT_DB_URL) {
+      return db.list(this.name.toLowerCase() + "/").then(keys => keys.includes(name));
+    } else {
+      return fs.existsSync(this._get_save_path() + name + ".json");
+    }
   }
 
   save(name, data) {
@@ -124,7 +128,7 @@ class Base {
   }
 
   async load(name, fallback) {
-    if (!this.save_exists(name)) {
+    if (!await this.save_exists(name)) {
       this.save(name, fallback);
       return fallback;
     }
