@@ -104,17 +104,17 @@ class Base {
       .catch(e => this.client.error(channel, this.name, e));
   }
 
-  _get_save_path() {
+  _getSavePath() {
     return this.client.path + "\\saves\\" + this.name.toLowerCase() + "\\";
   }
 
-  save_exists(name) {
+  async saveExists(name) {
     if (process.env.REPLIT_DB_URL) {
-      var ret = db.list().then(keys => keys.includes(this.name.toLowerCase() + "/" + name));
+      var ret = await db.list().then(keys => keys.includes(this.name.toLowerCase() + "/" + name));
       console.log(ret);
       return ret;
     } else {
-      return fs.existsSync(this._get_save_path() + name + ".json");
+      return fs.existsSync(this._getSavePath() + name + ".json");
     }
   }
 
@@ -123,14 +123,14 @@ class Base {
     if (process.env.REPLIT_DB_URL) {
       db.set(this.name.toLowerCase() + "/" + name, string);
     } else {
-      if (!fs.existsSync(this._get_save_path())) fs.mkdirSync(this._get_save_path());
-      fs.writeFile(this._get_save_path() + name + ".json", string, err => {if (err != null) console.log(err)});
+      if (!fs.existsSync(this._getSavePath())) fs.mkdirSync(this._getSavePath());
+      fs.writeFile(this._getSavePath() + name + ".json", string, err => {if (err != null) console.log(err)});
     }
     console.log(this.name + " Data Saved");
   }
 
   async load(name, fallback) {
-    if (!await this.save_exists(name)) {
+    if (!await this.saveExists(name)) {
       this.save(name, fallback);
       return fallback;
     }
@@ -138,7 +138,7 @@ class Base {
     if (process.env.REPLIT_DB_URL) {
       string = await db.get(this.name.toLowerCase() + "/" + name);
     } else {
-      string = fs.readFileSync(this._get_save_path() + name + ".json");
+      string = fs.readFileSync(this._getSavePath() + name + ".json");
     }
     return JSON.parse(string);
   }
