@@ -1,5 +1,7 @@
 const fs = require('fs');
 const {MessageEmbed} = require('discord.js');
+const Database = require("@replit/database");
+const db = new Database();
 
 class Base {
   /*
@@ -112,17 +114,26 @@ class Base {
 
   save(name, data) {
     var string = JSON.stringify(data);
-    if (!fs.existsSync(this._get_save_path())) fs.mkdirSync(this._get_save_path());
-    fs.writeFile(this._get_save_path() + name + ".json", string, err => {if (err != null) console.log(err)});
+    if (process.env.REPLIT_DB_URL) {
+      db.set(this.name.toLowerCase() + "/" + name, string);
+    } else {
+      if (!fs.existsSync(this._get_save_path())) fs.mkdirSync(this._get_save_path());
+      fs.writeFile(this._get_save_path() + name + ".json", string, err => {if (err != null) console.log(err)});
+    }
     console.log(this.name + " Data Saved");
   }
 
-  load(name, fallback) {
+  async load(name, fallback) {
     if (!this.save_exists(name)) {
       this.save(name, fallback);
-      return fallback
+      return fallback;
     }
-    var string = fs.readFileSync(this._get_save_path() + name + ".json");
+    var string = "";
+    if (process.env.REPLIT_DB_URL) {
+      string = await db.get(this.name.toLowerCase() + "/" + name);
+    } else {
+      string = fs.readFileSync(this._get_save_path() + name + ".json");
+    }
     return JSON.parse(string);
   }
 }
