@@ -53,7 +53,7 @@ class Player {
     var effect_return = "";
     if (cup.effect) effect_return = cup.effect(game);
 
-    game.sendStack("Tasse de " + this.user.username, effect_return).then(() => {
+    game.sendStack("Tasse de " + game.channel.guild.members.cache.get(game.lastPlayed).displayName, effect_return).then(() => {
       var message = "";
       // if (!this.hand.length) message = this.draw(game, 5);
       this.sendHand(game, message).then(() => game.checkStackEnd(this)).catch(console.error);

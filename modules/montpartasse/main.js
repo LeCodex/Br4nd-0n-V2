@@ -113,7 +113,7 @@ class MainClass extends Base {
       if (game.stackMessage) {
         game.stackMessage.delete();
         game.stackMessage = null;
-        game.sendStack("Tasse de " + game.players[game.lastPlayed].user.username).then(() => game.save());
+        game.sendStack("Tasse de " + game.channel.guild.members.cache.get(game.lastPlayed).displayName).then(() => game.save());
       }
     }
   }

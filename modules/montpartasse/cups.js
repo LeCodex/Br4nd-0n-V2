@@ -79,7 +79,7 @@ class BombCup extends Cup {
 
 class RainbowCup extends Cup {
   constructor(mainclass, player) {
-    super(mainclass, player, "666367471648768029", "🌈");
+    super(mainclass, player, "0", mainclass.COLOR_EMOJIS.all);
 
     this.name = "Tasse Arc-en-ciel";
     this.description = "Est de toutes les couleurs à la fois";
