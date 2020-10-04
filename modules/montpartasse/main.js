@@ -17,6 +17,7 @@ class MainClass extends Base {
     };
     this.command_text = "montpartasse";
     this.color = 0xFF69B4;
+		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
 
     this.load("games", { games : {}, debug: false }).then(object => {
       this.games = {};
@@ -101,7 +102,7 @@ class MainClass extends Base {
           buffer.message += this.getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + e.user.toString() + "\n";
           return buffer;
         }, {message: "", rank: 0, lastScore: Infinity}).message, true)
-        .addField("Scores", sorted.map(e => e.score + " " + this.COLOR_EMOJIS.special).join("\n"), true)
+        .addField("Scores", sorted.map(e => "**" + e.score + "** " + this.COLOR_EMOJIS.special).join("\n"), true)
       )
     }
   }
@@ -118,7 +119,7 @@ class MainClass extends Base {
   }
 
   com_start(message, args, kwargs) {
-    if (message.author.id === process.env.ADMIN) {
+    if (this.pseudo_auth.includes(message.author.id)) {
       if (this.games[message.channel.id]) {
         this.games[message.channel.id].paused = false;
         message.reply("Unpaused");
@@ -129,7 +130,7 @@ class MainClass extends Base {
   }
 
   com_stop(message, args, kwargs) {
-    if (message.author.id === process.env.ADMIN) {
+    if (this.pseudo_auth.includes(message.author.id)) {
       if (this.games[message.channel.id]) {
         this.games[message.channel.id].paused = true;
         message.reply("Paused");
@@ -138,7 +139,7 @@ class MainClass extends Base {
   }
 
   com_delete(message, args, kwargs) {
-    if (message.author.id === process.env.ADMIN) {
+    if (this.pseudo_auth.includes(message.author.id)) {
       if (this.games[message.channel.id]) {
         this.games[message.channel.id].delete_save();
         delete this.games[message.channel.id];
@@ -148,7 +149,7 @@ class MainClass extends Base {
   }
 
   com_refill(message, args, kwargs) {
-    if (message.author.id === process.env.ADMIN) {
+    if (this.pseudo_auth.includes(message.author.id)) {
       if (this.games[message.channel.id]) {
         this.games[message.channel.id].refill();
         this.games[message.channel.id].lastTimestamp = DateTime.local().setZone("Europe/Paris");
@@ -158,7 +159,7 @@ class MainClass extends Base {
   }
 
   com_enable(message, args, kwargs) {
-    if (message.author.id === process.env.ADMIN) {
+    if (this.pseudo_auth.includes(message.author.id)) {
       if (this.games[message.channel.id]) {
         this.games[message.channel.id].enabled.push(...args.slice(1).filter(e => !this.games[message.channel.id].enabled.includes(e)));
         this.games[message.channel.id].save();
@@ -168,7 +169,7 @@ class MainClass extends Base {
   }
 
   com_newStack(message, args, kwargs) {
-    if (message.author.id === process.env.ADMIN) {
+    if (this.pseudo_auth.includes(message.author.id)) {
       if (this.games[message.channel.id]) {
         this.games[message.channel.id].needRefill = true;
         this.games[message.channel.id].newStack();
@@ -177,7 +178,7 @@ class MainClass extends Base {
   }
 
   com_disable(message, args, kwargs) {
-    if (message.author.id === process.env.ADMIN) {
+    if (this.pseudo_auth.includes(message.author.id)) {
       if (this.games[message.channel.id]) {
         for (var cup of args.slice(1)) {
           if (this.games[message.channel.id].enabled.includes(cup)) this.games[message.channel.id].enabled.splice(this.games[message.channel.id].enabled.indexOf(cup), 1);
@@ -189,7 +190,7 @@ class MainClass extends Base {
   }
 
   com_debug(message, args, kwargs) {
-    if (message.author.id === process.env.ADMIN) {
+    if (this.pseudo_auth.includes(message.author.id)) {
       this.debug = !this.debug
       this.load("games").then(object =>{
         object.debug = this.debug;
