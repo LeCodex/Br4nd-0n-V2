@@ -144,7 +144,7 @@ class Game {
     var cups = shuffle([...this.enabled]);
 
     for (var i = 0; i < Math.min(this.enabled.length, 3); i ++) {
-      this.specialCups.push(new Cups[cups.pop()](this, null));
+      this.specialCups.push(new Cups[cups.pop()](this.mainclass, null));
     }
   }
 
