@@ -59,10 +59,18 @@ class Game {
   }
 
   async sendStack(info, description = "") {
+    var summary = this.stack.reduce((buffer, element) => {
+      if (!buffer[element.color]) buffer[element.color] = 0;
+      buffer[element.color] += 1;
+      return buffer;
+    }, {});
+
     var content = new MessageEmbed()
       .setTitle("[MONTPARTASSE] " + info)
-      .setDescription(this.stack.map(e => e.emoji + " " + e.player.user.toString()).join("\n") + "\n\n" + description)
+      .setDescription(this.stack.map(e => e.emoji + " " + e.player.user.toString()).join("\n") + "\n\n"
+        + description)
       .setColor(this.mainclass.color)
+      .addField("Résumé", Object.keys(summary).length ? Object.keys(summary).sort().map(e => this.mainclass.COLOR_EMOJIS[e] + " : **" + summary[e] + "**").join(" | ") : "❌ Aucune tasse dans la pile")
       .addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n"));
 
     if (this.stackMessage) {
