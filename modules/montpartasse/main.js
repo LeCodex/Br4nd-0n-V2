@@ -77,8 +77,11 @@ class MainClass extends Base {
           }
         }
       } else {
-        game.players[message.author.id].handMessage = null;
-        game.players[message.author.id].sendHand(game);
+				if (player.handMessage) {
+					player.handMessage.delete();
+					player.handMessage = null;
+				}
+        player.sendHand(game);
       }
     }
 
@@ -102,7 +105,7 @@ class MainClass extends Base {
           buffer.message += this.getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + e.user.toString() + "\n";
           return buffer;
         }, {message: "", rank: 0, lastScore: Infinity}).message, true)
-        .addField("Scores", sorted.map(e => "**" + e.score + "** " + this.COLOR_EMOJIS.special).join("\n"), true)
+        .addField("Scores", sorted.map(e => "**" + e.score + "** " + this.COLOR_EMOJIS.all).join("\n"), true)
       )
     }
   }
