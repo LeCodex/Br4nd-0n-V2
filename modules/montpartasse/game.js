@@ -198,7 +198,8 @@ class Game {
       lastPlayed: this.lastPlayed,
       stackMessage: this.stackMessage ? this.stackMessage.id : null,
       paused: this.paused,
-      enabled: this.enabled
+      enabled: this.enabled,
+      lastTimestamp: this.lastTimestamp.toMillis()
     };
 
     for (var [k, e] of Object.entries(this.players)) {
@@ -238,6 +239,7 @@ class Game {
     };
 
     this.stack = object.stack.map(e => new Cups[e.cup](this.mainclass, this.players[e.player]));
+    this.lastTimestamp = object.lastTimestamp ? DateTime.fromMillis(object.lastTimestamp).setZone("Europe/Paris") : this.lastTimestamp;
   }
 
   save() {
