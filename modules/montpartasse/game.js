@@ -107,7 +107,7 @@ class Game {
     var last_player_score_gain = this.stack.filter(e => e.player.user.id === player.user.id).length;
     player.score += last_player_score_gain;
     description += player.user.toString() + ", vous gagnez **" + last_player_score_gain + (last_player_score_gain > 1 ? " points" : " point") + "** (1 pour chaque tasse que vous avez joué). "
-      + "Les autres, vous gagnez 1 point " + (victorious_color ? "pour chaque tasse " + this.mainclass.COLOR_EMOJIS[victorious_color] + " que vous avez jouée!\n\n" : "pour chaque couleur que vous avez joué!\n\n")
+      + "Les autres, vous gagnez 1 point " + (victorious_color ? "pour chaque tasse " + this.mainclass.COLOR_EMOJIS[victorious_color] + " que vous avez jouée!\n\n" : "pour chaque couleur que vous avez jouée!\n\n")
 
     var played_colors = {}
     for (var player_id of Object.keys(this.players)) {
