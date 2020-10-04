@@ -46,6 +46,7 @@ class Game {
   newStack(description = "") {
     this.stackMessage = null;
     this.stack = [...this.nextStack];
+    this.lastPlayed = "";
 
     this.channel.send(
       new MessageEmbed()
