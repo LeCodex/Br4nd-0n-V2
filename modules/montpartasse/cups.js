@@ -137,7 +137,7 @@ class CactusCup extends Cup {
   stackEnd(game, winner) {
     winner.score --;
 
-    return "🌵 Ouch! Ca pique!" + winner.user.toString() + " perd 1 point! 🌵";
+    return "🌵 Ouch! Ca pique!" + winner.user.toString() + " perd **1 point**! 🌵";
   }
 }
 

@@ -100,31 +100,34 @@ class Game {
     this.save();
   }
 
-  endStack(player) {
+  endStack(player, victorious_color = null) {
     this.nextStack = [];
 
     var description = "La pile s'est effrondée! Oh non!\n";
     var last_player_score_gain = this.stack.filter(e => e.player.user.id === player.user.id).length;
     player.score += last_player_score_gain;
-    description += player.user.toString() + ", vous gagnez **" + last_player_score_gain + (last_player_score_gain > 1 ? " points" : " point") + "** (1 pour chaque tasse que vous avez joué). Les autres, vous gagnez 1 point pour chaque couleur que vous avez joué!\n\n"
+    description += player.user.toString() + ", vous gagnez **" + last_player_score_gain + (last_player_score_gain > 1 ? " points" : " point") + "** (1 pour chaque tasse que vous avez joué). "
+      + "Les autres, vous gagnez 1 point " + (victorious_color ? "pour chaque tasse " + this.mainclass.COLOR_EMOJIS[victorious_color] + " que vous avez jouée!\n\n" : "pour chaque couleur que vous avez joué!\n\n")
 
     var played_colors = {}
     for (var player_id of Object.keys(this.players)) {
       if (player_id != player.user.id) {
         played_colors[player_id] = [];
         for (var cup of this.stack.filter(e => e.player.user.id === player_id)) {
-          if (!played_colors[player_id].includes(cup.color) || cup.color === "all") played_colors[player_id].push(cup.color);
+          if (
+            cup.color === "all" ||
+            !victorious_color && !played_colors[player_id].includes(cup.color) ||
+            victorious_color && cup.color === victorious_color
+          ) played_colors[player_id].push(cup.color);
         }
       }
     }
 
     for (var [player_id, colors] of Object.entries(played_colors)) {
       if (colors.length > 0) {
-        var rainbow_count = colors.filter(e => e == "all").length;
         this.players[player_id].score += colors.length;
         description += this.players[player_id].user.toString() + " gagne **" + colors.length + (colors.length > 1 ? " points" : " point")
-          + "** (" + colors.filter(e => e != "all").sort().map(e => this.mainclass.COLOR_EMOJIS[e]).join(", ")
-          + (rainbow_count ? " + " + this.mainclass.COLOR_EMOJIS.all.repeat(rainbow_count) : "") + ")\n";
+          + "** (" + colors.sort().map(e => this.mainclass.COLOR_EMOJIS[e]).join(", ") + ")\n";
       }
     }
 
