@@ -75,7 +75,7 @@ class Game {
       .addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n"));
 
     if (this.stackMessage) {
-      if (this.channel.messages.cache.keyArray().reverse().indexOf(this.stackMessage.id) > 11) {
+      if (this.channel.messages.cache.keyArray().reverse().indexOf(this.stackMessage.id) > 10) {
         this.stackMessage.delete();
         await this.channel.send(content).then(m => {this.stackMessage = m;});
       } else {
@@ -222,7 +222,10 @@ class Game {
     this.paused = object.paused;
     this.enabled = object.enabled;
     this.stackMessage = null;
-    if (object.stackMessage) this.stackMessage = await this.channel.messages.fetch(object.stackMessage);
+    if (object.stackMessage) {
+      this.stackMessage = await this.channel.messages.fetch(object.stackMessage);
+      await this.channel.messages.fetch({ after: object.stackMessage }).catch(console.error);
+    }
 
     for (var [k, e] of Object.entries(object.players)) {
       var p = new Player(this.client.users.cache.get(e.user), this, true);
