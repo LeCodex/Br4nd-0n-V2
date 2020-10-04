@@ -74,7 +74,12 @@ class Game {
       .addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n"));
 
     if (this.stackMessage) {
-      this.stackMessage.edit(content);
+      if (this.channel.messages.cache.keyArray().reverse().indexOf(this.stackMessage.id) > 11) {
+        this.stackMessage.delete();
+        await this.channel.send(content).then(m => {this.stackMessage = m;});
+      } else {
+        this.stackMessage.edit(content);
+      };
     } else {
       await this.channel.send(content).then(m => {this.stackMessage = m;});
     }
