@@ -12,7 +12,7 @@ class Cup {
 
 class BlueCup extends Cup {
   constructor(mainclass, player) {
-    super(mainclass, player, "472452877391233025", "🔵");
+    super(mainclass, player, "0", mainclass.COLOR_EMOJIS.blue);
 
     this.color = "blue";
     this.name = "Tasse bleue";
@@ -22,7 +22,7 @@ class BlueCup extends Cup {
 
 class PurpleCup extends Cup {
   constructor(mainclass, player) {
-    super(mainclass, player, "472453014020685824", "🟣");
+    super(mainclass, player, "0", mainclass.COLOR_EMOJIS.purple);
 
     this.color = "purple";
     this.name = "Tasse violette";
@@ -32,7 +32,7 @@ class PurpleCup extends Cup {
 
 class OrangeCup extends Cup {
   constructor(mainclass, player) {
-    super(mainclass, player, "472452943950643210", "🟠");
+    super(mainclass, player, "0", mainclass.COLOR_EMOJIS.orange);
 
     this.color = "orange";
     this.name = "Tasse orange";
@@ -42,7 +42,7 @@ class OrangeCup extends Cup {
 
 class GreenCup extends Cup {
   constructor(mainclass, player) {
-    super(mainclass, player, "472453002238754857", "🟢");
+    super(mainclass, player, "0", mainclass.COLOR_EMOJIS.green);
 
     this.color = "green";
     this.name = "Tasse verte";
@@ -55,7 +55,7 @@ class BombCup extends Cup {
     super(mainclass, player, "472452844470009876", "💣");
 
     this.name = "Tasse Bombe";
-    this.description = "Explose toutes les tasses de la même couleur que la dernière";
+    this.description = "Explose toutes les tasses de la même couleur que celle en-dessous";
     this.color = "special";
   }
 
@@ -212,7 +212,7 @@ class MagnetCup extends Cup {
     super(mainclass, player, "472452853714386956", "🧲");
 
     this.name = "Tasse Aimant";
-    this.description = "Force le joueur précédent à défaussser une tasse au hasard";
+    this.description = "Force le joueur qui a joué la tasse d'en-dessous à défaussser une tasse au hasard";
     this.color = "special";
   }
 

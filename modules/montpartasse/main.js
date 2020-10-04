@@ -30,10 +30,10 @@ class MainClass extends Base {
 
     var emojis = this.client.emojis.cache;
     this.COLOR_EMOJIS = {
-      blue: (emojis.get("472452877391233025") || "🔵").toString() ,
-      orange: (emojis.get("472452943950643210") || "🟠").toString(),
-      purple: (emojis.get("472453014020685824") || "🟣").toString(),
-      green: (emojis.get("472453002238754857") || "🟢").toString(),
+      blue: (emojis.get("762244073762717707") || "🔵").toString() ,
+      orange: (emojis.get("762244112325410828") || "🟠").toString(),
+      purple: (emojis.get("762244777567191052") || "🟣").toString(),
+      green: (emojis.get("762244193493319701") || "🟢").toString(),
       special: (emojis.get("472452927802310676") || "⚪").toString(),
       all: (emojis.get("666367471648768029") || "🌈").toString()
     };
