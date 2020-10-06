@@ -212,7 +212,7 @@ class MagnetCup extends Cup {
     super(mainclass, player, "472452853714386956", "🧲");
 
     this.name = "Tasse Aimant";
-    this.description = "Force le joueur qui a joué la tasse d'en-dessous à défaussser une tasse au hasard";
+    this.description = "Force le joueur qui a joué la tasse d'en-dessous à défausser une tasse au hasard";
     this.color = "special";
   }
 
