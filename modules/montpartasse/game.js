@@ -205,7 +205,7 @@ class Game {
     for (var [k, e] of Object.entries(this.players)) {
       object.players[k] = {
         hand: e.hand.map(e => e.constructor.name),
-        score: e.score,
+        score: Number(e.score),
         user: e.user.id,
         handMessage: e.handMessage ? e.handMessage.id : null,
         handChannel: e.handMessage ? e.handMessage.channel.id : null
