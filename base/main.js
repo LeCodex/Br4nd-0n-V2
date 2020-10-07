@@ -1,11 +1,9 @@
 const fs = require('fs');
 const {MessageEmbed} = require('discord.js');
-const Database = require("@replit/database");
-const db = new Database();
 
 class Base {
   /*
-    MainClass(client)
+    constructor(client)
     Instantiates the module class.
 
     @param {Client} client The Discord.js bot client
@@ -20,6 +18,8 @@ class Base {
     this.command_text = "";
     this.color = 0xffffff;
     this.auth = [];
+
+    this.databaseEventBuckets = [];
   }
 
   get NUMBER_EMOJIS() {
@@ -109,26 +109,20 @@ class Base {
   }
 
   async saveExists(name) {
-    if (process.env.REPLIT_DB_URL) {
-      var ret = await db.list().then(keys => keys.includes(this.name.toLowerCase() + "/" + name));
-      console.log(ret);
-      return ret;
-    } else {
-      return fs.existsSync(this._getSavePath() + name + ".json");
-    }
+    const ret = await this.client.mongo.db(this.name.toLowerCase()).listCollections({name: name}).hasNext();
+    console.log(ret);
+    return ret;
   }
 
   save(name, data) {
-    if (process.env.REPLIT_DB_URL) {
-      db.set(this.name.toLowerCase() + "/" + name, data).then(() => {
-        db.get(this.name.toLowerCase() + "/" + name, { raw: true }).then(e => {console.log(this.name + " Database Saved : " + e);});
-      });
-    } else {
-      var string = JSON.stringify(data);
-      if (!fs.existsSync(this._getSavePath())) fs.mkdirSync(this._getSavePath());
-      fs.writeFile(this._getSavePath() + name + ".json", string, err => {if (err != null) console.log(err)});
-      console.log(this.name + " JSON Data Saved");
-    }
+    const collection = this.client.mongo.db(this.name.toLowerCase()).collection(name);
+    collection.replaceOne({}, data, { upsert: true });
+    console.log(this.name + " Database Saved");
+
+    // var string = JSON.stringify(data);
+    // if (!fs.existsSync(this._getSavePath())) fs.mkdirSync(this._getSavePath());
+    // fs.writeFile(this._getSavePath() + name + ".json", string, err => {if (err != null) console.log(err)});
+    // console.log(this.name + " JSON Data Saved");
   }
 
   async load(name, fallback) {
@@ -136,12 +130,11 @@ class Base {
       this.save(name, fallback);
       return fallback;
     }
-    if (process.env.REPLIT_DB_URL) {
-      return await db.get(this.name.toLowerCase() + "/" + name);
-    } else {
-      var string = fs.readFileSync(this._getSavePath() + name + ".json");
-      return JSON.parse(string);
-    }
+    var ret = await this.client.mongo.db(this.name.toLowerCase()).collection(name).findOne();
+    return ret;
+
+    // var string = fs.readFileSync(this._getSavePath() + name + ".json");
+    // return JSON.parse(string);
   }
 }
 
