@@ -197,16 +197,20 @@ class MainClass extends Base {
 		if (this.pseudo_auth.includes(message.author.id)) {
       if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];
-				console.log(this.client.getUserFromMention(args[1]).id);
-				var player = game.players[this.client.getUserFromMention(args[1]).id];
-				if (player) {
-					Object.keys(kwargs).forEach(key => {
-						player[key] = kwargs[key];
-					});
+				var user = this.client.getUserFromMention(args[1])
 
-					this.games[message.channel.id].save();
-					message.reply("Set " + player.user.username + ": " + Object.keys(kwargs).map(k => k + "=" + player[k]).join(", "));
+				if (!game.players[user.id]) {
+					game.players[user.id] = new Player(user, game);
+					game.players[user.id].sendHand(game);
 				}
+
+				var player = game.players[user.id];
+				Object.keys(kwargs).forEach(key => {
+					player[key] = kwargs[key];
+				});
+
+				this.games[message.channel.id].save();
+				message.reply("Set " + player.user.username + ": " + Object.keys(kwargs).map(k => k + "=" + player[k]).join(", "));
       };
     }
 	}
