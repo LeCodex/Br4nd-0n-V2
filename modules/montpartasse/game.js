@@ -224,8 +224,8 @@ class Game {
     this.enabled = object.enabled;
     this.stackMessage = null;
     if (object.stackMessage) {
-      this.stackMessage = await this.channel.messages.fetch(object.stackMessage);
-      await this.channel.messages.fetch({ after: object.stackMessage }).catch(console.error);
+      this.stackMessage = await this.channel.messages.fetch(object.stackMessage).catch(e => this.client.error(this.channel, "Montpartasse", e));
+      await this.channel.messages.fetch({ after: object.stackMessage }).catch(e => this.client.error(this.channel, "Montpartasse", e));
     }
 
     for (var [k, e] of Object.entries(object.players)) {
@@ -233,8 +233,8 @@ class Game {
       p.score = e.score;
       p.hand = e.hand.map(f => new Cups[f](this.mainclass, p));
       p.handMessage = null;
-      var channel = await this.client.channels.fetch(e.handChannel);
-      if (e.handMessage) p.handMessage = await channel.messages.fetch(e.handMessage);
+      var channel = await this.client.channels.fetch(e.handChannel).catch(e => this.client.error(this.channel, "Montpartasse", e));
+      if (e.handMessage) p.handMessage = await channel.messages.fetch(e.handMessage).catch(e => this.client.error(this.channel, "Montpartasse", e));
       this.players[k] = p;
     };
 

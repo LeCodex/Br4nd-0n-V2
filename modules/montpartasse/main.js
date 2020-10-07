@@ -82,6 +82,7 @@ class MainClass extends Base {
 					player.handMessage = null;
 				}
         player.sendHand(game);
+				game.save();
       }
     }
 
@@ -191,6 +192,24 @@ class MainClass extends Base {
       };
     }
   }
+
+	com_set(message, args, kwargs) {
+		if (this.pseudo_auth.includes(message.author.id)) {
+      if (this.games[message.channel.id]) {
+				var game = this.games[message.channel.id];
+				console.log(this.client.getUserFromMention(args[1]).id);
+				var player = game.players[this.client.getUserFromMention(args[1]).id];
+				if (player) {
+					Object.keys(kwargs).forEach(key => {
+						player[key] = kwargs[key];
+					});
+
+					this.games[message.channel.id].save();
+					message.reply("Set " + player.user.username + ": " + Object.keys(kwargs).map(k => k + "=" + player[k]).join(", "));
+				}
+      };
+    }
+	}
 
   com_debug(message, args, kwargs) {
     if (this.pseudo_auth.includes(message.author.id)) {
