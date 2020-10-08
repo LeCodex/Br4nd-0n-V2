@@ -6,9 +6,9 @@ const Player = require("./player.js");
 
 class MainClass extends Base {
 	constructor(client) {
-		super(client);
-		this.name = "Montpartasse";
-		this.description = "S'amuse à empiler des tasses de toutes les couleurs";
+    super(client);
+    this.name = "Montpartasse";
+    this.description = "S'amuse à empiler des tasses de toutes les couleurs";
     this.help = {
       "": "Reçoit une main ou voit sa propre main",
       "<nombre ou emoji>": "Joue une tasse",
@@ -17,7 +17,7 @@ class MainClass extends Base {
     };
     this.command_text = "montpartasse";
     this.color = 0xFF69B4;
-		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
+    this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
 
     this.load("games", { games : {}, debug: false }).then(object => {
       this.games = {};
@@ -77,12 +77,12 @@ class MainClass extends Base {
           }
         }
       } else {
-				if (player.handMessage) {
-					player.handMessage.delete();
-					player.handMessage = null;
-				}
+        if (player.handMessage) {
+        	player.handMessage.delete();
+        	player.handMessage = null;
+        }
         player.sendHand(game);
-				game.save();
+        game.save();
       }
     }
 
@@ -195,7 +195,7 @@ class MainClass extends Base {
 
 	com_set(message, args, kwargs) {
 		if (this.pseudo_auth.includes(message.author.id)) {
-      if (this.games[message.channel.id]) {
+			if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];
 				var user = this.client.getUserFromMention(args[1])
 
