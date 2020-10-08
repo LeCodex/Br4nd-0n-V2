@@ -26,10 +26,12 @@ class MainClass extends Base {
 
 				message.reply(embed);
 			} else {
-				message.reply(new MessageEmbed()
+				message.reply(
+					new MessageEmbed()
 					.setTitle("[HELP] Unknown Module")
 					.setDescription("The module you requested is either inactive or inexistant")
-					.setColor(this.color));
+					.setColor(this.color)
+				);
 			}
 		} else {
 			var embed = new MessageEmbed().setTitle("[HELP] Active modules").setColor(this.color);

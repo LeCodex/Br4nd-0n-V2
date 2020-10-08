@@ -158,8 +158,10 @@ class MainClass extends Base {
 				if (data.welcome_message && data.welcome_channel) {
 					var channel = this.client.channels.cache.get(data.welcome_channel);
 
-					if (channel) channel.send(new MessageEmbed()
-						.setDescription(data.welcome_message.replace("%u", message.author.toString())));
+					if (channel) channel.send(
+						new MessageEmbed()
+						.setDescription(data.welcome_message.replace("%u", message.author.toString()))
+					);
 				}
 			}
 			message.delete().catch(e => this.client.error(message.channel, "Rules", e));

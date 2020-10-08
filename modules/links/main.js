@@ -14,13 +14,15 @@ class MainClass extends Base {
 	}
 
 	command(message, args, kwargs) {
-		message.reply(new MessageEmbed()
+		message.reply(
+			new MessageEmbed()
 			.setThumbnail(this.client.user.displayAvatarURL())
 			.setTitle("Links")
 			.setDescription("The code for this bot is entirely open-source. Feel free to leave suggestions on the repository's Issues page.")
 			.addField("GitHub", "https://github.com/LeCodex/Br4nd-0n-V2")
 			.addField("Repl.it", "https://repl.it/@LeCodex/Br4nd-0n-V2")
-			.setColor(this.color));
+			.setColor(this.color)
+		);
 	}
 }
 
