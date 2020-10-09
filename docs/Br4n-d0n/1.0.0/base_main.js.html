@@ -1,4 +1,45 @@
-const fs = require('fs');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>base/main.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Base.html">Base</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Base.html#load">load</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Base.html#on_message">on_message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Base.html#save">save</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Base.html#saveExists">saveExists</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Base.html#sendChoice">sendChoice</a></span></li><li class="nav-heading">Externals</li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-Client.html">Client</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-Collection.html">Collection</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-DMChannel.html">DMChannel</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-Message.html">Message</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-MessageEmbed.html">MessageEmbed</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-MessageReaction.html">MessageReaction</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-Snowflake.html">Snowflake</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-TextChannel.html">TextChannel</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-User.html">User</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">base/main.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const fs = require('fs');
 const {MessageEmbed} = require('discord.js');
 
 /** The Base module class. Every module's MainClass must extend from this. DO NOT INSTANTIATE AS IS. */
@@ -13,7 +54,7 @@ class Base {
 	 * @property {Object} help - Used to create the help message.
 	 * @property {string} command_text - The command the bot will be looking for.
 	 * @property {number} color - The module's description, used for the help command.
-	 * @property {Array<external:Snowflake>} auth - The ID of the users that are authorized to run this command. Authorizes everyone if it's empty.
+	 * @property {Array&lt;external:Snowflake>} auth - The ID of the users that are authorized to run this command. Authorizes everyone if it's empty.
 	 */
 	constructor(client) {
 		this.client = client;
@@ -70,7 +111,7 @@ class Base {
 	 * @param {external:Message} message - The message that was sent.
 	 */
 	on_message(message) {
-		if (message.content.startsWith(process.env.PREFIX) && message.content.split(" ")[0] === process.env.PREFIX + this.command_text) {
+		if (message.content.startsWith(process.env.PREFIX) &amp;&amp; message.content.split(" ")[0] === process.env.PREFIX + this.command_text) {
 			this._testForAuth(message);
 		}
 	}
@@ -99,7 +140,7 @@ class Base {
 			.then(async m => {for (var r of emojis) await m.react(r); return m})
 			.then(m => {
 				emojis.push(confirmation_emoji);
-				var collection = m.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name) && !user.bot, { dispose: true });
+				var collection = m.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name) &amp;&amp; !user.bot, { dispose: true });
 
 				function updateConfirmationEmoji(base, can_confirm) {
 					if (can_confirm) {
@@ -112,7 +153,7 @@ class Base {
 
 				collection.on('collect', (reaction, user) => {
 					if (reaction.emoji.name === confirmation_emoji) {
-						if (confirmation_condition(reaction, user) && m.reactions.cache.get(confirmation_emoji).me) collection.stop();
+						if (confirmation_condition(reaction, user) &amp;&amp; m.reactions.cache.get(confirmation_emoji).me) collection.stop();
 					} else {
 						var can_confirm = collect_function(collection, reaction, user);
 						updateConfirmationEmoji(this, can_confirm);
@@ -195,7 +236,7 @@ module.exports = exports = {Base}
 /**
  * Called when an emoji is collected.
  * @callback collectionCallback
- * @param {external:Collection<Emoji,external:MessageReaction>} collection - The current collection of all reactions.
+ * @param {external:Collection&lt;Emoji,external:MessageReaction>} collection - The current collection of all reactions.
  * @param {external:MessageReaction} reaction - The reaction that was added.
  * @param {external:User} user - The user that added that reaction.
  */
@@ -203,7 +244,7 @@ module.exports = exports = {Base}
 /**
  * Called when an emoji is removed.
  * @callback removalCallback
- * @param {external:Collection<Emoji,external:MessageReaction>} collection - The current collection of all reactions.
+ * @param {external:Collection&lt;Emoji,external:MessageReaction>} collection - The current collection of all reactions.
  * @param {external:MessageReaction} reaction - The reaction that was added.
  * @param {external:User} user - The user that added that reaction.
  */
@@ -219,5 +260,24 @@ module.exports = exports = {Base}
  * Called once the reaction collector is closed.
  * @callback endCallback
  * @param {external:ReactionCollector} collection - The ReactionCollector object.
- * @param {external:Collection<Emoji,external:MessageReaction>} collected - The collection of MessageReactions that were collected.
+ * @param {external:Collection&lt;Emoji,external:MessageReaction>} collected - The collection of MessageReactions that were collected.
  */
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Fri Oct 09 2020 17:55:48 GMT+0200 (GMT+02:00) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

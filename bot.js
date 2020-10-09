@@ -61,8 +61,8 @@ client.on('message', message => {
 	}
 });
 
-client.error = function(channel, name, e) {
-	console.error("Error caused by " + name + " module: ", e);
+client.error = function(channel, name, error) {
+	console.error("Error caused by " + name + " module: ", error);
 	channel.send(
 		new MessageEmbed()
 		.setTitle("Error caused by " + name + " module")
@@ -96,3 +96,63 @@ const server = http.createServer((req, res) => {
 	res.end('ok');
 });
 server.listen(3000);
+
+/**
+ * Discord.js client.
+ * @external Client
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/Client|Client}
+ */
+
+/**
+ * Twitter Snowflake.
+ * @external Snowflake
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/typedef/Snowflake|Snowflake}
+ */
+
+/**
+ * Discord.js User.
+ * @external User
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/User|User}
+ */
+
+/**
+ * Discord.js Message.
+ * @external Message
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/Message|Message}
+ */
+
+/**
+ * Discord.js Message Embed.
+ * @external MessageEmbed
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/MessageEmbed|MessageEmbed}
+ */
+
+/**
+ * Discord.js Message Reaction.
+ * @external MessageReaction
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/MessageReaction|MessageReaction}
+ */
+
+/**
+ * Discord.js Text Channel.
+ * @external TextChannel
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/TextChannel|TextChannel}
+ */
+
+/**
+ * Discord.js DM Channel.
+ * @external DMChannel
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/DMChannel|DMChannel}
+ */
+
+/*
+ * Discord.js EmojiIdentifierResolvable.
+ * @external EmojiIdentifierResolvable
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/typedef/EmojiIdentifierResolvable|EmojiIdentifierResolvable}
+ */
+
+/**
+ * Collection.
+ * @external Collection
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/collection/master/class/Collection|Collection}
+ */

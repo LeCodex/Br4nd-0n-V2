@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>bot.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Base.html">Base</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Base.html#load">load</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Base.html#on_message">on_message</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Base.html#save">save</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Base.html#saveExists">saveExists</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Base.html#sendChoice">sendChoice</a></span></li><li class="nav-heading">Externals</li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-Client.html">Client</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-Collection.html">Collection</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-DMChannel.html">DMChannel</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-Message.html">Message</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-MessageEmbed.html">MessageEmbed</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-MessageReaction.html">MessageReaction</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-Snowflake.html">Snowflake</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-TextChannel.html">TextChannel</a></span></li><li class="nav-heading"><span class="nav-item-type type-external">E</span><span class="nav-item-name"><a href="external-User.html">User</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">bot.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const {Client, MessageEmbed} = require('discord.js');
+const client = new Client();
+const {MongoClient} = require("mongodb");
+
+require('dotenv').config();
+require('toml-require').install();
+
+const fs = require('fs');
+const toml = require('toml');
+const concat = require('concat-stream');
+
+client.mongo = new MongoClient(process.env.MONGO_DB_URL, { useUnifiedTopology: true });
+client.config = require("./config.toml");
+client.modules = {};
+client.path = module.path;
+
+async function loadModules() {
+	console.log("MongoDB connected");
+
+	try {
+		const files = await fs.promises.readdir('./modules');
+		for (const file of files) {
+			const path = './modules/' + file
+			const stat = await fs.promises.stat(path);
+
+			if (stat.isDirectory()) {
+				const mainfile = require(path + '/main.js');
+				const mod = new mainfile.MainClass(client);
+				client.modules[mod.command_text] = mod;
+				console.log("Loaded module " + mod.name + " (" + mod.description + "), command text: " + process.env.PREFIX + mod.command_text + "");
+			}
+		}
+	} catch(e) {
+			console.error("Failed to load modules: ", e);
+	}
+}
+
+client.on('ready', () => {
+	if (client.mongo.isConnected()) {
+		loadModules();
+	} else {
+		client.mongo.connect(err => {
+			if (err) {
+				console.error(err);
+				return
+			}
+			loadModules();
+		});
+	}
+});
+
+client.on('message', message => {
+	if (!message.author.bot &amp;&amp; message.guild) {
+		Object.values(client.modules).forEach((element) => {
+			try {
+				element.on_message(message);
+			} catch(e) {
+				client.error(message.channel, element.name, e);
+			}
+		});
+	}
+});
+
+/**
+ * Sends an error to Discord when it is created by a module.
+ * @function
+ * @param {external:TextChannel} channel - The channel in which to send the message.
+ * @param {string} name - The name of the module that caused the error
+ * @param {Error} e - The error itself.
+ */
+client.error = function(channel, name, e) {
+	console.error("Error caused by " + name + " module: ", e);
+	channel.send(
+		new MessageEmbed()
+		.setTitle("Error caused by " + name + " module")
+		.setColor(0xff0000)
+		.setDescription("```js\n" + e.stack + "```")
+		.setFooter("This message will be deleted in one minute")
+	).then(message => {
+		message.delete({ timeout: 60000 });
+	});
+}
+
+client.getUserFromMention = function(mention) {
+	if (!mention) return;
+
+	if (mention.startsWith('&lt;@') &amp;&amp; mention.endsWith('>')) {
+		mention = mention.slice(2, -1);
+
+		if (mention.startsWith('!')) {
+			mention = mention.slice(1);
+		}
+
+		return client.users.cache.get(mention);
+	}
+}
+
+client.login(process.env.BOT_TOKEN).catch(console.error);
+
+const http = require('http');
+const server = http.createServer((req, res) => {
+	res.writeHead(200);
+	res.end('ok');
+});
+server.listen(3000);
+
+/**
+ * Discord.js client.
+ * @external Client
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/Client|Client}
+ */
+
+/**
+ * Twitter Snowflake.
+ * @external Snowflake
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/typedef/Snowflake|Snowflake}
+ */
+
+/**
+ * Discord.js User.
+ * @external User
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/User|User}
+ */
+
+/**
+ * Discord.js Message.
+ * @external Message
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/Message|Message}
+ */
+
+/**
+ * Discord.js Message Embed.
+ * @external MessageEmbed
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/MessageEmbed|MessageEmbed}
+ */
+
+/**
+ * Discord.js Message Reaction.
+ * @external MessageReaction
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/MessageReaction|MessageReaction}
+ */
+
+/**
+ * Discord.js Text Channel.
+ * @external TextChannel
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/TextChannel|TextChannel}
+ */
+
+/**
+ * Discord.js DM Channel.
+ * @external DMChannel
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/class/DMChannel|DMChannel}
+ */
+
+/*
+ * Discord.js EmojiIdentifierResolvable.
+ * @external EmojiIdentifierResolvable
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/typedef/EmojiIdentifierResolvable|EmojiIdentifierResolvable}
+ */
+
+/**
+ * Collection.
+ * @external Collection
+ * @see {@link https://discord.js.org/?source=post_page---------------------------#/docs/collection/master/class/Collection|Collection}
+ */
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Fri Oct 09 2020 17:55:48 GMT+0200 (GMT+02:00) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
