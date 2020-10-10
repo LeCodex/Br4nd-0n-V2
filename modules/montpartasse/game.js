@@ -66,7 +66,7 @@ class Game {
 	async sendStack(info, description = "") {
 		var summary = this.stack.reduce((buffer, element) => {
 			if (element.color === "none") return buffer;
-			
+
 			if (!buffer[element.color]) buffer[element.color] = 0;
 			buffer[element.color] += 1;
 			return buffer;
@@ -149,7 +149,7 @@ class Game {
 			"En voyant la hauteur de la pile, Chris à eu l'idée d'un concours de pole dance. Mais il n'avait pas précisé que la pile ne devait pas servir de barre. On ne dira pas qui a essayé."
 		];
 
-		var description = custom_messages[Math.floor(Math.random() * custom_messages.length)] + "\n";
+		var description = custom_messages[Math.floor(Math.random() * custom_messages.length)] + "\n\n";
 		var last_player_score_gain = this.stack.filter(e => e.player.user.id === player.user.id).length;
 		player.score += last_player_score_gain;
 		description += player.user.toString() + ", vous gagnez **" + last_player_score_gain + (last_player_score_gain > 1 ? " points" : " point") + "** (1 pour chaque tasse que vous avez joué). "
