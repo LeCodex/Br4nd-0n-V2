@@ -176,10 +176,10 @@ class StealCup extends Cup {
 
 	effect(game, index) {
 		if (game.stack.length - index === 1) {
-			super.effect(game, index, "🤷 Il n'y avait rien à voler pour la Tasse Vol 🤷");
+			super.effect(game, index, "🤷 Il n'y a rien à voler pour la Tasse Vol 🤷");
 		} else {
 			var old_player = game.stack[index + 1].player;
-			game.stack[index + 1].player = this.player;
+			game.stack[index + 1].player = game.players[game.lastPlayed];
 			super.effect(game, index, "🕵 ️La Tasse Vol a pris le contrôle de la " + game.stack[index + 1].fullName + " de " + old_player.user.toString() + "! 🕵");
 		}
 	}
