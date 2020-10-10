@@ -291,7 +291,7 @@ class CarCup extends Cup {
 
 	effect(game, index) {
 		if (game.stack.length - index == 1) {
-			super.effect(game, index, "📄 La livraison n'a pas de tasse dé référence pour l'échange... 📄");
+			super.effect(game, index, "📄 La livraison n'a pas de tasse de référence pour l'échange... 📄");
 		} else {
 			var color = game.stack[index + 1].color;
 			var amount = 0;
