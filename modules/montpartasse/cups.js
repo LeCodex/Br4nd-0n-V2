@@ -12,7 +12,7 @@ class Cup {
 		game.effectStack.push(effect_return);
 		game.sendStack("Tasse de " + game.channel.guild.members.cache.get(game.lastPlayed).displayName, game.effectStack.join("\n")).then(() => {
 			var message = "";
-			if (!this.player.hand.length && game.gamerules.refillEmptyHands) message = this.player.draw(game, 5);
+			if (!this.player.hand.length && game.gamerules.refillEmptyHands) message = this.player.draw(game, 20);
 			this.player.sendHand(game, message).then(() => game.checkStackEnd(game.players[game.lastPlayed])).catch(e => game.client.error(game.channel, "Montpartasse", e));
 		}).catch(e => game.client.error(game.channel, "Montpartasse", e));
 	}
