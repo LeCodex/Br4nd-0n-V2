@@ -25,13 +25,13 @@ class Player {
 	async sendHand(game, message = "") {
 		var content = new MessageEmbed()
 			.setTitle("[MONTPARTASSE] Votre main")
-			.setDescription(message + "\n\n" + this.hand.map((e, i) => "**" + (i + 1) + ".** __" + e.emoji + " " + e.name + (e.description? ":__ " + e.description: "__")).join("\n"))
+			.setDescription(message + "\n\n" + this.hand.map((e, i) => "**" + (i + 1) + ".** __" + e.fullName + (e.description? ":__ " + e.description: "__")).join("\n"))
 			.setColor(game.mainclass.color);
 
 		if (this.handMessage) {
 			this.handMessage.edit(content);
 		} else {
-			await this.user.send(content).then(m => {this.handMessage = m;});
+			this.handMessage = await this.user.send(content);
 		}
 	}
 
@@ -46,18 +46,12 @@ class Player {
 			return;
 		}
 
+		game.effectStack = [];
 		game.lastPlayed = this.user.id;
 
 		var cup = this.hand.splice(index - 1, 1)[0];
 		game.stack.unshift(cup);
-		var effect_return = "";
-		if (cup.effect) effect_return = cup.effect(game);
-
-		game.sendStack("Tasse de " + game.channel.guild.members.cache.get(game.lastPlayed).displayName, effect_return).then(() => {
-			var message = "";
-			// if (!this.hand.length) message = this.draw(game, 5);
-			this.sendHand(game, message).then(() => game.checkStackEnd(this)).catch(console.error);
-		}).catch(console.error);
+		cup.effect(game, 0);
 	}
 }
 

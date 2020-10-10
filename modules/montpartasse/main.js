@@ -35,7 +35,8 @@ class MainClass extends Base {
 			purple: (emojis.get("762244777567191052") || "🟣").toString(),
 			green: (emojis.get("762244193493319701") || "🟢").toString(),
 			special: (emojis.get("472452927802310676") || "⚪").toString(),
-			all: (emojis.get("666367471648768029") || "🌈").toString()
+			all: (emojis.get("666367471648768029") || "🌈").toString(),
+			none: (emojis.get("659705735105740811") || "👻").toString()
 		};
 	}
 
@@ -81,8 +82,7 @@ class MainClass extends Base {
 					player.handMessage.delete();
 					player.handMessage = null;
 				}
-				player.sendHand(game);
-				game.save();
+				player.sendHand(game).then(game.save());
 			}
 		}
 
