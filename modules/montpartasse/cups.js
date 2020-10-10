@@ -59,6 +59,16 @@ class GreenCup extends Cup {
 }
 
 
+class CottonCup extends Cup {
+	constructor(mainclass, player) {
+		super(mainclass, player, "472452900602249216", "🥛");
+
+		this.name = "Tasse de Coton";
+		this.description = "N'est d'aucune couleur";
+		this.color = "none";
+	}
+}
+
 class BombCup extends Cup {
 	constructor(mainclass, player) {
 		super(mainclass, player, "472452844470009876", "💣");
@@ -69,19 +79,21 @@ class BombCup extends Cup {
 	}
 
 	effect(game, index) {
-		if (game.stack.length === 1) return "🧨 La Tasse Bombe n'a aucune tasse à exploser... 🧨";
+		if (game.stack.length === 1) {
+			super.effect(game, index, "🧨 La Tasse Bombe n'a aucune tasse à exploser... 🧨");
+		} else {
+			var color = game.stack[index + 1].color;
+			var amount = 0;
 
-		var color = game.stack[index + 1].color;
-		var amount = 0;
-
-		for (var i = game.stack.length - 1; i >= 0; i --) {
-			if (game.stack[i].color === color || game.stack[i].color === "all" || color === "all") {
-				amount ++;
-				game.stack.splice(i, 1);
+			for (var i = game.stack.length - 1; i >= 0; i --) {
+				if (game.stack[i].color === color || game.stack[i].color === "all" || color === "all") {
+					amount ++;
+					game.stack.splice(i, 1);
+				}
 			}
-		}
 
-		super.effect(game, index, "💥 Toutes les tasses " + game.mainclass.COLOR_EMOJIS[color] + ", au nombre de " + amount + ", ont explosé! 💥");
+			super.effect(game, index, "💥 Toutes les tasses " + game.mainclass.COLOR_EMOJIS[color] + ", au nombre de " + amount + ", ont explosé! 💥");
+		}
 	}
 }
 
@@ -154,16 +166,6 @@ class CactusCup extends Cup {
 	}
 }
 
-
-class CottonCup extends Cup {
-	constructor(mainclass, player) {
-		super(mainclass, player, "472452900602249216", "🥛");
-
-		this.name = "Tasse de Coton";
-		this.description = "N'est d'aucune couleur";
-		this.color = "none";
-	}
-}
 
 class StealCup extends Cup {
 	constructor(mainclass, player) {
