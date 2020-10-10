@@ -215,6 +215,20 @@ class MainClass extends Base {
 		}
 	}
 
+	com_gamerules(message, args, kwargs) {
+		if (this.pseudo_auth.includes(message.author.id)) {
+			if (this.games[message.channel.id]) {
+				var game = this.games[message.channel.id];
+				Object.keys(kwargs).forEach(key => {
+					game.gamerules[key] = (kwargs[key] === "true" ? true : false);
+				});
+
+				this.games[message.channel.id].save();
+				message.reply("Gamerules set to: " + Object.keys(game.gamerules).map(k => k + "=" + game.gamerules[k]).join(", "));
+			};
+		}
+	}
+
 	com_debug(message, args, kwargs) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			this.debug = !this.debug
