@@ -290,23 +290,27 @@ class CarCup extends Cup {
 	}
 
 	effect(game, index) {
-		var color = game.stack[index + 1].color;
-		var amount = 0;
-		var player = game.players[game.lastPlayed];
+		if (game.stack.length - index == 1) {
+			super.effect(game, index, "📄 La livraison n'a pas de tasse dé référence pour l'échange... 📄");
+		} else {
+			var color = game.stack[index + 1].color;
+			var amount = 0;
+			var player = game.players[game.lastPlayed];
 
-		if (color != "none") {
-			for (var i = player.hand.length - 1; i >= 0; i --) {
-				var cup = player.hand[i];
-				if (cup.color === color || cup.color === "all" || color === "all") {
-					amount ++;
-					player.hand.splice(i, 1);
+			if (color != "none") {
+				for (var i = player.hand.length - 1; i >= 0; i --) {
+					var cup = player.hand[i];
+					if (cup.color === color || cup.color === "all" || color === "all") {
+						amount ++;
+						player.hand.splice(i, 1);
+					}
 				}
 			}
+
+			player.draw(game, amount);
+
+			super.effect(game, index, "🚚 Une livraison de tasse a échangé les tasses " + game.mainclass.COLOR_EMOJIS[color] + " de " + player.user.toString() + " pour " + amount + (amount > 1 ? " nouvelles tasses" : " nouvelle tasse") + "! 🚚");
 		}
-
-		player.draw(game, amount);
-
-		super.effect(game, index, "🚚 Une livraison de tasse a échangé les tasses " + game.mainclass.COLOR_EMOJIS[color] + " de " + player.user.toString() + " pour " + amount + (amount > 1 ? " nouvelles tasses" : " nouvelle tasse") + "! 🚚");
 	}
 }
 
