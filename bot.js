@@ -67,7 +67,7 @@ client.error = function(channel, name, error) {
 		new MessageEmbed()
 		.setTitle("Error caused by " + name + " module")
 		.setColor(0xff0000)
-		.setDescription("```js\n" + e.stack + "```")
+		.setDescription("```js\n" + error.stack + "```")
 		.setFooter("This message will be deleted in one minute")
 	).then(message => {
 		message.delete({ timeout: 60000 });
