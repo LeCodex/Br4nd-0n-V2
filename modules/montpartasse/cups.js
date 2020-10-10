@@ -257,7 +257,7 @@ class MagnetCup extends Cup {
 			game.lastPlayed = player.user.id;
 
 			game.effectStack.push("🧲 ️La Tasse Aimant a attiré une tasse hors de la main de " + player.user.toString() + "! 🧲")
-			cup.effect(game, index + 1);
+			cup.effect(game, 0);
 		}
 
 	}
