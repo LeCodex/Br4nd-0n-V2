@@ -226,9 +226,12 @@ class FireCup extends Cup {
 			}
 		}
 
-		if (!first_effect_cup) super.effect(game, index, "💧 Il n'y a pas d'autre tasse avec un effet dans la pile 💧");
-		game.effectStack.push("🔥 ️La Tasse de Feu est brûlante! Au point qu'elle a déclenchée de nouveau l'effet de la " + first_effect_cup.fullName + "! 🔥");
-		first_effect_cup.effect(game, new_index);
+		if (!first_effect_cup) {
+			super.effect(game, index, "💧 Il n'y a pas d'autre tasse avec un effet dans la pile 💧");
+		} else {
+			game.effectStack.push("🔥 ️La Tasse de Feu est brûlante! Au point qu'elle a déclenchée de nouveau l'effet de la " + first_effect_cup.fullName + "! 🔥");
+			first_effect_cup.effect(game, new_index);
+		}
 	}
 }
 
