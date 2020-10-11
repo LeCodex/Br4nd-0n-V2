@@ -61,7 +61,7 @@ class GreenCup extends Cup {
 
 class CottonCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.none;
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.none);
 
 		this.name = "Tasse de Coton";
 		this.description = "N'est d'aucune couleur";
