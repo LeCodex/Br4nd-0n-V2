@@ -97,7 +97,7 @@ class BombCup extends Cup {
 				}
 			}
 
-			super.effect(game, index, "💥 Toutes les tasses " + game.mainclass.COLOR_EMOJIS[color] + ", au nombre de " + amount + ", ont explosé! 💥", true);
+			super.effect(game, index, "💥 Toutes les tasses " + game.mainclass.COLOR_EMOJIS[color] + ", au nombre de " + amount + ", ont explosé à cause de " + game.players[game.lastPlayed].user.toString() + "! 💥", true);
 		}
 	}
 }
