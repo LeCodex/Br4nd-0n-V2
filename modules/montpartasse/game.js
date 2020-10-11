@@ -232,7 +232,8 @@ class Game {
 			paused: this.paused,
 			enabled: this.enabled,
 			lastTimestamp: this.lastTimestamp.toMillis(),
-			gamerules: this.gamerules
+			gamerules: this.gamerules,
+			effectStack: this.effectStack
 		};
 
 		for (var [k, e] of Object.entries(this.players)) {
@@ -256,6 +257,7 @@ class Game {
 		this.paused = object.paused;
 		this.enabled = object.enabled;
 		this.gamerules = object.gamerules;
+		this.effectStack = object.effectStack;
 		this.stackMessage = null;
 		if (object.stackMessage) {
 			this.stackMessage = await this.channel.messages.fetch(object.stackMessage).catch(e => this.client.error(this.channel, "Montpartasse", e));
