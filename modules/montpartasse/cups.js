@@ -61,7 +61,7 @@ class GreenCup extends Cup {
 
 class CottonCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "472452900602249216", "🥛");
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.none;
 
 		this.name = "Tasse de Coton";
 		this.description = "N'est d'aucune couleur";
@@ -80,15 +80,17 @@ class BombCup extends Cup {
 
 	effect(game, index) {
 		if (game.stack.length === 1) {
-			super.effect(game, index, "🧨 La Tasse Bombe n'a aucune tasse à exploser... 🧨");
+			super.effect(game, index, "🧨 La Tasse Bombe n'a aucune tasse à faire exploser... 🧨");
 		} else {
 			var color = game.stack[index + 1].color;
 			var amount = 0;
 
-			for (var i = game.stack.length - 1; i >= 0; i --) {
-				if (game.stack[i].color === color || game.stack[i].color === "all" || color === "all") {
-					amount ++;
-					game.stack.splice(i, 1);
+			if (color != "none") {
+				for (var i = game.stack.length - 1; i >= 0; i --) {
+					if (game.stack[i].color === color || game.stack[i].color === "all" || color === "all") {
+						amount ++;
+						game.stack.splice(i, 1);
+					}
 				}
 			}
 
@@ -249,17 +251,22 @@ class MagnetCup extends Cup {
 
 	effect(game, index) {
 		if (game.stack.length - index == 1) {
-			super.effect(game, index, "✨ Il n'y a pas de joueur dont la Tasse Aimant pouvait attirer une tasse ✨");
+			super.effect(game, index, "✨ Il n'y a pas de joueur dont la Tasse Aimant pouvait attirer une tasse... ✨");
 		} else {
 			var player = game.stack[index + 1].player;
-			var index = Math.floor(Math.random() * player.hand.length);
-			var cup = player.hand.splice(index, 1)[0];
-			player.sendHand(game, "Vous avez été forcé de jouer une tasse");
-			game.stack.unshift(cup);
-			game.lastPlayed = player.user.id;
 
-			game.effectStack.push("🧲 ️La Tasse Aimant a attiré une tasse hors de la main de " + player.user.toString() + "! 🧲")
-			cup.effect(game, 0);
+			if (player.hand.length) {
+				var index = Math.floor(Math.random() * player.hand.length);
+				var cup = player.hand.splice(index, 1)[0];
+				player.sendHand(game, "Vous avez été forcé de jouer une tasse");
+				game.stack.unshift(cup);
+				game.lastPlayed = player.user.id;
+
+				game.effectStack.push("🧲 ️La Tasse Aimant a attiré une tasse hors de la main de " + player.user.toString() + "! 🧲")
+				cup.effect(game, 0);
+			} else {
+				super.effect(game, index, "✨ " + player.user.toString() + " n'a plus de tasses en main à attirer... ✨")
+			}
 		}
 
 	}

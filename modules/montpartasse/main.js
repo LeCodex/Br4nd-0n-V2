@@ -36,7 +36,7 @@ class MainClass extends Base {
 			green: (emojis.get("762244193493319701") || "🟢").toString(),
 			special: (emojis.get("472452927802310676") || "⚪").toString(),
 			all: (emojis.get("666367471648768029") || "🌈").toString(),
-			none: (emojis.get("659705735105740811") || "👻").toString()
+			none: (emojis.get("472452900602249216") || "🥛").toString()
 		};
 	}
 
@@ -117,7 +117,7 @@ class MainClass extends Base {
 			if (game.stackMessage) {
 				game.stackMessage.delete();
 				game.stackMessage = null;
-				game.sendStack("Tasse de " + game.channel.guild.members.cache.get(game.lastPlayed).displayName).then(() => game.save());
+				game.sendStack("Tasse de " + game.channel.guild.members.cache.get(game.lastPlayed).displayName, game.effectStack.join("\n")).then(() => game.save());
 			}
 		}
 	}
