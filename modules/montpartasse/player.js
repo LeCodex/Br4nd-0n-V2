@@ -46,7 +46,7 @@ class Player {
 			return;
 		}
 
-		game.effectStack = [];
+		game.effectStack = game.effectStack.filter(e => e.persistent);
 		game.lastPlayed = this.user.id;
 
 		var cup = this.hand.splice(index - 1, 1)[0];

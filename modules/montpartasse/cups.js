@@ -8,9 +8,12 @@ class Cup {
 		return this.emoji + " " + this.name;
 	}
 
-	effect(game, index, effect_return = "") {
-		game.effectStack.push(effect_return);
-		game.sendStack("Tasse de " + game.channel.guild.members.cache.get(game.lastPlayed).displayName, game.effectStack.join("\n")).then(() => {
+	effect(game, index, effect_return = "", persistent = false) {
+		game.effectStack.push({
+			message: effect_return,
+			persistent: persistent
+		});
+		game.sendStack("Tasse de " + game.channel.guild.members.cache.get(game.lastPlayed).displayName).then(() => {
 			var message = "";
 			if (!this.player.hand.length && game.gamerules.refillEmptyHands) message = this.player.draw(game, 20);
 			this.player.sendHand(game, message).then(() => game.checkStackEnd(game.players[game.lastPlayed])).catch(e => game.client.error(game.channel, "Montpartasse", e));
@@ -94,7 +97,7 @@ class BombCup extends Cup {
 				}
 			}
 
-			super.effect(game, index, "💥 Toutes les tasses " + game.mainclass.COLOR_EMOJIS[color] + ", au nombre de " + amount + ", ont explosé! 💥");
+			super.effect(game, index, "💥 Toutes les tasses " + game.mainclass.COLOR_EMOJIS[color] + ", au nombre de " + amount + ", ont explosé! 💥", true);
 		}
 	}
 }
@@ -233,7 +236,10 @@ class FireCup extends Cup {
 		if (!first_effect_cup) {
 			super.effect(game, index, "💧 Il n'y a pas d'autre tasse avec un effet dans la pile 💧");
 		} else {
-			game.effectStack.push("🔥 ️La Tasse de Feu est brûlante! Au point qu'elle a déclenchée de nouveau l'effet de la " + first_effect_cup.fullName + "! 🔥");
+			game.effectStack.push({
+				message: "🔥 ️La Tasse de Feu est brûlante! Au point qu'elle a déclenchée de nouveau l'effet de la " + first_effect_cup.fullName + "! 🔥",
+				persistent: false
+			});
 			first_effect_cup.effect(game, new_index);
 		}
 	}
@@ -262,7 +268,10 @@ class MagnetCup extends Cup {
 				game.stack.unshift(cup);
 				game.lastPlayed = player.user.id;
 
-				game.effectStack.push("🧲 ️La Tasse Aimant a attiré une tasse hors de la main de " + player.user.toString() + "! 🧲")
+				game.effectStack.push({
+					message: "🧲 ️La Tasse Aimant a attiré une tasse hors de la main de " + player.user.toString() + "! 🧲",
+					persistent: false
+				})
 				cup.effect(game, 0);
 			} else {
 				super.effect(game, index, "✨ " + player.user.toString() + " n'a plus de tasses en main à attirer... ✨")
