@@ -95,9 +95,14 @@ class BombCup extends Cup {
 						game.stack.splice(i, 1);
 					}
 				}
+
 			}
 
-			super.effect(game, index, "💥 Toutes les tasses " + game.mainclass.COLOR_EMOJIS[color] + ", au nombre de " + amount + ", ont explosé à cause de " + game.players[game.lastPlayed].user.toString() + "! 💥", true);
+			if (amount) {
+				super.effect(game, index, "💥 Toutes les tasses " + game.mainclass.COLOR_EMOJIS[color] + ", au nombre de " + amount + ", ont explosé à cause de " + game.players[game.lastPlayed].user.toString() + "! 💥", true);
+			} else {
+				super.effect(game, index, "🧨 La Tasse Bombe n'a trouvé aucune tasse à exploser... 🧨");
+			}
 		}
 	}
 }
@@ -141,12 +146,16 @@ class PaintCup extends Cup {
 	}
 
 	effect(game, index) {
-		var cup = game.stack[index + 1];
-		var basic_cups = [OrangeCup, PurpleCup, GreenCup, BlueCup];
-		var new_cup = new basic_cups[Math.floor(Math.random() * basic_cups.length)](game.mainclass, cup.player);
-		game.stack.splice(index + 1, 1, new_cup);
+		if (game.stack.length - index == 1) {
+			super.effect(game, index, "🌂 Il n'y avait pas de tasses à repeindre... 🌂");
+		} else {
+			var cup = game.stack[index + 1];
+			var basic_cups = [OrangeCup, PurpleCup, GreenCup, BlueCup];
+			var new_cup = new basic_cups[Math.floor(Math.random() * basic_cups.length)](game.mainclass, cup.player);
+			game.stack.splice(index + 1, 1, new_cup);
 
-		super.effect(game, index, "🎨 La dernière tasse a été repeinte en " + new_cup.fullName + "! 🎨");
+			super.effect(game, index, "🎨 La dernière tasse a été repeinte en " + new_cup.fullName + "! 🎨");
+		}
 	}
 }
 

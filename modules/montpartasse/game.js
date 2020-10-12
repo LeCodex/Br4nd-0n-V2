@@ -83,12 +83,12 @@ class Game {
 		if (this.stackMessage) {
 			if (this.channel.messages.cache.keyArray().reverse().indexOf(this.stackMessage.id) > 10) {
 				this.stackMessage.delete();
-				await this.channel.send(content).then(m => {this.stackMessage = m;});
+				this.stackMessage = await this.channel.send(content);
 			} else {
 				this.stackMessage.edit(content);
 			};
 		} else {
-			await this.channel.send(content).then(m => {this.stackMessage = m;});
+			this.stackMessage = await this.channel.send(content);
 		}
 	}
 
@@ -153,7 +153,7 @@ class Game {
 		var description = custom_messages[Math.floor(Math.random() * custom_messages.length)] + "\n\n";
 		var last_player_score_gain = this.stack.filter(e => e.player.user.id === player.user.id).length;
 		player.score += last_player_score_gain;
-		description += player.user.toString() + ", vous gagnez **" + last_player_score_gain + (last_player_score_gain > 1 ? " points" : " point") + "** (1 pour chaque tasse que vous avez joué). "
+		description += player.user.toString() + ", vous gagnez **" + last_player_score_gain + (last_player_score_gain > 1 ? " points" : " point") + "** (1 pour chaque tasse que vous avez jouée). "
 			+ "Les autres, vous gagnez 1 point " + (victorious_color ? "pour chaque tasse " + this.mainclass.COLOR_EMOJIS[victorious_color] + " que vous avez jouée!\n\n" : "pour chaque couleur que vous avez jouée!\n\n")
 
 		var played_colors = {}
