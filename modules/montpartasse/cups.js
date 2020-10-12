@@ -214,9 +214,9 @@ class GhostCup extends Cup {
 	stackEnd(game, winner) {
 		if (winner.user.id === this.player.user.id) {
 			winner.score ++;
-			return "👻 ️" + this.player.user.toString() + " a fini la pile! La Tasse Fantôme lui rapporte donc un point bonus! 👻";
+			return "👻 ️" + this.player.user.toString() + " a fini la pile! Ils gagnent **1 point**! 👻";
 		}
-		return "👻 ️" + this.player.user.toString() + " n'a pas réussi à finir la pile: la Tasse Fantôme disparaît sans laisser de points... 👻";
+		return "👻 ️" + this.player.user.toString() + " n'a pas réussi à finir la pile... 👻";
 	}
 }
 
