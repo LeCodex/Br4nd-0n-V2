@@ -207,14 +207,14 @@ class GhostCup extends Cup {
 		super(mainclass, player, "659705735105740811", "👻");
 
 		this.name = "Tasse Fantôme";
-		this.description = "N'est d'aucune couleur, mais rapporte 2 points si tu finis la pile";
+		this.description = "N'est d'aucune couleur, mais rapporte 1 point bonus si tu finis la pile";
 		this.color = "none";
 	}
 
 	stackEnd(game, winner) {
 		if (winner.user.id === this.player.user.id) {
 			winner.score ++;
-			return "👻 ️" + this.player.user.toString() + " a fini la pile! Ils gagnent **1 point**! 👻";
+			return "👻 ️" + this.player.user.toString() + " a fini la pile! **1 point bonus**! 👻";
 		}
 		return "👻 ️" + this.player.user.toString() + " n'a pas réussi à finir la pile... 👻";
 	}
