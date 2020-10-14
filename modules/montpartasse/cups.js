@@ -312,7 +312,7 @@ class CarCup extends Cup {
 		super(mainclass, player, "472452992822542338", "🚚");
 
 		this.name = "Tasse Voiture";
-		this.description = "Défausse toutes les tasses de ta main de la même couleur que celle d'en-desosus, puis pioches-en autant";
+		this.description = "Défausse toutes les tasses de ta main de la même couleur que celle d'en-dessous, puis pioches-en autant";
 		this.color = "special";
 	}
 

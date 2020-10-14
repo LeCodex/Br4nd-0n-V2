@@ -270,8 +270,10 @@ class Game {
 			p.score = e.score;
 			p.hand = e.hand.map(f => new Cups[f](this.mainclass, p));
 			p.handMessage = null;
-			var channel = await this.client.channels.fetch(e.handChannel).catch(e => this.client.error(this.channel, "Montpartasse", e));
-			if (e.handMessage) p.handMessage = await channel.messages.fetch(e.handMessage).catch(e => this.client.error(this.channel, "Montpartasse", e));
+			if (e.handChannel) {
+				var channel = await this.client.channels.fetch(e.handChannel).catch(e => this.client.error(this.channel, "Montpartasse", e));
+				if (e.handMessage) p.handMessage = await channel.messages.fetch(e.handMessage).catch(e => this.client.error(this.channel, "Montpartasse", e));
+			}
 			this.players[k] = p;
 		};
 
