@@ -26,12 +26,17 @@ class Player {
 		var content = new MessageEmbed()
 			.setTitle("[MONTPARTASSE] Votre main")
 			.setDescription(message + "\n\n" + this.hand.reduce((acc, e, i) => {
-				var message = "**" + (i + 1) + ".** __" + e.fullName;
-				if (e.description && !acc.specials.includes(e.name)) {
-					acc.specials.push(e.name);
-					message += ":__ " + e.description;
+				var message = "**" + (i + 1) + ".** __";
+				if (e.description) {
+					message += "**" + e.fullName + "**"
+					if (!acc.specials.includes(e.name)) {
+						acc.specials.push(e.name);
+						message += ":__ " + e.description;
+					} else {
+						message += "__";
+					}
 				} else {
-					message += "__";
+					message += e.fullName + "__";
 				}
 
 				acc.list.push(message);
