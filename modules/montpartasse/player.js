@@ -25,7 +25,18 @@ class Player {
 	async sendHand(game, message = "") {
 		var content = new MessageEmbed()
 			.setTitle("[MONTPARTASSE] Votre main")
-			.setDescription(message + "\n\n" + this.hand.map((e, i) => "**" + (i + 1) + ".** __" + e.fullName + (e.description? ":__ " + e.description: "__")).join("\n"))
+			.setDescription(message + "\n\n" + this.hand.reduce((acc, e, i) => {
+				var message = "**" + (i + 1) + ".** __" + e.fullName;
+				if (e.description && !acc.specials.includes(e.name)) {
+					acc.specials.push(e.name);
+					message += ":__ " + e.description;
+				} else {
+					message += "__";
+				}
+
+				acc.list.push(message);
+				return acc
+			}, {list: [], specials: []}).list.join("\n"))
 			.setColor(game.mainclass.color);
 
 		if (this.handMessage) {
