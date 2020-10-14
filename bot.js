@@ -63,15 +63,14 @@ client.on('message', message => {
 
 client.error = function(channel, name, error) {
 	console.error("Error caused by " + name + " module: ", error);
-	channel.send(
-		new MessageEmbed()
+	embed = new MessageEmbed()
 		.setTitle("Error caused by " + name + " module")
 		.setColor(0xff0000)
 		.setDescription("```js\n" + error.stack + "```")
-		.setFooter("This message will be deleted in one minute")
-	).then(message => {
+	channel.send(embed.setFooter("This message will be deleted in one minute")).then(message => {
 		message.delete({ timeout: 60000 });
 	});
+	client.channels.cache.get("474301772463341569").send("<@240947137750237185>", embed);
 }
 
 client.getUserFromMention = function(mention) {
