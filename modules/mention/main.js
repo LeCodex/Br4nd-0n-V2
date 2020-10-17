@@ -32,15 +32,17 @@ class MainClass extends Base {
 	}
 
 	on_message(message) {
-		super.on_message(message);
+		if (message.guild) {
+			super.on_message(message);
 
-		var index = message.content.search(MessageMentions.USERS_PATTERN);
-		if (!this.moduleList[message.guild.id]) {
-			this.moduleList[message.guild.id] = "ping";
-			this.save("modules", this.moduleList);
-		}
-		if (index == 0 && message.mentions.users.first().id == this.client.user.id && this.client.modules[this.moduleList[message.guild.id]]) {
-			this.client.modules[this.moduleList[message.guild.id]]._testForAuth(message);
+			var index = message.content.search(MessageMentions.USERS_PATTERN);
+			if (!this.moduleList[message.guild.id]) {
+				this.moduleList[message.guild.id] = "ping";
+				this.save("modules", this.moduleList);
+			}
+			if (index == 0 && message.mentions.users.first().id == this.client.user.id && this.client.modules[this.moduleList[message.guild.id]]) {
+				this.client.modules[this.moduleList[message.guild.id]]._testForAuth(message);
+			}
 		}
 	}
 }
