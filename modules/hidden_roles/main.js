@@ -9,7 +9,7 @@ class MainClass extends Base {
 		this.description = "Offers useful commands to manage a hidden role game";
 		this.help = {
 			"": "Create a game in the channel, or shows all the infos of the current game",
-			"roles <role names>": "Set the roles of all teams.\nUse team=<team name> to affect one team.\nUse operation=<set/remove> to change the type of operation on the role list. Defaults to add",
+			"roles <role names>": "Change the roles of all teams.\nUse `team=<team name>` to affect only one team.\nUse `operation=<set/remove>` to change the type of operation on the role list. Defaults to add",
 			"remove <team names>": "Delete the named teams and all their roles",
 			"send <mentions>": "Sends a unique role and team pairing to each mentionned user, and remember them",
 			"peek <index>": "*Can be used in DMs.*\nLook at the role and team of the player at that index",
