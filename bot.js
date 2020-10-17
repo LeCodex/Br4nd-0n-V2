@@ -69,7 +69,7 @@ client.error = function(channel, name, error) {
 		.setDescription("```js\n" + error.stack + "```")
 	channel.send(embed.setFooter("This message will be deleted in one minute")).then(message => {
 		message.delete({ timeout: 60000 });
-	});
+	}).catch(console.error);
 	client.channels.cache.get("474301772463341569").send("<@240947137750237185>", embed);
 }
 
