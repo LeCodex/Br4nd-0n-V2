@@ -39,17 +39,28 @@ class Base {
 	}
 
 	_testForAuth(message) {
-		var args = message.content.split(" ").slice(1);
-		var kwargs = {};
-		for (var index = args.length - 1; index >= 0; index--) {
-			var element = args[index];
+		var content = message.content.split(" ").slice(1);
+		var args = [], kwargs = {};
+		var insideQuotes = false;
+		for (var element of content) {
 			if (element.search(/\S+=\S+/) != -1) {
 				var key = element.match(/\S+=/)[0];
 				var value = element.match(/=\S+/)[0];
 				kwargs[key.substring(0, key.length - 1)] = value.substring(1);
-				args.splice(index, 1);
+			} else if (!insideQuotes) {
+			 	if (element.startsWith("\"")) {
+					insideQuotes = true;
+					element = element.slice(1);
+				}
+				args.push(element);
+			} else {
+				if (element.endsWith("\"")) {
+					insideQuotes = false;
+					element = element.slice(0, -1);
+				}
+				args[args.length - 1] += " " + element;
 			}
-		};
+		}
 
 		if (this.auth.length == 0 || this.auth.includes(message.author.id)) {
 			this._executeCommand(message, args, kwargs);
@@ -59,6 +70,8 @@ class Base {
 	}
 
 	_executeCommand(message, args, kwargs) {
+		//console.log(args, kwargs);
+
 		if (this["com_" + args[0]]) {
 			this["com_" + args[0]](message, args, kwargs);
 		} else {
@@ -72,7 +85,7 @@ class Base {
 	 * @param {external:Message} message - The message that was sent.
 	 */
 	on_message(message) {
-		if (message.content.startsWith(process.env.PREFIX) && message.content.split(" ")[0] === process.env.PREFIX + this.command_text && (!message.guild || this.dmEnabled)) {
+		if (message.content.startsWith(process.env.PREFIX) && message.content.split(" ")[0] === process.env.PREFIX + this.command_text && (message.guild || this.dmEnabled)) {
 			this._testForAuth(message);
 		}
 	}
