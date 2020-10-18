@@ -84,12 +84,34 @@ class Game {
 			if (this.channel.messages.cache.keyArray().reverse().indexOf(this.stackMessage.id) > 10) {
 				this.stackMessage.delete();
 				this.stackMessage = await this.channel.send(content);
+				this.setupReactionCollector();
 			} else {
 				this.stackMessage.edit(content);
 			};
 		} else {
 			this.stackMessage = await this.channel.send(content);
+			this.setupReactionCollector();
 		}
+	}
+
+	setupReactionCollector() {
+		var emojis = Object.keys(this.mainclass.COLOR_EMOJIS).slice(0, this.COLOR_COUNT - 1).map(e => this.mainclass.COLOR_EMOJIS[e]);
+		emojis.push(...this.specialCups.map(e => e.emoji));
+		for (var r of emojis) this.stackMessage.react(r);
+
+		var collection = this.stackMessage.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name) && !user.bot && this.players[user.id], { dispose: true });
+
+		collection.on('collect', (reaction, user) => {
+			var player = this.players[user.id];
+			var index = player.hand.map(e => e.emoji).indexOf(reaction.emoji.toString());
+			if (index != -1) {
+				player.playCup(this, index + 1);
+			} else {
+				user.send("Vous n'avez pas cette tasse dans votre main");
+			}
+
+			reaction.users.remove(user);
+		});
 	}
 
 	checkStackEnd(player) {
@@ -263,6 +285,7 @@ class Game {
 		if (object.stackMessage) {
 			this.stackMessage = await this.channel.messages.fetch(object.stackMessage).catch(e => this.client.error(this.channel, "Montpartasse", e));
 			await this.channel.messages.fetch({ after: object.stackMessage }).catch(e => this.client.error(this.channel, "Montpartasse", e));
+			this.setupReactionCollector();
 		}
 
 		for (var [k, e] of Object.entries(object.players)) {
