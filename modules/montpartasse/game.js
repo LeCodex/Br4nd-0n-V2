@@ -99,7 +99,7 @@ class Game {
 		emojis.push(...this.specialCups.map(e => e.emoji));
 		for (var r of emojis) this.stackMessage.react(r).catch(e => this.client.error(this.channel, "Montpartasse", e));
 
-		var collection = this.stackMessage.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name) && !user.bot && this.players[user.id], { dispose: true });
+		var collection = this.stackMessage.createReactionCollector((reaction, user) => emojis.map(e => e.toString()).includes(reaction.emoji.name) && !user.bot && this.players[user.id], { dispose: true });
 
 		collection.on('collect', (reaction, user) => {
 			try {
