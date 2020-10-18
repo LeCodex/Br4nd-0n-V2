@@ -58,7 +58,7 @@ class Game {
 			.setTitle("[MONTPARTASSE] Nouvelle pile")
 			.setDescription(description + "La table est nettoyée, les morceaux jetés, et les points comptés. Que le jeu continue!")
 			.setColor(this.mainclass.color)
-			.addField("Tasses spéciales", this.specialCups.length ? this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n") : "❌ Aucune")
+			.addField("Tasses spéciales", this.specialCups.length ? this.specialCups.map(e => "__" + e.emoji.toString() + " " + e.name + ":__ " + e.description).join("\n") : "❌ Aucune")
 		);
 
 		this.save();
@@ -75,10 +75,10 @@ class Game {
 
 		var content = new MessageEmbed()
 			.setTitle("[MONTPARTASSE] " + info)
-			.setDescription(this.stack.map(e => e.emoji + " " + e.player.user.toString()).join("\n") + "\n\n" + this.effectStack.map(e => e.message).join("\n"))
+			.setDescription(this.stack.map(e => e.emoji.toString() + " " + e.player.user.toString()).join("\n") + "\n\n" + this.effectStack.map(e => e.message).join("\n"))
 			.setColor(this.mainclass.color)
 			.addField("Résumé", Object.keys(summary).length ? Object.keys(summary).sort().map(e => this.mainclass.COLOR_EMOJIS[e].toString() + " : **" + summary[e] + "**").join(" | ") : "❌ Aucune tasse dans la pile")
-			.addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n"));
+			.addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji.toString() + " " + e.name + ":__ " + e.description).join("\n"));
 
 		if (this.stackMessage) {
 			if (this.channel.messages.cache.keyArray().reverse().indexOf(this.stackMessage.id) > 10) {
@@ -96,15 +96,15 @@ class Game {
 
 	setupReactionCollector() {
 		var emojis = Object.keys(this.mainclass.COLOR_EMOJIS).slice(0, this.COLOR_COUNT - 1).map(e => this.mainclass.COLOR_EMOJIS[e]);
-		emojis.push(...this.specialCups.map(e => e.emoji));
-		for (var r of emojis) this.stackMessage.react(r).catch(e => this.client.error("Montpartasse", this.channel, e));
+		emojis.push(...this.specialCups.map(e => e.emoji);
+		for (var r of emojis) this.stackMessage.react(r).catch(e => this.client.error(this.channel, "Montpartasse", e));
 
 		var collection = this.stackMessage.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name) && !user.bot && this.players[user.id], { dispose: true });
 
 		collection.on('collect', (reaction, user) => {
 			try {
 				var player = this.players[user.id];
-				var index = player.hand.map(e => e.emoji).indexOf(reaction.emoji.toString());
+				var index = player.hand.map(e => e.emoji.toString()).indexOf(reaction.emoji.toString());
 				if (index != -1) {
 					player.playCup(this, index + 1);
 				} else {
@@ -113,7 +113,7 @@ class Game {
 
 				reaction.users.remove(user);
 			} catch (e) {
-				this.client.error("Montpartasse", this.channel, e);
+				this.client.error(this.channel, "Montpartasse", e);
 			}
 		});
 	}
@@ -239,7 +239,7 @@ class Game {
 			.setTitle("[MONTPARTASSE] Nouvelle tournée")
 			.setDescription("**Les mains ont été de nouveau remplies! Voici les trois nouvelles tasses spéciales!**")
 			.setColor(this.mainclass.color)
-			.addField("Tasses spéciales", this.specialCups.length ? this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n") : "❌ Aucune")
+			.addField("Tasses spéciales", this.specialCups.length ? this.specialCups.map(e => "__" + e.emoji.toString() + " " + e.name + ":__ " + e.description).join("\n") : "❌ Aucune")
 		);
 
 		this.save();

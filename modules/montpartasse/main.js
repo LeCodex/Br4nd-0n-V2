@@ -64,8 +64,9 @@ class MainClass extends Base {
 				if (!player.hand.length) {
 					message.author.send("Votre main est vide");
 				} else {
-					if (player.hand.map(e => e.emoji).indexOf(args[0]) != -1) {
-						player.playCup(game, player.hand.map(e => e.emoji).indexOf(args[0]) + 1);
+					var index = player.hand.map(e => e.emoji.toString()).indexOf(args[0]);
+					if (index != -1) {
+						player.playCup(game, index + 1);
 					} else if (!isNaN(Number(args[0]))) {
 						var index = Number(args[0]);
 						if (index > 0 && index <= player.hand.length) {

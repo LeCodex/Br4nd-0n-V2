@@ -1,11 +1,11 @@
 class Cup {
 	constructor(mainclass, player, id, fallback) {
-		this.emoji = (mainclass.client.emojis.cache.get(id) || fallback).toString();
+		this.emoji = mainclass.client.emojis.cache.get(id) || fallback;
 		this.player = player;
 	}
 
 	get fullName() {
-		return this.emoji + " " + this.name;
+		return this.emoji.toString() + " " + this.name;
 	}
 
 	effect(game, index, effect_return = "", persistent = false) {
