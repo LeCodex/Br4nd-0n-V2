@@ -96,7 +96,7 @@ class Game {
 
 	setupReactionCollector() {
 		var emojis = Object.keys(this.mainclass.COLOR_EMOJIS).slice(0, this.COLOR_COUNT - 1).map(e => this.mainclass.COLOR_EMOJIS[e]);
-		emojis.push(...this.specialCups.map(e => e.emoji);
+		emojis.push(...this.specialCups.map(e => e.emoji));
 		for (var r of emojis) this.stackMessage.react(r).catch(e => this.client.error(this.channel, "Montpartasse", e));
 
 		var collection = this.stackMessage.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name) && !user.bot && this.players[user.id], { dispose: true });
