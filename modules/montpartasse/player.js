@@ -12,11 +12,19 @@ class Player {
 	}
 
 	draw(game, amount) {
-		var valid_cups = Object.values(Cups).slice(0, 4);
-		valid_cups.push(...game.specialCups.map(e => e.constructor));
+		var basic_cups = Object.values(Cups).slice(0, game.COLOR_COUNT - 1);
+		var special_cups = game.specialCups.map(e => e.constructor);
 
 		for (var i = 0; i < amount; i ++) {
-			this.hand.push(new valid_cups[Math.floor(Math.random() * valid_cups.length)](game.mainclass, this));
+			var isSpecialCup = Math.random() < .3;
+			var cupConstructor = null;
+
+			if (isSpecialCup) {
+				cupConstructor = special_cups[Math.floor(Math.random() * special_cups.length)];
+			} else {
+				cupConstructor = basic_cups[Math.floor(Math.random() * basic_cups.length)];
+			}
+			this.hand.push(new cupConstructor(game.mainclass, this));
 		}
 
 		return "Vous avez pioché " + amount + " tasses";
