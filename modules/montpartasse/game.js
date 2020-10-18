@@ -83,7 +83,8 @@ class Game {
 			.addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji.toString() + " " + e.name + ":__ " + e.description).join("\n"));
 
 		if (this.stackMessage) {
-			if (this.channel.messages.cache.keyArray().reverse().indexOf(this.stackMessage.id) > 10) {
+			var length = this.channel.messages.cache.keyArray().length
+			if (length - this.channel.messages.cache.keyArray().indexOf(this.stackMessage.id) > 10) {
 				this.deleteStackMessage();
 				this.stackMessage = await this.channel.send(content);
 				this.setupReactionCollector();
@@ -108,11 +109,15 @@ class Game {
 		this.collection.on('collect', (reaction, user) => {
 			try {
 				var player = this.players[user.id];
-				var index = player.hand.map(e => e.emoji.toString()).indexOf(reaction.emoji.toString());
-				if (index != -1) {
-					player.playCup(this, index + 1);
+				if (!player.hand.length) {
+					user.send("Votre main est vide");
 				} else {
-					user.send("Vous n'avez pas cette tasse dans votre main");
+					var index = player.hand.map(e => e.emoji.toString()).indexOf(reaction.emoji.toString());
+					if (index != -1) {
+						player.playCup(this, index + 1);
+					} else {
+						user.send("Vous n'avez pas cette tasse dans votre main");
+					}
 				}
 
 				reaction.users.remove(user);
