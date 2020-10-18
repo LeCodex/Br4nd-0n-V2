@@ -48,7 +48,7 @@ class Base {
 				var value = element.match(/=\S+/)[0];
 				kwargs[key.substring(0, key.length - 1)] = value.substring(1);
 			} else if (!insideQuotes) {
-			 	if (element.startsWith("\"")) {
+			 	if (element.startsWith("\"") && !element.endsWith("\"")) {
 					insideQuotes = true;
 					element = element.slice(1);
 				}
