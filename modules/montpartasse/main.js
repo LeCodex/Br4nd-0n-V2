@@ -115,11 +115,8 @@ class MainClass extends Base {
 	com_show(message, args, kwargs) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
-			if (game.stackMessage) {
-				game.stackMessage.delete();
-				game.stackMessage = null;
-			}
-			game.sendStack("Tasse de " + game.channel.guild.members.cache.get(game.lastPlayed).displayName).then(() => game.save());
+			if (game.stackMessage) game.deleteStackMessage();
+			game.sendStack(game.lastPlayed ? "Tasse de " + game.channel.guild.members.cache.get(game.lastPlayed).displayName : "Pile vide").then(() => game.save());
 		}
 	}
 

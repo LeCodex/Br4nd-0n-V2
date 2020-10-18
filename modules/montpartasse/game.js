@@ -28,6 +28,7 @@ class Game {
 		this.needRefill = false;
 		this.lastTimestamp = DateTime.local().setZone("Europe/Paris");
 		this.enabled = Object.keys(Cups).slice(this.COLOR_COUNT);
+		this.collection = null;
 		this.gamerules = {
 			refillEmptyHands: false
 		};
@@ -48,6 +49,7 @@ class Game {
 	}
 
 	newStack(description = "") {
+		if (this.stackMessage) this.clearReactionCollector();
 		this.stackMessage = null;
 		this.stack = [...this.nextStack];
 		this.effectStack = [];
@@ -82,7 +84,7 @@ class Game {
 
 		if (this.stackMessage) {
 			if (this.channel.messages.cache.keyArray().reverse().indexOf(this.stackMessage.id) > 10) {
-				this.stackMessage.delete();
+				this.deleteStackMessage();
 				this.stackMessage = await this.channel.send(content);
 				this.setupReactionCollector();
 			} else {
@@ -95,13 +97,15 @@ class Game {
 	}
 
 	setupReactionCollector() {
+		if (this.collection) this.clearReactionCollector();
+
 		var emojis = Object.keys(this.mainclass.COLOR_EMOJIS).slice(0, this.COLOR_COUNT - 1).map(e => this.mainclass.COLOR_EMOJIS[e]);
 		emojis.push(...this.specialCups.map(e => e.emoji));
 		for (var r of emojis) this.stackMessage.react(r).catch(e => this.client.error(this.channel, "Montpartasse", e));
 
-		var collection = this.stackMessage.createReactionCollector((reaction, user) => emojis.map(e => e.toString()).includes(reaction.emoji.toString()) && !user.bot && this.players[user.id], { dispose: true });
+		this.collection = this.stackMessage.createReactionCollector((reaction, user) => emojis.map(e => e.toString()).includes(reaction.emoji.toString()) && !user.bot && this.players[user.id], { dispose: true });
 
-		collection.on('collect', (reaction, user) => {
+		this.collection.on('collect', (reaction, user) => {
 			try {
 				var player = this.players[user.id];
 				var index = player.hand.map(e => e.emoji.toString()).indexOf(reaction.emoji.toString());
@@ -116,6 +120,17 @@ class Game {
 				this.client.error(this.channel, "Montpartasse", e);
 			}
 		});
+	}
+
+	clearReactionCollector() {
+		if (this.stackMessage) this.stackMessage.reactions.removeAll();
+		if (this.collection) this.collection.stop();
+	}
+
+	deleteStackMessage() {
+		this.stackMessage.delete();
+		this.stackMessage = null;
+		this.clearReactionCollector();
 	}
 
 	checkStackEnd(player) {
