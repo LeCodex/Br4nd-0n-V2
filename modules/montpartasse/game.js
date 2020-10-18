@@ -61,7 +61,7 @@ class Game {
 			.setDescription(description + "La table est nettoyée, les morceaux jetés, et les points comptés. Que le jeu continue!")
 			.setColor(this.mainclass.color)
 			.addField("Tasses spéciales", this.specialCups.length ? this.specialCups.map(e => "__" + e.emoji.toString() + " " + e.name + ":__ " + e.description).join("\n") : "❌ Aucune")
-		);
+		).then(this.sendStack("Pile vide"));
 
 		this.save();
 	}

@@ -31,9 +31,9 @@ class MainClass extends Base {
 		var emojis = this.client.emojis.cache;
 		this.COLOR_EMOJIS = {
 			blue: emojis.get("765264328550383626") || "🔵" ,
+			green: emojis.get("765264398037680129") || "🟢",
 			orange: emojis.get("765264363237933096") || "🟠",
 			purple: emojis.get("765264431050653696") || "🟣",
-			green: emojis.get("765264398037680129") || "🟢",
 			special: emojis.get("472452927802310676") || "⚪",
 			all: emojis.get("666367471648768029") || "🌈",
 			none: emojis.get("472452900602249216") || "🥛"
