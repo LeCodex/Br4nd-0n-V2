@@ -30,13 +30,13 @@ class MainClass extends Base {
 
 		var emojis = this.client.emojis.cache;
 		this.COLOR_EMOJIS = {
-			blue: (emojis.get("765264328550383626") || "🔵").toString() ,
-			orange: (emojis.get("765264363237933096") || "🟠").toString(),
-			purple: (emojis.get("765264431050653696") || "🟣").toString(),
-			green: (emojis.get("765264398037680129") || "🟢").toString(),
-			special: (emojis.get("472452927802310676") || "⚪").toString(),
-			all: (emojis.get("666367471648768029") || "🌈").toString(),
-			none: (emojis.get("472452900602249216") || "🥛").toString()
+			blue: emojis.get("765264328550383626") || "🔵" ,
+			orange: emojis.get("765264363237933096") || "🟠",
+			purple: emojis.get("765264431050653696") || "🟣",
+			green: emojis.get("765264398037680129") || "🟢",
+			special: emojis.get("472452927802310676") || "⚪",
+			all: emojis.get("666367471648768029") || "🌈",
+			none: emojis.get("472452900602249216") || "🥛"
 		};
 	}
 

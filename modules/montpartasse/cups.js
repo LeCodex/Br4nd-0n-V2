@@ -24,7 +24,7 @@ class Cup {
 
 class BlueCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.blue);
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.blue.toString());
 
 		this.color = "blue";
 		this.name = "Tasse bleue";
@@ -34,7 +34,7 @@ class BlueCup extends Cup {
 
 class PurpleCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.purple);
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.purple.toString());
 
 		this.color = "purple";
 		this.name = "Tasse violette";
@@ -44,7 +44,7 @@ class PurpleCup extends Cup {
 
 class OrangeCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.orange);
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.orange.toString());
 
 		this.color = "orange";
 		this.name = "Tasse orange";
@@ -54,7 +54,7 @@ class OrangeCup extends Cup {
 
 class GreenCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.green);
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.green.toString());
 
 		this.color = "green";
 		this.name = "Tasse verte";
@@ -64,7 +64,7 @@ class GreenCup extends Cup {
 
 class CottonCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.none);
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.none.toString());
 
 		this.name = "Tasse de Coton";
 		this.description = "N'est d'aucune couleur";
@@ -119,7 +119,7 @@ class BombCup extends Cup {
 
 class RainbowCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.all);
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.all.toString());
 
 		this.name = "Tasse Arc-en-ciel";
 		this.description = "Est de toutes les couleurs à la fois";
@@ -345,7 +345,7 @@ class CarCup extends Cup {
 
 			player.draw(game, amount);
 
-			super.effect(game, index, "🚚 Une livraison de tasse a échangé les tasses " + game.mainclass.COLOR_EMOJIS[color] + " de " + player.user.toString() + " pour " + amount + (amount > 1 ? " nouvelles tasses" : " nouvelle tasse") + "! 🚚");
+			super.effect(game, index, "🚚 Une livraison de tasse a échangé les tasses " + game.mainclass.COLOR_EMOJIS[color].toString() + " de " + player.user.toString() + " pour " + amount + (amount > 1 ? " nouvelles tasses" : " nouvelle tasse") + "! 🚚");
 		}
 	}
 }

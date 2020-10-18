@@ -77,7 +77,7 @@ class Game {
 			.setTitle("[MONTPARTASSE] " + info)
 			.setDescription(this.stack.map(e => e.emoji + " " + e.player.user.toString()).join("\n") + "\n\n" + this.effectStack.map(e => e.message).join("\n"))
 			.setColor(this.mainclass.color)
-			.addField("Résumé", Object.keys(summary).length ? Object.keys(summary).sort().map(e => this.mainclass.COLOR_EMOJIS[e] + " : **" + summary[e] + "**").join(" | ") : "❌ Aucune tasse dans la pile")
+			.addField("Résumé", Object.keys(summary).length ? Object.keys(summary).sort().map(e => this.mainclass.COLOR_EMOJIS[e].toString() + " : **" + summary[e] + "**").join(" | ") : "❌ Aucune tasse dans la pile")
 			.addField("Tasses spéciales", this.specialCups.map(e => "__" + e.emoji + " " + e.name + ":__ " + e.description).join("\n"));
 
 		if (this.stackMessage) {
@@ -97,20 +97,24 @@ class Game {
 	setupReactionCollector() {
 		var emojis = Object.keys(this.mainclass.COLOR_EMOJIS).slice(0, this.COLOR_COUNT - 1).map(e => this.mainclass.COLOR_EMOJIS[e]);
 		emojis.push(...this.specialCups.map(e => e.emoji));
-		for (var r of emojis) this.stackMessage.react(r);
+		for (var r of emojis) this.stackMessage.react(r).catch(e => this.client.error("Montpartasse", this.channel, e));
 
 		var collection = this.stackMessage.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name) && !user.bot && this.players[user.id], { dispose: true });
 
 		collection.on('collect', (reaction, user) => {
-			var player = this.players[user.id];
-			var index = player.hand.map(e => e.emoji).indexOf(reaction.emoji.toString());
-			if (index != -1) {
-				player.playCup(this, index + 1);
-			} else {
-				user.send("Vous n'avez pas cette tasse dans votre main");
-			}
+			try {
+				var player = this.players[user.id];
+				var index = player.hand.map(e => e.emoji).indexOf(reaction.emoji.toString());
+				if (index != -1) {
+					player.playCup(this, index + 1);
+				} else {
+					user.send("Vous n'avez pas cette tasse dans votre main");
+				}
 
-			reaction.users.remove(user);
+				reaction.users.remove(user);
+			} catch (e) {
+				this.client.error("Montpartasse", this.channel, e);
+			}
 		});
 	}
 
@@ -176,7 +180,7 @@ class Game {
 		var last_player_score_gain = this.stack.filter(e => e.player.user.id === player.user.id).length;
 		player.score += last_player_score_gain;
 		description += player.user.toString() + ", vous gagnez **" + last_player_score_gain + (last_player_score_gain > 1 ? " points" : " point") + "** (1 pour chaque tasse que vous avez jouée). "
-			+ "Les autres, vous gagnez 1 point " + (victorious_color ? "pour chaque tasse " + this.mainclass.COLOR_EMOJIS[victorious_color] + " que vous avez jouée!\n\n" : "pour chaque couleur que vous avez jouée!\n\n")
+			+ "Les autres, vous gagnez 1 point " + (victorious_color ? "pour chaque tasse " + this.mainclass.COLOR_EMOJIS[victorious_color].toString() + " que vous avez jouée!\n\n" : "pour chaque couleur que vous avez jouée!\n\n")
 
 		var played_colors = {}
 		for (var player_id of Object.keys(this.players)) {
@@ -196,7 +200,7 @@ class Game {
 			if (colors.length > 0) {
 				this.players[player_id].score += colors.length;
 				description += this.players[player_id].user.toString() + " gagne **" + colors.length + (colors.length > 1 ? " points" : " point")
-					+ "** (" + colors.sort().map(e => this.mainclass.COLOR_EMOJIS[e]).join(", ") + ")\n";
+					+ "** (" + colors.sort().map(e => this.mainclass.COLOR_EMOJIS[e].toString()).join(", ") + ")\n";
 			}
 		}
 
