@@ -50,9 +50,7 @@ class MainClass extends Base {
 			var game = this.games[message.channel.id]
 			if (game.paused) return;
 
-			var now = DateTime.local().setZone("Europe/Paris");
-			if (game.lastTimestamp.get('hour') < 12 && now.get('hour') >= 12 || game.lastTimestamp.get('hour') >= 12 && now.get('hour') < 12 || game.lastTimestamp.get('day') != now.get('day')) game.refill();
-			game.lastTimestamp = DateTime.local().setZone("Europe/Paris");
+			game.checkForRefill();
 
 			if (!game.players[message.author.id]) {
 				game.players[message.author.id] = new Player(message.author, game);

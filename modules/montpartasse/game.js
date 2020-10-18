@@ -108,6 +108,8 @@ class Game {
 
 		this.collection.on('collect', (reaction, user) => {
 			try {
+				this.checkForRefill();
+
 				var player = this.players[user.id];
 				if (!player.hand.length) {
 					user.send("Votre main est vide");
@@ -230,6 +232,12 @@ class Game {
 		}, "");
 
 		this.newStack(description + (trigger_returns.length ? "\n" + trigger_returns : "") + "\n");
+	}
+
+	checkForRefill() {
+		var now = DateTime.local().setZone("Europe/Paris");
+		if (this.lastTimestamp.get('hour') < 12 && now.get('hour') >= 12 || this.lastTimestamp.get('hour') >= 12 && now.get('hour') < 12 || this.lastTimestamp.get('day') != now.get('day')) this.refill();
+		this.lastTimestamp = DateTime.local().setZone("Europe/Paris");
 	}
 
 	rerollSpecials() {
