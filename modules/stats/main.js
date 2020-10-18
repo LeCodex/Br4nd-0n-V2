@@ -12,7 +12,7 @@ class MainClass extends Base {
 			"<scoreboard>": "Sends the requested scoreboard. Use sort=<criteria> to get a sorted list",
 			"<scoreboard> edit=true": "Opens the scoreboard in edit mode"
 		};
-		this.command_text = "stats";
+		this.commandText = "stats";
 		this.color = 0x990099;
 
 		this.load("stats", {}).then(e => {this.stats = e;});

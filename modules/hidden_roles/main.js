@@ -17,7 +17,7 @@ class MainClass extends Base {
 			"swap <index> [second index]": "*Can be used in DMs.*\nSwap role and team with that player. If you precise a second player, instead swap both of them",
 			"end": "Close the game"
 		};
-		this.command_text = "hr";
+		this.commandText = "hr";
 		this.color = 0x5599BB;
 		this.dmEnabled = true;
 

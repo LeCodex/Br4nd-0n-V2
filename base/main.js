@@ -11,7 +11,7 @@ class Base {
 	 * @property {string} name - The module's name, used for the help command.
 	 * @property {string} description - The module's description, used for the help command.
 	 * @property {Object} help - Used to create the help message.
-	 * @property {string} command_text - The command the bot will be looking for.
+	 * @property {string} commandText - The command the bot will be looking for.
 	 * @property {number} color - The module's description, used for the help command.
 	 * @property {Array<external:Snowflake>} auth - The ID of the users that are authorized to run this command. Authorizes everyone if it's empty.
 	 * @property {boolean} dmEnabled - Whether or not the command can be run from DMs. Defaults to false.
@@ -23,7 +23,7 @@ class Base {
 		this.help = {
 			"": "[TODO] Add help"
 		}
-		this.command_text = "";
+		this.commandText = "";
 		this.color = 0xffffff;
 		this.auth = [];
 		this.dmEnabled = false;
@@ -85,7 +85,7 @@ class Base {
 	 * @param {external:Message} message - The message that was sent.
 	 */
 	on_message(message) {
-		if (message.content.startsWith(process.env.PREFIX) && message.content.split(" ")[0] === process.env.PREFIX + this.command_text && (message.guild || this.dmEnabled)) {
+		if (message.content.startsWith(process.env.PREFIX) && message.content.split(" ")[0] === process.env.PREFIX + this.commandText && (message.guild || this.dmEnabled)) {
 			this._testForAuth(message);
 		}
 	}

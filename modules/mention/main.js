@@ -10,7 +10,7 @@ class MainClass extends Base {
 			"": "Sends the current module the mentions calls",
 			"<module>": "Sets the module the mentions will call"
 		};
-		this.command_text = "mention";
+		this.commandText = "mention";
 		this.color = 0x222222;
 		this.auth = [ process.env.ADMIN ];
 

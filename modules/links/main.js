@@ -9,7 +9,7 @@ class MainClass extends Base {
 		this.help = {
 			"": "Sends thoses links"
 		};
-		this.command_text = "links";
+		this.commandText = "links";
 		this.color = 0xfffffe;
 	}
 

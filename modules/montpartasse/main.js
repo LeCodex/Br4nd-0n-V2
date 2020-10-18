@@ -15,7 +15,7 @@ class MainClass extends Base {
 			"rank": "Envoies le classement de la partie",
 			"show": "Redescends le message d'info de la partie"
 		};
-		this.command_text = "montpartasse";
+		this.commandText = "montpartasse";
 		this.color = 0xFF69B4;
 		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
 

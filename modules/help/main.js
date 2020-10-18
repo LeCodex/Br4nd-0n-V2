@@ -10,18 +10,18 @@ class MainClass extends Base {
 			"": "Sends a list of all active modules",
 			"<module>": "Sends the help message of that module"
 		};
-		this.command_text = "help";
+		this.commandText = "help";
 		this.color = 0x00ff00;
 	}
 
 	command(message, args, kwargs) {
 		if (args.length) {
-			var command_text = args.join(" ").toLowerCase();
-			if (Object.keys(this.client.modules).includes(command_text)) {
-				var mod = this.client.modules[command_text];
+			var commandText = args.join(" ").toLowerCase();
+			if (Object.keys(this.client.modules).includes(commandText)) {
+				var mod = this.client.modules[commandText];
 				var embed = new MessageEmbed().setTitle("[HELP] " + mod.name + " Module").setColor(mod.color).setDescription(mod.description);
 				for (var [key, value] of Object.entries(mod.help)) {
-					embed.addField("`" + process.env.PREFIX + mod.command_text + (key.length ? " " + key : "") + "`", value, false)
+					embed.addField("`" + process.env.PREFIX + mod.commandText + (key.length ? " " + key : "") + "`", value, false)
 				};
 
 				message.reply(embed);
@@ -36,7 +36,7 @@ class MainClass extends Base {
 		} else {
 			var embed = new MessageEmbed().setTitle("[HELP] Active modules").setColor(this.color);
 			Object.values(this.client.modules).forEach((element) => {
-				embed.addField(element.name + " (" + element.command_text + ")", element.description, true);
+				embed.addField(element.name + " (" + element.commandText + ")", element.description, true);
 			});
 
 			message.reply(embed);

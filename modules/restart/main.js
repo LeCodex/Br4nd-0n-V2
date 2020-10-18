@@ -8,7 +8,7 @@ class MainClass extends Base {
 		this.help = {
 			"": "Exits the program"
 		};
-		this.command_text = "restart";
+		this.commandText = "restart";
 		this.color = 0xffffff;
 		this.auth = [ process.env.ADMIN ];
 	}

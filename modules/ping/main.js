@@ -10,7 +10,7 @@ class MainClass extends Base {
 		this.help = {
 			"": "Pong!"
 		}
-		this.command_text = "ping";
+		this.commandText = "ping";
 		this.color = 0x00ffff;
 	}
 

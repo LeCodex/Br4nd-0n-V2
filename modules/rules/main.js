@@ -15,7 +15,7 @@ class MainClass extends Base {
 			"welcome_channel <channel mention>": "Sets the channel in which the welcome message will be sent",
 			"<subcommmand> reset": "Resets the given value"
 		};
-		this.command_text = "rules";
+		this.commandText = "rules";
 		this.color = 0xffff00;
 		this.auth = [ process.env.ADMIN ];
 
