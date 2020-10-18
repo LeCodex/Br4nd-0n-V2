@@ -77,7 +77,7 @@ class BombCup extends Cup {
 		super(mainclass, player, "472452844470009876", "💣");
 
 		this.name = "Tasse Bombe";
-		this.description = "Explose toutes les tasses de la même couleur que celle en-dessous";
+		this.description = "Explose les deux tasses juste en-dessous";
 		this.color = "special";
 	}
 
