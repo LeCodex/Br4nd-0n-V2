@@ -24,7 +24,7 @@ class Cup {
 
 class BlueCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.blue.toString());
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.blue);
 
 		this.color = "blue";
 		this.name = "Tasse bleue";
@@ -34,7 +34,7 @@ class BlueCup extends Cup {
 
 class PurpleCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.purple.toString());
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.purple);
 
 		this.color = "purple";
 		this.name = "Tasse violette";
@@ -44,7 +44,7 @@ class PurpleCup extends Cup {
 
 class OrangeCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.orange.toString());
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.orange);
 
 		this.color = "orange";
 		this.name = "Tasse orange";
@@ -54,7 +54,7 @@ class OrangeCup extends Cup {
 
 class GreenCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.green.toString());
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.green);
 
 		this.color = "green";
 		this.name = "Tasse verte";
@@ -64,7 +64,7 @@ class GreenCup extends Cup {
 
 class CottonCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.none.toString());
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.none);
 
 		this.name = "Tasse de Coton";
 		this.description = "N'est d'aucune couleur";
@@ -119,7 +119,7 @@ class BombCup extends Cup {
 
 class RainbowCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.all.toString());
+		super(mainclass, player, "0", mainclass.COLOR_EMOJIS.all);
 
 		this.name = "Tasse Arc-en-ciel";
 		this.description = "Est de toutes les couleurs à la fois";
