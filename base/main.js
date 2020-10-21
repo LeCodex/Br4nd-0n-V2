@@ -91,6 +91,15 @@ class Base {
 	}
 
 	/**
+	 * Callback function called when a member joins a server.
+	 * @method
+	 * @param {external:Member} member - The member that joined.
+	 */
+	on_guildMemberAdd(member) {
+		return;
+	}
+
+	/**
 	 * Sends a choice message, using reactions. The message will be deleted once the collector is closed by default.
 	 * @async
 	 * @method

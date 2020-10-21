@@ -31,7 +31,7 @@ async function loadModules() {
 			}
 		}
 	} catch(e) {
-			console.error("Failed to load modules: ", e);
+		console.error("Failed to load modules: ", e);
 	}
 }
 
@@ -61,15 +61,27 @@ client.on('message', message => {
 	}
 });
 
+client.on('guildMemberAdd', member => {
+	Object.values(client.modules).forEach((element) => {
+		try {
+			element.on_guildMemberAdd(member);
+		} catch(e) {
+			client.error(null, element.name, e);
+		}
+	});
+})
+
 client.error = function(channel, name, error) {
 	console.error("Error caused by " + name + " module: ", error);
 	embed = new MessageEmbed()
 		.setTitle("Error caused by " + name + " module")
 		.setColor(0xff0000)
 		.setDescription("```js\n" + error.stack + "```")
-	channel.send(embed.setFooter("This message will be deleted in one minute")).then(message => {
-		message.delete({ timeout: 60000 });
-	}).catch(console.error);
+	if (channel)
+		channel.send(embed.setFooter("This message will be deleted in one minute")).then(message => {
+			message.delete({ timeout: 60000 });
+		}).catch(console.error);
+		
 	client.channels.cache.get("474301772463341569").send("<@240947137750237185>", embed);
 }
 
