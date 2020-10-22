@@ -165,37 +165,39 @@ class Base {
 	}
 
 	/**
-	 * Checks the database to see if a save already exists.
+	 * Checks the database to see if a save already exists. If no URL is set in the environement, instead checks for a JSON file.
 	 * @async
 	 * @param {string} name - The name of the collection to look for. The database has the same name as the module.
 	 */
 	async saveExists(name) {
-		const ret = await this.client.mongo.db(this.name.toLowerCase()).listCollections({name: name}).hasNext();
-		console.log(ret);
-		return ret;
-
-		//return fs.existsSync(this._getSavePath() + name + ".json");
+		if (process.env.MONGO_DB_URL) {
+			return await this.client.mongo.db(this.name.toLowerCase()).listCollections({name: name}).hasNext();
+		} else {
+			return fs.existsSync(this._getSavePath() + name + ".json");
+		}
 	}
 
 	/**
-	 * Saves data into the database.
+	 * Saves data into the database. If no URL is set in the environement, saves it to a JSON file instead.
 	 * @async
 	 * @param {string} name - The name of the collection to look for. The database has the same name as the module.
 	 * @param {Object} data - The data to be stored into the database.
 	 */
 	async save(name, data) {
-		const collection = this.client.mongo.db(this.name.toLowerCase()).collection(name);
-		await collection.replaceOne({}, data, { upsert: true });
-		console.log(this.name + " Database Saved");
-
-		// var string = JSON.stringify(data);
-		// if (!fs.existsSync(this._getSavePath())) fs.mkdirSync(this._getSavePath());
-		// fs.writeFile(this._getSavePath() + name + ".json", string, err => {if (err != null) console.log(err)});
-		// console.log(this.name + " JSON Data Saved");
+		if (process.env.MONGO_DB_URL) {
+			const collection = this.client.mongo.db(this.name.toLowerCase()).collection(name);
+			await collection.replaceOne({}, data, { upsert: true });
+			console.log(this.name + " Database Saved");
+		} else {
+			var string = JSON.stringify(data);
+			if (!fs.existsSync(this._getSavePath())) fs.mkdirSync(this._getSavePath());
+			fs.writeFile(this._getSavePath() + name + ".json", string, err => {if (err != null) console.log(err)});
+			console.log(this.name + " JSON Data Saved");
+		}
 	}
 
 	/**
-	 * Loads data from the database.
+	 * Loads data from the database. If no URL is set in the environement, loads the JSON file instead.
 	 * @async
 	 * @param {string} name - The name of the collection to look for. The database has the same name as the module.
 	 * @param {Object} fallback - The data to be saved in case no save already exists.
@@ -206,11 +208,14 @@ class Base {
 			this.save(name, fallback);
 			return fallback;
 		}
-		var ret = await this.client.mongo.db(this.name.toLowerCase()).collection(name).findOne();
-		return ret;
 
-		// var string = fs.readFileSync(this._getSavePath() + name + ".json");
-		// return JSON.parse(string);
+		if (process.env.MONGO_DB_URL) {
+			return await this.client.mongo.db(this.name.toLowerCase()).collection(name).findOne();
+		} else {
+			var string = fs.readFileSync(this._getSavePath() + name + ".json");
+			return JSON.parse(string);
+		}
+
 	}
 }
 

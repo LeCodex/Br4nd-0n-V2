@@ -9,7 +9,7 @@ const fs = require('fs');
 const toml = require('toml');
 const concat = require('concat-stream');
 
-client.mongo = new MongoClient(process.env.MONGO_DB_URL, { useUnifiedTopology: true });
+if (process.env.MONGO_DB_URL) client.mongo = new MongoClient(process.env.MONGO_DB_URL, { useUnifiedTopology: true });
 client.config = require("./config.toml");
 client.modules = {};
 client.path = module.path;
@@ -36,7 +36,9 @@ async function loadModules() {
 }
 
 client.on('ready', () => {
-	if (client.mongo.isConnected()) {
+	if (!client.mongo) {
+		loadModules();
+	} else if (client.mongo.isConnected()) {
 		loadModules();
 	} else {
 		client.mongo.connect(err => {
@@ -81,7 +83,7 @@ client.error = function(channel, name, error) {
 		channel.send(embed.setFooter("This message will be deleted in one minute")).then(message => {
 			message.delete({ timeout: 60000 });
 		}).catch(console.error);
-		
+
 	client.channels.cache.get("474301772463341569").send("<@240947137750237185>", embed);
 }
 
