@@ -13,6 +13,7 @@ class Menu {
 		this.message = null;
 		this.collector = null;
 		this.endTrigger = null;
+		this.mentionBuffer = [];
 
 		if (message) {
 			this.channel = message.channel;
@@ -69,16 +70,17 @@ class Menu {
 
 		this.collector.on("end", (collected, reason) => {
 			if (reason != "user") {
-				var mention = collected.first().mentions.roles.first();
+				this.mentionBuffer = collected.first().mentions.roles.array();
 				collected.first().delete();
-				this.awaitReaction(mention);
+				this.awaitReaction();
 			}
 		});
 	}
 
-	awaitReaction(mention) {
-		var embed = this.message.embeds[0]
-		embed.fields[0].value = "React with the **emoji** to click to get this role";
+	awaitReaction() {
+		var embed = this.message.embeds[0];
+		var mention = this.mentionBuffer.shift();
+		embed.fields[0].value = "React with the **emoji** to click to get this role " + mention.toString();
 		this.message.edit(embed);
 
 		this.collector = this.message.createReactionCollector((r, u) => !Object.keys(this.choices).includes(r.emoji.name) && u.id === this.admin.id, { max: 1 })
@@ -87,10 +89,12 @@ class Menu {
 			if (reason != "user") {
 				this.choices[collected.first().emoji.toString()] = {mention: mention, emoji: collected.first().emoji};
 				this.message.edit(embed).then(() => {
-					if (Object.keys(this.choices).length < 20) {
-						this.awaitMention()
+					if (this.mentionBuffer.length) {
+						this.awaitReaction()
+					} else if (Object.keys(this.choices).length < 20) {
+						this.awaitMention();
 					} else {
-						this.awaitClose()
+						this.awaitClose();
 					}
 				}).catch(e => this.client.error(this.channel, "Roles", e));
 				collected.first().users.remove(this.admin);
@@ -132,8 +136,8 @@ class Menu {
 			await member.roles.add(this.choices[reaction.emoji.toString()].mention);
 
 			if (this.options["1️⃣"].value) {
-				for (var [emoji, role] of Object.entries(this.choices)) {
-					if (reaction.emoji.name != emoji) await this.message.reactions.cache.get(emoji).users.remove(user);
+				for (var value of Object.values(this.choices)) {
+					if (reaction.emoji.name != value.emoji.name) await this.message.reactions.cache.get(value.emoji.id ? value.emoji.id : value.emoji.name).users.remove(user);
 				}
 			}
 
@@ -159,7 +163,7 @@ class Menu {
 				var role = member.guild.roles.cache.get(data.role);
 
 				if (role) {
-					var add_again = !Object.values(this.choices).some(e => member.roles.cache.has(e.id));
+					var add_again = !Object.values(this.choices).some(e => member.roles.cache.has(e.mention.id));
 					if (add_again) await member.roles.add(role);
 				}
 			}
@@ -189,7 +193,10 @@ class Menu {
 		object.admin = this.admin.id;
 
 		for (var [key, value] of Object.entries(this.choices)) {
-			object.choices[key] = value.id;
+			object.choices[key] = {
+				mention: value.mention.id,
+				emoji: value.emoji.id ? value.emoji.id : value.emoji.name
+			};
 		}
 
 		return object;
@@ -204,7 +211,10 @@ class Menu {
 		this.choices = {};
 
 		for (var [key, value] of Object.entries(object.choices)) {
-			this.choices[key] = await this.channel.guild.roles.fetch(value);
+			this.choices[key] = {
+				mention: await this.channel.guild.roles.fetch(value.mention),
+				emoji: await this.message.reactions.cache.get(value.emoji).emoji
+			}
 		}
 
 		this.setupReactionCollector();
