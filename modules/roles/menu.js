@@ -62,7 +62,7 @@ class Menu {
 
 	awaitMention() {
 		var embed = this.message.embeds[0]
-		embed.fields[0].value = "Mention the **role** to add the menu";
+		embed.fields[0].value = "Mention the **role(s)** to add the menu";
 		embed.setDescription(Object.keys(this.choices).map(e => e + " - " + this.choices[e].mention.toString()).join("\n"));
 		this.message.edit(embed);
 
@@ -80,7 +80,7 @@ class Menu {
 	awaitReaction() {
 		var embed = this.message.embeds[0];
 		var mention = this.mentionBuffer.shift();
-		embed.fields[0].value = "React with the **emoji** to click to get this role " + mention.toString();
+		embed.fields[0].value = "React with the **emoji** to click to get this role: " + mention.toString();
 		this.message.edit(embed);
 
 		this.collector = this.message.createReactionCollector((r, u) => !Object.keys(this.choices).includes(r.emoji.name) && u.id === this.admin.id, { max: 1 })
@@ -89,12 +89,12 @@ class Menu {
 			if (reason != "user") {
 				this.choices[collected.first().emoji.toString()] = {mention: mention, emoji: collected.first().emoji};
 				this.message.edit(embed).then(() => {
-					if (this.mentionBuffer.length) {
-						this.awaitReaction()
-					} else if (Object.keys(this.choices).length < 20) {
-						this.awaitMention();
-					} else {
+					if (Object.keys(this.choices).length >= 20) {
 						this.awaitClose();
+					} else if (this.mentionBuffer.length) {
+						this.awaitReaction()
+					} else {
+						this.awaitMention();
 					}
 				}).catch(e => this.client.error(this.channel, "Roles", e));
 				collected.first().users.remove(this.admin);
@@ -137,7 +137,10 @@ class Menu {
 
 			if (this.options["1️⃣"].value) {
 				for (var value of Object.values(this.choices)) {
-					if (reaction.emoji.name != value.emoji.name) await this.message.reactions.cache.get(value.emoji.id ? value.emoji.id : value.emoji.name).users.remove(user);
+					if (reaction.emoji.name != value.emoji.name) {
+						await this.message.reactions.cache.get(value.emoji.id ? value.emoji.id : value.emoji.name).users.remove(user);
+						await member.roles.remove(value.mention);
+					}
 				}
 			}
 
