@@ -18,7 +18,10 @@ class MainClass extends Base {
 		this.auth = [ process.env.ADMIN, "118399702667493380", "110848467756134400" ];
 
 		this.load("data", {}).then(async e => {
-			this.data = await this.parse(e).catch(e => this.client.error(null, "Roles", e));
+			this.data = await this.parse(e).catch(e => {
+				this.client.error(null, "Roles", e)
+				return {};
+			});
 		});
 	}
 
@@ -30,7 +33,7 @@ class MainClass extends Base {
 
 	on_guildMemberAdd(member) {
 		if (this.data) {
-			this.check_if_data_exists(member);
+			this.checkIfDataExists(member);
 			var data = this.data[member.guild.id];
 			var role = member.guild.roles.cache.get(data.role);
 
@@ -40,7 +43,7 @@ class MainClass extends Base {
 		}
 	}
 
-	check_if_data_exists(message) {
+	checkIfDataExists(message) {
 		if (!this.data[message.guild.id]) {
 			this.data[message.guild.id] = {
 				role: "",
@@ -52,7 +55,7 @@ class MainClass extends Base {
 	}
 
 	command(message, args, kwargs) {
-		this.check_if_data_exists(message);
+		this.checkIfDataExists(message);
 		var data = this.data[message.guild.id];
 		var role = message.guild.roles.cache.get(data.role);
 
@@ -60,7 +63,7 @@ class MainClass extends Base {
 	}
 
 	com_join(message, args, kwargs) {
-		this.check_if_data_exists(message);
+		this.checkIfDataExists(message);
 
 		if (args[1] == "reset") {
 			this.data[message.guild.id].role = undefined;
@@ -81,7 +84,7 @@ class MainClass extends Base {
 	}
 
 	com_menu(message, args, kwargs) {
-		this.check_if_data_exists(message);
+		this.checkIfDataExists(message);
 		var data = this.data[message.guild.id];
 
 		if (data.menus[message.channel.id]) {
@@ -94,7 +97,7 @@ class MainClass extends Base {
 	}
 
 	com_close(message, args, kwargs) {
-		this.check_if_data_exists(message);
+		this.checkIfDataExists(message);
 		var data = this.data[message.guild.id];
 
 		if (data.menus[message.channel.id]) {

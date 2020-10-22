@@ -127,6 +127,11 @@ class Menu {
 		this.mainclass.completeSave();
 	}
 
+	async checkIfMemberHasRole(member, role) {
+		var role = await this.channel.guild.roles.fetch(role.id, true, true);
+		return role.members.keyArray().includes(member.id);
+	}
+
 	setupReactionCollector() {
 		this.collector = this.message.createReactionCollector((r, u) => Object.keys(this.choices).includes(r.emoji.toString()), { dispose: true })
 
@@ -135,21 +140,23 @@ class Menu {
 
 			await member.roles.add(this.choices[reaction.emoji.toString()].mention);
 
-			if (this.options["1️⃣"].value) {
-				for (var value of Object.values(this.choices)) {
-					if (reaction.emoji.name != value.emoji.name) {
-						await this.message.reactions.cache.get(value.emoji.id ? value.emoji.id : value.emoji.name).users.remove(user);
-						await member.roles.remove(value.mention);
-					}
-				}
-			}
-
 			if (this.options["🔄"].value) {
-				this.mainclass.check_if_data_exists(member);
+				this.mainclass.checkIfDataExists(member);
 				var data = this.mainclass.data[member.guild.id];
 				var role = member.guild.roles.cache.get(data.role);
 
 				if (role) await member.roles.remove(role);
+			}
+
+			if (this.options["1️⃣"].value) {
+				for (var value of Object.values(this.choices)) {
+					if (reaction.emoji.name != value.emoji.name) {
+						if (await this.checkIfMemberHasRole(member, value.mention)) {
+							await this.message.reactions.cache.get(value.emoji.id ? value.emoji.id : value.emoji.name).users.remove(user);
+							await member.roles.remove(value.mention);
+						}
+					}
+				}
 			}
 
 			user.send("Gave you the role " + this.choices[reaction.emoji.toString()].mention.name);
@@ -161,13 +168,19 @@ class Menu {
 			await member.roles.remove(this.choices[reaction.emoji.toString()].mention);
 
 			if (this.options["🔄"].value) {
-				this.mainclass.check_if_data_exists(member);
+				this.mainclass.checkIfDataExists(member);
 				var data = this.mainclass.data[member.guild.id];
 				var role = member.guild.roles.cache.get(data.role);
 
 				if (role) {
-					var add_again = !Object.values(this.choices).some(e => member.roles.cache.has(e.mention.id));
-					if (add_again) await member.roles.add(role);
+					var has_one_of_the_roles = false;
+					for (var value of Object.values(this.choices)) {
+						if (await this.checkIfMemberHasRole(member, value.mention)) {
+							has_one_of_the_roles = true;
+							break;
+						}
+					}
+					if (!has_one_of_the_roles) await member.roles.add(role);
 				}
 			}
 
