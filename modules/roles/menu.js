@@ -62,6 +62,7 @@ class Menu {
 	awaitMention() {
 		var embed = this.message.embeds[0]
 		embed.fields[0].value = "Mention the **role** to add the menu";
+		embed.setDescription(Object.keys(this.choices).map(e => e + " - " + this.choices[e].mention.toString()).join("\n"));
 		this.message.edit(embed);
 
 		this.collector = this.channel.createMessageCollector(m => m.mentions.roles.first() && !Object.values(this.choices).includes(m.mentions.roles.first()) && m.author.id === this.admin.id, { max: 1 })
@@ -84,9 +85,7 @@ class Menu {
 
 		this.collector.on("end", (collected, reason) => {
 			if (reason != "user") {
-				this.choices[collected.firstKey()] = mention;
-				if (!embed.description) embed.description = "";
-				embed.description += "\n" + collected.firstKey() + " - " + mention.toString();
+				this.choices[collected.first().emoji.toString()] = {mention: mention, emoji: collected.first().emoji};
 				this.message.edit(embed).then(() => {
 					if (Object.keys(this.choices).length < 20) {
 						this.awaitMention()
@@ -94,6 +93,7 @@ class Menu {
 						this.awaitClose()
 					}
 				}).catch(e => this.client.error(this.channel, "Roles", e));
+				collected.first().users.remove(this.admin);
 			}
 		});
 	}
@@ -106,7 +106,6 @@ class Menu {
 
 	async endCreation() {
 		this.endTrigger = null;
-
 		this.collector.stop();
 		this.message.delete();
 
@@ -114,11 +113,11 @@ class Menu {
 			new MessageEmbed()
 			.setTitle("Role Menu")
 			.setDescription("React with one of the emojis to get the role.\nRemove your reaction to remove it\n\n"
-			 	+ Object.keys(this.choices).map(e => e + " - " + this.choices[e].toString()).join("\n"))
+			 	+ Object.keys(this.choices).map(e => e + " - " + this.choices[e].mention.toString()).join("\n"))
 			.setColor(this.mainclass.color)
 		)
 
-		for (var emoji of Object.keys(this.choices)) await this.message.react(emoji);
+		for (var value of Object.values(this.choices)) await this.message.react(value.emoji);
 		this.setupReactionCollector();
 
 		this.mainclass.completeSave();
@@ -130,7 +129,7 @@ class Menu {
 		this.collector.on("collect", async (reaction, user) => {
 			var member = this.channel.guild.members.cache.get(user.id);
 
-			await member.roles.add(this.choices[reaction.emoji.toString()]);
+			await member.roles.add(this.choices[reaction.emoji.toString()].mention);
 
 			if (this.options["1️⃣"].value) {
 				for (var [emoji, role] of Object.entries(this.choices)) {
@@ -146,13 +145,13 @@ class Menu {
 				if (role) await member.roles.remove(role);
 			}
 
-			user.send("Gave you the role " + this.choices[reaction.emoji.toString()].name);
+			user.send("Gave you the role " + this.choices[reaction.emoji.toString()].mention.name);
 		});
 
 		this.collector.on("remove", async (reaction, user) => {
 			var member = this.channel.guild.members.cache.get(user.id);
 
-			await member.roles.remove(this.choices[reaction.emoji.toString()]);
+			await member.roles.remove(this.choices[reaction.emoji.toString()].mention);
 
 			if (this.options["🔄"].value) {
 				this.mainclass.check_if_data_exists(member);
@@ -165,7 +164,7 @@ class Menu {
 				}
 			}
 
-			user.send("Took away the role " + this.choices[reaction.emoji.toString()].name);
+			user.send("Took away the role " + this.choices[reaction.emoji.toString()].mention.name);
 		});
 	}
 
