@@ -107,7 +107,8 @@ class BombCup extends Cup {
 			// }
 
 			if (amount) {
-				super.effect(game, index, "💥 " + (exploded.length > 1 ? "Les " + exploded.slice(0, -1).join(", ") + " et " + exploded[exploded.length - 1] + " ont explosé" : "La " + exploded[0] + " a explosé") + " à cause de " + game.players[game.lastPlayed].user.toString() + "! 💥", true);
+				// (exploded.length > 1 ? "Les " + exploded.slice(0, -1).join(", ") + " et " + exploded[exploded.length - 1] + " ont explosé" : "La " + exploded[0] + " a explosé")
+				super.effect(game, index, "💥 " + (amount > 1 ? amount + " tasses ont": "1 tasse a") + " explosé à cause de " + game.players[game.lastPlayed].user.toString() + "! 💥", true);
 			} else {
 				super.effect(game, index, "🧨 La Tasse Bombe n'a trouvé aucune tasse à exploser... 🧨");
 			}
