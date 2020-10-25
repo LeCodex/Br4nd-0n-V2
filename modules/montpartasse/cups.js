@@ -85,27 +85,26 @@ class BombCup extends Cup {
 		if (game.stack.length === 1) {
 			super.effect(game, index, "🧨 La Tasse Bombe n'a aucune tasse à faire exploser... 🧨");
 		} else {
-			// var color = game.stack[index + 1].color;
-			// var amount = 0;
-			//
-			// if (color != "none") {
-			// 	for (var i = game.stack.length - 1; i >= 0; i --) {
-			// 		if (game.stack[i].color === color || game.stack[i].color === "all" || color === "all") {
-			// 			amount ++;
-			// 			game.stack.splice(i, 1);
-			// 		}
-			// 	}
-			//
-			// }
+			var color = game.stack[index + 1].color;
+			var amount = 0;
 
-			var max = 2;
-			var amount = Math.min(game.stack.length, max);
-			var exploded = [];
-			for (var i = Math.min(game.stack.length - 1, index + max); i > index ; i --) {
-				var cup = game.stack[i];
-				exploded.push(cup.fullName);
-				game.stack.splice(i, 1)
+			if (color != "none") {
+				for (var i = game.stack.length - 1; i >= 0; i --) {
+					if (game.stack[i].color === color || game.stack[i].color === "all" || color === "all") {
+						amount ++;
+						game.stack.splice(i, 1);
+					}
+				}
 			}
+
+			// var max = 2;
+			// var amount = Math.min(game.stack.length, max);
+			// var exploded = [];
+			// for (var i = Math.min(game.stack.length - 1, index + max); i > index ; i --) {
+			// 	var cup = game.stack[i];
+			// 	exploded.push(cup.fullName);
+			// 	game.stack.splice(i, 1)
+			// }
 
 			if (amount) {
 				super.effect(game, index, "💥 " + (exploded.length > 1 ? "Les " + exploded.slice(0, -1).join(", ") + " et " + exploded[exploded.length - 1] + " ont explosé" : "La " + exploded[0] + " a explosé") + " à cause de " + game.players[game.lastPlayed].user.toString() + "! 💥", true);
