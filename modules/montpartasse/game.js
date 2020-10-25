@@ -22,7 +22,8 @@ class Game {
 		this.nextStack = [];
 		this.specialCups = [];
 		this.players = {};
-		this.lastPlayed = "";
+		this.lastPlayed = "";    // The player who last send a command to play a cup and so cannot play
+		this.lastCupPlayer = ""; // The player who last played a cup and so will be credited as responsible for the stack collapse
 		this.paused = false;
 		this.stackMessage = null;
 		this.needRefill = false;
@@ -98,16 +99,19 @@ class Game {
 	}
 
 	setupReactionCollector() {
-		if (this.collection) this.clearReactionCollector();
+		this.clearReactionCollector();
 
 		var emojis = Object.keys(this.mainclass.COLOR_EMOJIS).slice(0, this.COLOR_COUNT - 1).map(e => this.mainclass.COLOR_EMOJIS[e]);
 		emojis.push(...this.specialCups.map(e => e.emoji));
 		for (var r of emojis) this.stackMessage.react(r).catch(e => this.client.error(this.channel, "Montpartasse", e));
+		emojis = Object.values(Cups).map(e => new e(this.mainclass, null).emoji);
 
 		this.collection = this.stackMessage.createReactionCollector((reaction, user) => emojis.map(e => e.toString()).includes(reaction.emoji.toString()) && !user.bot && this.players[user.id], { dispose: true });
 
 		this.collection.on('collect', (reaction, user) => {
 			try {
+				if (this.paused) return;
+
 				this.checkForRefill();
 
 				var player = this.players[user.id];
@@ -195,7 +199,17 @@ class Game {
 			"Vous deviez recevoir un appel très important aujourd'hui. Pour ne pas le manquer, vous avez mis votre portable sur vibreur puissance max. Plus qu'à attVRRR VRRR VRRR VRRR VRRR VRRR",
 			"Pour une fois que vous jouez correctement, il y a un nouveau client qui entre dans le bar. Pour une fois que quelqu'un entre dans le bar, il y a une tempête à 180 km/h dehors.",
 			"La pile était belle, tout était bien aligné. Jusqu'à ce que Chris se rende compte que la première tasse posée était sa BTF (Best Tasse Forever). On ne discute pas les caprices du Pôtron.",
-			"En voyant la hauteur de la pile, Chris à eu l'idée d'un concours de pole dance. Mais il n'avait pas précisé que la pile ne devait pas servir de barre. On ne dira pas qui a essayé."
+			"En voyant la hauteur de la pile, Chris à eu l'idée d'un concours de pole dance. Mais il n'avait pas précisé que la pile ne devait pas servir de barre. On ne dira pas qui a essayé.",
+			"Holly et Chris ont trinqué trop fort, les étincelles ont provoqué un feu ! Les pompiers sont arrivés très rapidement, ils ont juste eu à descendre le long de la barre... Ah, c'était la pile.",
+			"En posant votre tasse, la pile s'est transformé en grosse pile AAAAAA dont les volts vous ont touchés. Évidemment, on l'a retirée pour pouvoir continuer à jouer. Votre santé ? Connais pas.",
+			"Des indiens qui passaient par là ont pensé que la pile était en fait le totem d'Ysun. Ils ont dansé autour de la table, tenté de scalper Arma (une idée de Chris) puis emmené la pile avec eux.",
+			"\"Ok, donc vous avez posé la tasse, puis tout le monde a cligné des yeux en même temps et pouf, apu la pile ? Non mais vous croyez que je vais gober ça ?\" Tout le monde a alors cligné des yeux.",
+			"Je sais, on aurait pas dû casser la pile. Mais au bout de 353 mètres de hauteur, fallait qu'on intervienne. La grue coûte une blinde, faut qu'on bouche le toit et un avion a failli rentrer dedans.",
+			"Vous connaissez la blague de tasse le Yoshi ? C'est un Yoshi qui devait se prendre une tasse mais comme vous savez pas viser vous avez lancé le Yoshi contre une pile de tasses pour pas vous rater.",
+			"C'est alors qu'un camion arriva en trombe dans le bar, manquant d'écraser tout le monde. Seule la pile n'a pas survé... Ah non, c'était le chat de Venus. Désolé, j'ai lu ce qu'a écrit Booti.",
+			"Je voulais profiter de ce bot pour vous délivrer un message : vous êtes les meilleurs. Non, vraiment, j'insiste. C'est super de vous avoir ici. La pile ? Oui bah non, on peut pas tout avoir.",
+			"En voyant la hauteur de la pile, la Délégation a décidé de faire passer un test anti-dopage aux tasses qui s'y trouvent. Elle les a donc réquisitionnées et emmenées aux toilettes pour... Pardon ?",
+			"La dernière tasse que vous avez posée touche le plafond (vous avez fait comment ?). Alphard est alors arrivée avec une masse pour exploser le plafond. On a bien ri, puis on a flippé. Fin du tour."
 		];
 
 		var description = custom_messages[Math.floor(Math.random() * custom_messages.length)] + "\n\n";
@@ -344,6 +358,7 @@ class Game {
 	}
 
 	delete_save() {
+		this.clearReactionCollector();
 		this.mainclass.load("games").then(object => {
 			delete object.games[this.channel.id];
 			this.mainclass.save("games", object);

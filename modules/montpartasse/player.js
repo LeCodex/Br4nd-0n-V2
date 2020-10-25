@@ -17,13 +17,7 @@ class Player {
 
 		for (var i = 0; i < amount; i ++) {
 			var isSpecialCup = Math.random() < .3;
-			var cupConstructor = null;
-
-			if (isSpecialCup) {
-				cupConstructor = special_cups[Math.floor(Math.random() * special_cups.length)];
-			} else {
-				cupConstructor = basic_cups[Math.floor(Math.random() * basic_cups.length)];
-			}
+			var cupConstructor = isSpecialCup ? special_cups[Math.floor(Math.random() * special_cups.length)] : basic_cups[Math.floor(Math.random() * basic_cups.length)];
 			this.hand.push(new cupConstructor(game.mainclass, this));
 		}
 
