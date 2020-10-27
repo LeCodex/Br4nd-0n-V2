@@ -319,7 +319,7 @@ class Game {
 	}
 
 	async parse(object) {
-		this.channel = this.client.channels.cache.get(object.channel);
+		this.channel = await this.client.channels.fetch(object.channel);
 		this.players = {};
 		this.specialCups = object.specialCups.map(e => new Cups[e](this.mainclass, null));
 		this.lastPlayed = object.lastPlayed;

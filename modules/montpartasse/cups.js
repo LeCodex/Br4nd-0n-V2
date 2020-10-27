@@ -8,12 +8,13 @@ class Cup {
 		return this.emoji.toString() + " " + this.name;
 	}
 
-	effect(game, index, effect_return = "", persistent = false) {
+	async effect(game, index, effect_return = "", persistent = false) {
 		game.effectStack.push({
 			message: effect_return,
 			persistent: persistent
 		});
-		game.sendStack("Tasse de " + game.channel.guild.members.cache.get(game.lastPlayed).displayName).then(() => {
+		var member = await game.channel.guild.members.fetch(game.lastPlayed);
+		game.sendStack("Tasse de " + member.displayName).then(() => {
 			var message = "";
 			if (!this.player.hand.length && game.gamerules.refillEmptyHands) message = this.player.draw(game, 20);
 			this.player.sendHand(game, message).then(() => game.checkStackEnd(game.players[game.lastPlayed])).catch(e => game.client.error(game.channel, "Montpartasse", e));
