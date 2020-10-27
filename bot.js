@@ -71,7 +71,11 @@ client.on('guildMemberAdd', member => {
 			client.error(null, element.name, e);
 		}
 	});
-})
+});
+
+process.on('uncaughtException', function (err) {
+  client.error(null, "Unknown", err);
+});
 
 client.error = function(channel, name, error) {
 	console.error("Error caused by " + name + " module: ", error);
