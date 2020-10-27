@@ -102,7 +102,7 @@ class MainClass extends Base {
 						buffer.lastScore = e.score;
 						buffer.rank++;
 					}
-					buffer.message += this.getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + e.user.toString() + "\n";
+					buffer.message += this.getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + "\n";
 					return buffer;
 				}, {message: "", rank: 0, lastScore: Infinity}).message, true)
 				.addField("Scores", sorted.map(e => "**" + e.score + "** " + this.COLOR_EMOJIS.special.toString()).join("\n"), true)
