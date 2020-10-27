@@ -335,7 +335,7 @@ class Game {
 		}
 
 		for (var [k, e] of Object.entries(object.players)) {
-			var p = new Player(this.client.users.cache.get(e.user), this, true);
+			var p = new Player(await this.client.users.fetch(e.user, true, true), this, true);
 			p.score = e.score;
 			p.hand = e.hand.map(f => new Cups[f](this.mainclass, p));
 			p.handMessage = null;
