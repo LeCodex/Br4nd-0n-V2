@@ -1,5 +1,5 @@
-const {Client, MessageEmbed} = require('discord.js');
-const client = new Client();
+const {Client, MessageEmbed, Intents} = require('discord.js');
+const client = new Client({ ws: { intents: Intents.ALL } });
 const {MongoClient} = require("mongodb");
 
 require('dotenv').config();
@@ -15,7 +15,7 @@ client.modules = {};
 client.path = module.path;
 
 async function loadModules() {
-	console.log("MongoDB connected");
+	if (process.env.MONGO_DB_URL) console.log("MongoDB connected");
 
 	try {
 		const files = await fs.promises.readdir('./modules');
