@@ -181,7 +181,7 @@ class CactusCup extends Cup {
 	}
 
 	effect(game, index) {
-		if (game.stack.length - index === 1) {
+		if (game.stack.length === index) {
 			super.effect(game, index, "🌴 Il n'y a aucune autre tasse à percer... 🌴");
 		} else {
 			var cup = game.stack[index + 1];
