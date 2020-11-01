@@ -83,7 +83,7 @@ class BombCup extends Cup {
 	}
 
 	effect(game, index) {
-		if (game.stack.length === 1) {
+		if (index === game.stack.length) {
 			super.effect(game, index, "🧨 La Tasse Bombe n'a aucune tasse à faire exploser... 🧨");
 		} else {
 			var color = game.stack[index + 1].color;
@@ -157,7 +157,7 @@ class PaintCup extends Cup {
 	}
 
 	effect(game, index) {
-		if (game.stack.length - index == 1) {
+		if (game.stack.length === index) {
 			super.effect(game, index, "🌂 Il n'y avait pas de tasses à repeindre... 🌂");
 		} else {
 			var cup = game.stack[index + 1];
