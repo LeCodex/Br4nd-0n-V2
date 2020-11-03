@@ -139,7 +139,7 @@ class GoldenCup extends Cup {
 	}
 
 	effect(game, index) {
-		var messsage = game.players[game.lastPlayed].draw(game, 1);
+		var message = game.players[game.lastPlayed].draw(game, 1);
 		game.players[game.lastPlayed].sendHand(game, message);
 
 		super.effect(game, index, "⏫ " + game.players[game.lastPlayed].user.toString() + " a pioché une tasse! ⏫");
