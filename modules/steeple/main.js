@@ -80,12 +80,16 @@ class MainClass extends Base {
 				.addField("Joueurs", sorted.reduce((buffer, e) => {
 					if (e.score < buffer.lastScore) {
 						buffer.lastScore = e.score;
+						buffer.lastIndex = e.index;
+						buffer.rank++;
+					} else if (e.index < buffer.lastIndex) {
+						buffer.lastIndex = e.index;
 						buffer.rank++;
 					}
 					buffer.message += this.getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + "\n";
 					return buffer;
-				}, {message: "", rank: 0, lastScore: Infinity}).message, true)
-				.addField("Scores", sorted.map(e => "**" + e.score + "** 🔄").join("\n"), true)
+				}, {message: "", rank: 0, lastScore: Infinity, lastIndex: Infinity}).message, true)
+				.addField("Scores", sorted.map(e => "**" + e.score + "** 🔄 - **" + e.index + "** ⏺").join("\n"), true)
 			)
 		}
 
@@ -148,6 +152,21 @@ class MainClass extends Base {
 			if (this.pseudo_auth.includes(message.author.id)) {
 				var game = this.games[message.channel.id];
 				game.throwDice();
+			}
+
+			message.delete();
+		}
+	}
+
+	com_wait(message, args, kwargs) {
+		if (this.games[message.channel.id]) {
+			if (this.pseudo_auth.includes(message.author.id)) {
+				var game = this.games[message.channel.id];
+				game.waitDuration = Object.keys(kwargs).reduce((acc, element) => {
+					acc[element] = Number(kwargs[element]);
+					return acc;
+				}, {});
+				message.author.send("Wait duration now is " + game.waitDuration.minutes + " minutes and " + game.waitDuration.hours + " hours.");
 			}
 
 			message.delete();

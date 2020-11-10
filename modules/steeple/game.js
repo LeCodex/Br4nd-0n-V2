@@ -26,9 +26,14 @@ class Game {
 		this.lastTimestamp = DateTime.local().setZone("Europe/Paris");
 		this.enabled = Object.keys(Tiles).slice(1);
 		this.collector = null;
+		this.timeout = null;
 		this.gamerules = {
 			refillEmptyHands: false
 		};
+		this.waitDuration = {
+			minutes: 0,
+			hours: 1
+		}
 
 		if (message) {
 			this.channel = message.channel;
@@ -39,6 +44,16 @@ class Game {
 	start() {
 		this.generateBoard(60);
 		this.sendBoard();
+		this.setupTimeout();
+	}
+
+	setupTimeout() {
+		clearTimeout(this.timeout);
+		this.lastTimestamp = DateTime.local().setZone("Europe/Paris");
+		var nextHour = this.lastTimestamp.set({ second: 0 }).plus(this.waitDuration);
+		var time = nextHour.toMillis() - this.lastTimestamp.toMillis();
+
+		this.timeout = setTimeout(() => {this.throwDice()}, time);
 	}
 
 	generateBoard(size) {
@@ -69,10 +84,11 @@ class Game {
 				maxPlayers = Math.max(maxPlayers, lines.length);
 			}
 
-			var line = boardLine + "\n";
-			for (var j = 0; j < maxPlayers; j++) line += playerLines.map(e => e.length >= j + 1 ? e[j] : "⬛").join("") + "\n";
+			var line = "";
+			for (var j = maxPlayers; j > 0; j--) line += playerLines.map(e => e.length >= j ? e[j - 1] : "⬛").join("") + "\n";
+			line += boardLine;
 
-			board += line + "\n";
+			board += line + "\n\n";
 		}
 
 		// var board = this.board.map((e, index) =>
@@ -87,7 +103,7 @@ class Game {
 		var nbPlayersPerLine = 2;
 		if (this.order.length) {
 			embed.addField(
-				"Ordre (réagissez à ce message pour changer de pion)",
+				"Ordre",
 				this.order.map((e, i) => (this.players[e].pushedBackUpOnce ? "" : "**") + (i + 1) + "." + (this.players[e].pushedBackUpOnce ? " " : "** ") + this.players[e].user.toString() + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")).join("")
 			);
 		}
@@ -164,11 +180,13 @@ class Game {
 
 			this.summary.push({
 				message: ""
-			})
+			});
 		});
 
-		this.sendBoard("Dernier lancer: " + (diceResult + 1));
-		// this.sendOrder();
+		this.boardMessage = null;
+		this.sendBoard();
+
+		this.setupTimeout();
 	}
 
 	deleteBoardMessage() {
