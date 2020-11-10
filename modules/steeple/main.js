@@ -51,7 +51,7 @@ class MainClass extends Base {
 				} else {
 					var index = game.order.indexOf(message.author.id);
 					game.order.splice(index, 1);
-					if (index === 1) {
+					if (index === 0) {
 						game.order.push(message.author.id);
 					} else {
 						game.order.unshift(message.author.id);
