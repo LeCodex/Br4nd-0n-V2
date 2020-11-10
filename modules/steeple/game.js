@@ -51,7 +51,7 @@ class Game {
 		clearTimeout(this.timeout);
 		this.lastTimestamp = DateTime.local().setZone("Europe/Paris");
 		var nextHour = this.lastTimestamp;
-		if (this.waitDuration.hours) nextHour.set({ minute: 0 });
+		if (!this.waitDuration.minutes) nextHour.set({ minute: 0 });
 		nextHour = nextHour.set({ second: 0 }).plus(this.waitDuration);
 		var time = nextHour.toMillis() - this.lastTimestamp.toMillis();
 
