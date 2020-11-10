@@ -42,6 +42,11 @@ class Player {
 				message: "🏅 **" + this.user.toString() + " gagne 1 point!**",
 				persistent: false
 			});
+
+			game.channel.send(
+				new MessageEmbed()
+				.setDescription("🏅 **" + this.user.toString() + " a gagné 1 point!**")
+			);
 		} else if (this.index < 0) {
 			this.index += game.board.length;
 			this.score --;
@@ -49,6 +54,11 @@ class Player {
 				message: "❌ **" + this.user.toString() + " perd 1 point!**",
 				persistent: false
 			});
+
+			game.channel.send(
+				new MessageEmbed()
+				.setDescription("❌ **" + this.user.toString() + " a perdu 1 point!**")
+			);
 		}
 
 		this.effects = this.effects.filter(e => !e.used);

@@ -88,7 +88,7 @@ class Game {
 		if (this.order.length) {
 			embed.addField(
 				"Ordre (réagissez à ce message pour changer de pion)",
-				this.order.map((e, i) => (i + 1) + ". " + this.players[e].user.toString() + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")).join("")
+				this.order.map((e, i) => (this.players[e].pushedBackUpOnce ? "" : "**") + (i + 1) + "." + (this.players[e].pushedBackUpOnce ? " " : "** ") + this.players[e].user.toString() + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")).join("")
 			);
 		}
 

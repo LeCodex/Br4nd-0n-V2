@@ -96,7 +96,7 @@ class Cart extends Tile {
 
 	effect(game, player, index) {
 		game.summary.push({
-			message: "🛒" + player.user.toString() + " s'est installé dans le caddie, et attend son prochain mouvement"
+			message: "🛒" + player.user.toString() + " s'est installé dans le caddie"
 		});
 
 		player.addEffect(game, {
@@ -135,7 +135,7 @@ class Carousel extends Tile {
 
 		if (target) {
 			game.summary.push({
-				message: "🎠" + player.user.toString() + " a pris le carousel et a rejoint " + target.user.toString()
+				message: "🎠" + player.user.toString() + " prend le carousel pour rejoindre " + target.user.toString() + "!"
 			});
 
 			player.move(game, target.index - player.index);
@@ -162,10 +162,10 @@ class BusStop extends Tile {
 		if (stops.length) {
 			var stop = stops[Math.floor(Math.random() * stops.length)];
 			var stopIndex = game.board.indexOf(stop);
-			var distance = Math.abs(stopIndex - player.index)
+			var distance = stopIndex - player.index;
 
 			game.summary.push({
-				message: "🚏" + player.user.toString() + " a pris le bus sur " + distance + (distance > 1 ? " cases" : " case")
+				message: "🚏" + player.user.toString() + " a pris le bus sur " + Math.abs(distance) + (Math.abs(distance) > 1 ? " cases" : " case") + (distance > 0 ? " en avant" : " en arrière")
 			});
 
 			player.index = stopIndex;

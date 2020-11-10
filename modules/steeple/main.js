@@ -15,7 +15,7 @@ class MainClass extends Base {
 			"show": "Redescends le message d'info de la partie"
 		};
 		this.commandText = "steeple";
-		this.color = 0xF0486B;
+		this.color = 0xC1694F;
 		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
 
 		// this.load("games", { games : {}, debug: false }).then(object => {
@@ -47,7 +47,7 @@ class MainClass extends Base {
 				var player = game.players[message.author.id];
 
 				if (player.pushedBackUpOnce) {
-					message.author.send("Vous avez déjà été remonté, attendez le prochain lancer");
+					message.author.send("Vous avez déjà été déplacé dans l'ordre, attendez le prochain lancer");
 				} else {
 					var index = game.order.indexOf(message.author.id);
 					game.order.splice(index, 1);
@@ -88,6 +88,8 @@ class MainClass extends Base {
 				.addField("Scores", sorted.map(e => "**" + e.score + "** 🔄").join("\n"), true)
 			)
 		}
+
+		message.delete();
 	}
 
 	com_show(message, args, kwargs) {
@@ -96,6 +98,8 @@ class MainClass extends Base {
 			game.deleteBoardMessage();
 			game.sendBoard();
 		}
+
+		message.delete();
 	}
 
 	com_start(message, args, kwargs) {
