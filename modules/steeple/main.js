@@ -47,10 +47,15 @@ class MainClass extends Base {
 				var player = game.players[message.author.id];
 
 				if (player.pushedBackUpOnce) {
-					//message.reply("Vous avez déjà été remonté, attendez le prochain lancer");
+					message.author.send("Vous avez déjà été remonté, attendez le prochain lancer");
 				} else {
-					game.order.splice(game.order.indexOf(message.author.id), 1);
-					game.order.unshift(message.author.id);
+					var index = game.order.indexOf(message.author.id);
+					game.order.splice(index, 1);
+					if (index === 1) {
+						game.order.push(message.author.id);
+					} else {
+						game.order.unshift(message.author.id);
+					}
 
 					player.pushedBackUpOnce = true;
 
