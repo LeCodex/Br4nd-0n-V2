@@ -77,6 +77,10 @@ process.on('uncaughtException', function (err) {
   client.error(null, "Unknown", err);
 });
 
+process.on('unhandledRejection', function (err) {
+  client.error(null, "Unknown", err);
+});
+
 client.error = function(channel, name, error) {
 	console.error("Error caused by " + name + " module: ", error);
 	embed = new MessageEmbed()
