@@ -119,7 +119,7 @@ class Carousel extends Tile {
 	constructor(mainclass) {
 		super(mainclass, "0", "🎠");
 
-		this.name = "Carousel";
+		this.name = "Carrousel";
 		this.description = "Rejoint le joueur le plus proche"
 	}
 
@@ -135,7 +135,7 @@ class Carousel extends Tile {
 
 		if (target) {
 			game.summary.push({
-				message: "🎠" + player.user.toString() + " prend le carousel pour rejoindre " + target.user.toString() + "!"
+				message: "🎠" + player.user.toString() + " prend le carrousel pour rejoindre " + target.user.toString() + "!"
 			});
 
 			player.move(game, target.index - player.index);
@@ -219,19 +219,21 @@ class Dynamite extends Tile {
 		player.addEffect(game, {
 			name: "🧨 Sous Pression 🧨",
 			index: index,
-			postMove: function(game, player, index) {
+			turnEnd: function(game, player, index) {
 				this.used = true;
 
 				if (index === this.index) {
 					game.summary.push({
-						message: "💥 PAF! " + player.user.toString() + " est resté trop longtemps au même endroit!"
+						message: "💥 BOUM! " + player.user.toString() + " est resté trop longtemps au même endroit!"
 					});
-					
+
 					var amount = -Math.floor(Math.random() * 11 + 2);
 					player.move(amount);
+				} else {
+					game.summary.push({
+						message: "🧨 " + player.user.toString() + " a bougé à temps"
+					});
 				}
-
-				return true;
 			}
 		});
 	}

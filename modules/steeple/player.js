@@ -68,6 +68,10 @@ class Player {
 		if (place > result) return;
 
 		this.move(game, place + 1);
+
+		this.effects.forEach(element => {
+			if (element.turnEnd) element.turnEnd(game, this, this.index);
+		});
 		this.effects = this.effects.filter(e => !e.used);
 	}
 
