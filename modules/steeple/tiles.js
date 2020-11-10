@@ -189,13 +189,13 @@ class Box extends Tile {
 	effect(game, player, index) {
 		var playersOn = Object.values(game.players).filter(e => e.index === index);
 
-		if (playersOn.length > 3) {
+		if (playersOn.length > 1) {
 			game.summary.push({
-				message: "💥 La boîte en carton a cassé! " + playersOn.slice(1).map(e => e.user.toString()).join(", ") + " et " + playerOn[0].user.toString() + " vont devoir reculer!"
+				message: "💫 La boîte en carton a cassé!"
 			});
 
 			playersOn.forEach(element => {
-				var amount = -Math.floor(Math.random() * 10 + 2);
+				var amount = -Math.floor(Math.random() * 11 + 2);
 				element.move(amount);
 			});
 		} else {
@@ -207,4 +207,63 @@ class Box extends Tile {
 }
 
 
-module.exports = exports = { Chair, Cactus, Fountain, Couch, Cart, Carousel, BusStop, Box }
+class Dynamite extends Tile {
+	constructor(mainclass) {
+		super(mainclass, "0", "🧨");
+
+		this.name = "Dynamite";
+		this.description = "Si tu restes dessus pendant un tour complet, elle explose et tu recules de 2d6 cases"
+	}
+
+	effect(game, player, index) {
+		player.addEffect(game, {
+			name: "🧨 Sous Pression 🧨",
+			index: index,
+			postMove: function(game, player, index) {
+				this.used = true;
+
+				if (index === this.index) {
+					game.summary.push({
+						message: "💥 PAF! " + player.user.toString() + " est resté trop longtemps au même endroit!"
+					});
+					
+					var amount = -Math.floor(Math.random() * 11 + 2);
+					player.move(amount);
+				}
+
+				return true;
+			}
+		});
+	}
+}
+
+
+class Bathtub extends Tile {
+	constructor(mainclass) {
+		super(mainclass, "0", "🛁");
+
+		this.name = "Baignoire";
+		this.description = "Empêche le prochain effet de s'activer"
+	}
+
+	effect(game, player, index) {
+		player.addEffect(game, {
+			name: "🧼 Propre 🧼",
+			postMove: function(game, player, index) {
+				if (game.board[index].effect) {
+					game.summary.push({
+						message: "🧼 " + player.user.toString() + " n'active pas l'effet grâce à sa douche"
+					});
+					this.used = true;
+
+					return false;
+				}
+
+				return true;
+			}
+		});
+	}
+}
+
+
+module.exports = exports = { Chair, Cactus, Fountain, Couch, Cart, Carousel, BusStop, Box, Dynamite, Bathtub }

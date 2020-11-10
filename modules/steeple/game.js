@@ -25,6 +25,7 @@ class Game {
 		this.boardMessage = null;
 		this.lastTimestamp = DateTime.local().setZone("Europe/Paris");
 		this.enabled = Object.keys(Tiles).slice(1);
+		this.turn = 1;
 		this.collector = null;
 		this.timeout = null;
 		this.gamerules = {
@@ -71,7 +72,7 @@ class Game {
 
 	async sendBoard(message) {
 		var board = "";
-		var lineSize = 15;
+		var lineSize = 12;
 		for (var i = 0; i < Math.ceil(this.board.length / lineSize); i++) {
 			var boardLine = "";
 			var playerLines = [];
@@ -100,12 +101,13 @@ class Game {
 			.setTitle("[STEEPLE CHAISE] " + (message ? message : "Plateau"))
 			.setDescription(board)
 			.setColor(this.mainclass.color)
+			.setFooter("Tour #" + this.turn)
 
 		var nbPlayersPerLine = 2;
 		if (this.order.length) {
 			embed.addField(
 				"Ordre",
-				this.order.map((e, i) => (this.players[e].pushedBackUpOnce ? "" : "**") + (i + 1) + "." + (this.players[e].pushedBackUpOnce ? " " : "** ") + this.players[e].user.toString() + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")).join("")
+				this.order.map((e, i) => (i + 1) + ". " + (this.players[e].pushedBackUpOnce ? "" : "*") + this.players[e].user.toString() + (this.players[e].pushedBackUpOnce ? "" : "*")  + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")).join("")
 			);
 		}
 
@@ -184,7 +186,10 @@ class Game {
 			});
 		});
 
+		// this.sendBoard();
+
 		this.boardMessage = null;
+		this.turn++;
 		this.sendBoard();
 
 		this.setupTimeout();

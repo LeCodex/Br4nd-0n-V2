@@ -38,6 +38,7 @@ class Player {
 		if (this.index >= game.board.length) {
 			this.index -= game.board.length;
 			this.score ++;
+
 			game.summary.push({
 				message: "🏅 **" + this.user.toString() + " gagne 1 point!**",
 				persistent: false
@@ -45,15 +46,21 @@ class Player {
 		} else if (this.index < 0) {
 			this.index += game.board.length;
 			this.score --;
+
 			game.summary.push({
 				message: "❌ **" + this.user.toString() + " perd 1 point!**",
 				persistent: false
 			});
 		}
 
+		var canTriggerEffect = true;
+		this.effects.forEach(element => {
+			if (element.postMove) canTriggerEffect = element.postMove(game, this, this.index) && canTriggerEffect;
+		});
+
 		this.effects = this.effects.filter(e => !e.used);
 
-		if (game.board[this.index].effect) game.board[this.index].effect(game, this, this.index);
+		if (game.board[this.index].effect && canTriggerEffect) game.board[this.index].effect(game, this, this.index);
 	}
 
 	turn(game, result) {

@@ -71,7 +71,7 @@ class MainClass extends Base {
 	com_rank(message, args, kwargs) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
-			var sorted = Object.values(game.players).sort((a, b) => b.score - a.score);
+			var sorted = Object.values(game.players).sort((a, b) => b.score != a.score ? b.score - a.score : b.index - a.index);
 
 			message.reply(
 				new MessageEmbed()
@@ -89,7 +89,7 @@ class MainClass extends Base {
 					buffer.message += this.getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + "\n";
 					return buffer;
 				}, {message: "", rank: 0, lastScore: Infinity, lastIndex: Infinity}).message, true)
-				.addField("Scores", sorted.map(e => "**" + e.score + "** 🔄 - **" + e.index + "** ⏺").join("\n"), true)
+				.addField("Scores", sorted.map(e => "**" + e.score + "** 🔄 | **" + (e.index + 1) + "** 🪑").join("\n"), true)
 			)
 		}
 
