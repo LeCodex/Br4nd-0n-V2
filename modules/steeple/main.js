@@ -35,6 +35,8 @@ class MainClass extends Base {
 	}
 
 	command(message, args, kwargs) {
+		message.delete();
+
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
 			if (!game.order.includes(message.author.id)) {
@@ -50,12 +52,22 @@ class MainClass extends Base {
 					message.author.send("Vous avez déjà été déplacé dans l'ordre, attendez le prochain lancer");
 				} else {
 					var index = game.order.indexOf(message.author.id);
-					game.order.splice(index, 1);
+					var position = game.order.length;
 					if (index === 0) {
-						game.order.push(message.author.id);
-					} else {
-						game.order.unshift(message.author.id);
+						if (!args.length || isNaN(args[0])) {
+							message.author.send("En tant que premier joueur, précisez à quelle place vous voulez être ré-inséré");
+							return;
+						} else {
+							position = Number(args[0]);
+							if (position < 2 || position > game.order.length) {
+								message.author.send("Index invalide");
+								return;
+							}
+						}
 					}
+
+					game.order.splice(index, 1);
+					game.order.splice(args[0] - 1, 0, message.author.id);
 
 					player.pushedBackUpOnce = true;
 
@@ -63,8 +75,6 @@ class MainClass extends Base {
 					game.sendBoard();
 				}
 			}
-
-			message.delete();
 		}
 	}
 
@@ -101,6 +111,15 @@ class MainClass extends Base {
 			var game = this.games[message.channel.id];
 			game.deleteBoardMessage();
 			game.sendBoard();
+		}
+
+		message.delete();
+	}
+
+	com_logs(message, args, kwargs) {
+		if (this.games[message.channel.id]) {
+			var game = this.games[message.channel.id];
+			game.sendLogs(message.author);
 		}
 
 		message.delete();

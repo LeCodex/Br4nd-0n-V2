@@ -40,17 +40,23 @@ class Player {
 			this.score ++;
 
 			game.summary.push({
-				message: "🏅 **" + this.user.toString() + " gagne 1 point!**",
-				persistent: false
+				message: "🏅 **" + this.user.toString() + " a gagné 1 point!**"
 			});
 		} else if (this.index < 0) {
-			this.index += game.board.length;
-			this.score --;
+			if (this.score) {
+				this.index += game.board.length;
+				this.score --;
 
-			game.summary.push({
-				message: "❌ **" + this.user.toString() + " perd 1 point!**",
-				persistent: false
-			});
+				game.summary.push({
+					message: "❌ **" + this.user.toString() + " a perdu 1 point!**"
+				});
+			} else {
+				this.index = 0;
+
+				game.summary.push({
+					message: "↪ **" + this.user.toString() + " ne peut pas descendre en dessous de 0 point**"
+				});
+			}
 		}
 
 		var canTriggerEffect = true;

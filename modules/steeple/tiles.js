@@ -196,7 +196,7 @@ class Box extends Tile {
 
 			playersOn.forEach(element => {
 				var amount = -Math.floor(Math.random() * 11 + 2);
-				element.move(amount);
+				element.move(game, amount);
 			});
 		} else {
 			game.summary.push({
@@ -219,20 +219,25 @@ class Dynamite extends Tile {
 		player.addEffect(game, {
 			name: "🧨 Sous Pression 🧨",
 			index: index,
+			armed: false,
 			turnEnd: function(game, player, index) {
-				this.used = true;
+				if (this.armed) {
+					this.used = true;
 
-				if (index === this.index) {
-					game.summary.push({
-						message: "💥 BOUM! " + player.user.toString() + " est resté trop longtemps au même endroit!"
-					});
+					if (index === this.index) {
+						game.summary.push({
+							message: "💥 BOUM! " + player.user.toString() + " est resté trop longtemps au même endroit!"
+						});
 
-					var amount = -Math.floor(Math.random() * 11 + 2);
-					player.move(amount);
+						var amount = -Math.floor(Math.random() * 11 + 2);
+						player.move(game, amount);
+					} else {
+						game.summary.push({
+							message: "🧨 " + player.user.toString() + " a bougé à temps"
+						});
+					}
 				} else {
-					game.summary.push({
-						message: "🧨 " + player.user.toString() + " a bougé à temps"
-					});
+					this.armed = true;
 				}
 			}
 		});

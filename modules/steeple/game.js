@@ -21,11 +21,13 @@ class Game {
 		this.order = [];
 		this.players = {};
 		this.summary = [];
+		this.boards = [];
 		this.paused = false;
 		this.boardMessage = null;
 		this.lastTimestamp = DateTime.local().setZone("Europe/Paris");
 		this.enabled = Object.keys(Tiles).slice(1);
 		this.turn = 1;
+		this.maxBoards = 20;
 		this.collector = null;
 		this.timeout = null;
 		this.gamerules = {
@@ -70,7 +72,7 @@ class Game {
 		this.board = shuffle(this.board);
 	}
 
-	async sendBoard(message) {
+	async sendBoard(save = false) {
 		var board = "";
 		var lineSize = 12;
 		for (var i = 0; i < Math.ceil(this.board.length / lineSize); i++) {
@@ -98,26 +100,9 @@ class Game {
 		// ).join("\n")
 
 		var embed = new MessageEmbed()
-			.setTitle("[STEEPLE CHAISE] " + (message ? message : "Plateau"))
-			.setDescription(board)
+			.setTitle("Steeple Chaise")
 			.setColor(this.mainclass.color)
 			.setFooter("Tour #" + this.turn)
-
-		var nbPlayersPerLine = 2;
-		if (this.order.length) {
-			embed.addField(
-				"Ordre",
-				this.order.map((e, i) => (i + 1) + ". " + (this.players[e].pushedBackUpOnce ? "" : "*") + this.players[e].user.toString() + (this.players[e].pushedBackUpOnce ? "" : "*")  + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")).join("")
-			);
-		}
-
-		var activeEffects = Object.values(this.players).filter(e => e.effects.length).map(e => e.user.toString() + ": " + e.effects.map(f => f.name).join(", ")).join("\n")
-		if (activeEffects.length) {
-			embed.addField(
-				"Effets actifs",
-				activeEffects
-			);
-		}
 
 		if (this.summary.length) {
 			var totalLength = 0;
@@ -135,14 +120,44 @@ class Game {
 				}
 				field.value += element.message + "\n";
 			});
-			embed.addFields(field);
+			if (field.value.length) embed.addFields(field);
 		}
 
+		var activeEffects = Object.values(this.players).filter(e => e.effects.length).map(e => e.user.toString() + ": " + e.effects.map(f => f.name).join(", ")).join("\n")
+		if (activeEffects.length) {
+			embed.addField(
+				"Effets actifs",
+				activeEffects
+			);
+		}
+
+		var nbPlayersPerLine = 2;
+		if (this.order.length) {
+			embed.addField(
+				"Ordre",
+				this.order.map((e, i) => (i + 1) + ". " + (this.players[e].pushedBackUpOnce ? "" : "*") + this.players[e].user.toString() + (this.players[e].pushedBackUpOnce ? "" : "*")  + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")).join("")
+			);
+		}
+
+		embed.addField("Plateau", board);
+
 		if (this.boardMessage) {
-			this.boardMessage.edit(embed);
+			var length = this.channel.messages.cache.keyArray().length
+			if (length - this.channel.messages.cache.keyArray().indexOf(this.boardMessage.id) > 10) {
+				this.deleteBoardMessage();
+				this.boardMessage = await this.channel.send(embed);
+				this.setupReactionCollector();
+			} else {
+				this.boardMessage.edit(embed);
+			};
 		} else {
 			this.boardMessage = await this.channel.send(embed);
 			this.setupReactionCollector();
+		}
+
+		if (save) {
+			this.boards.unshift(embed);
+			if (this.boards.length > this.maxBoards) this.boards.pop();
 		}
 	}
 
@@ -168,11 +183,6 @@ class Game {
 		});
 	}
 
-	clearReactionCollector() {
-		if (this.boardMessage) this.boardMessage.reactions.removeAll();
-		if (this.collector) this.collector.stop();
-	}
-
 	throwDice() {
 		this.summary = this.summary.filter(e => e.permanent);
 		var diceResult = Math.floor(Math.random() * this.order.length);
@@ -188,11 +198,15 @@ class Game {
 
 		// this.sendBoard();
 
-		this.boardMessage = null;
 		this.turn++;
-		this.sendBoard();
+		this.sendBoard(true);
 
 		this.setupTimeout();
+	}
+
+	clearReactionCollector() {
+		if (this.boardMessage) this.boardMessage.reactions.removeAll();
+		if (this.collector) this.collector.stop();
 	}
 
 	deleteBoardMessage() {
@@ -201,6 +215,41 @@ class Game {
 			this.boardMessage = null;
 		}
 		this.clearReactionCollector();
+	}
+
+	async sendLogs(user) {
+		var logMessage = await user.send(this.boards[0]);
+		var currentLogIndex = 0;
+
+		var emojis = ["⬅", "➡️", "❌"];
+		for (var emoji of emojis) { await logMessage.react(emoji); }
+		var privateCollector = logMessage.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name), { idle: 300000 });
+
+		privateCollector.on('collect', (reaction, user) => {
+			try {
+				var index = emojis.indexOf(reaction.emoji.name);
+				switch(index) {
+					case 0:
+						currentLogIndex = Math.min(currentLogIndex + 1, this.boards.length - 1);
+						break;
+					case 1:
+						currentLogIndex = Math.max(currentLogIndex - 1, 0);
+						break;
+					case 2:
+						privateCollector.stop();
+						return;
+				}
+
+				console.log(currentLogIndex);
+				logMessage.edit(this.boards[currentLogIndex]);
+			} catch (e) {
+				this.client.error(this.channel, "Steeple Chaise", e);
+			}
+		});
+
+		privateCollector.on('end', () => {
+			logMessage.delete();
+		});
 	}
 }
 
