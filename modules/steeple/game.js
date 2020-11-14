@@ -180,6 +180,7 @@ class Game {
 				if (player) {
 					player.emoji = reaction.emoji;
 					this.sendBoard();
+					this.save();
 				}
 
 				reaction.users.remove(user);

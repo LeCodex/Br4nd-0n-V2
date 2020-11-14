@@ -44,6 +44,7 @@ class MainClass extends Base {
 
 				//message.reply("Vous avez été rejoint la partie. Vous êtes placé à la " + game.order.length + (game.order.length == 1 ? "ère" : "ème") + " place dans l'ordre");
 				game.sendBoard();
+				game.save();
 			} else {
 				var player = game.players[message.author.id];
 
