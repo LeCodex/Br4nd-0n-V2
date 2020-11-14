@@ -210,7 +210,7 @@ class Base {
 		}
 
 		if (process.env.MONGO_DB_URL) {
-			return await this.client.mongo.db(this.name.toLowerCase()).collection(name).findOne();
+			return await this.client.mongo.db(this.name.toLowerCase().replace(" ", "_")).collection(name).findOne();
 		} else {
 			var string = fs.readFileSync(this._getSavePath() + name + ".json");
 			return JSON.parse(string);
