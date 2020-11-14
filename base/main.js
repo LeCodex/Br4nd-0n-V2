@@ -171,7 +171,7 @@ class Base {
 	 */
 	async saveExists(name) {
 		if (process.env.MONGO_DB_URL) {
-			return await this.client.mongo.db(this.name.toLowerCase()).listCollections({name: name}).hasNext();
+			return await this.client.mongo.db(this.name.toLowerCase().replace(" ", "_")).listCollections({name: name}).hasNext();
 		} else {
 			return fs.existsSync(this._getSavePath() + name + ".json");
 		}
@@ -185,7 +185,7 @@ class Base {
 	 */
 	async save(name, data) {
 		if (process.env.MONGO_DB_URL) {
-			const collection = this.client.mongo.db(this.name.toLowerCase()).collection(name);
+			const collection = this.client.mongo.db(this.name.toLowerCase().replace(" ", "_")).collection(name);
 			await collection.replaceOne({}, data, { upsert: true });
 			console.log(this.name + " Database Saved");
 		} else {
