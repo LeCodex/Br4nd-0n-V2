@@ -18,15 +18,14 @@ class MainClass extends Base {
 		this.color = 0xC1694F;
 		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
 
-		// this.load("games", { games : {}, debug: false }).then(object => {
-		// 	this.games = {};
-		// 	for (var [channel_id, object] of Object.entries(object.games)) {
-		// 		this.games[channel_id] = new Game(this)
-		// 		this.games[channel_id].reload(object);
-		// 	}
-		// 	this.debug = object.debug;
-		// });
-		this.games = {};
+		this.load("games", { games : {}, debug: false }).then(object => {
+			this.games = {};
+			for (var [channel_id, object] of Object.entries(object.games)) {
+				this.games[channel_id] = new Game(this)
+				this.games[channel_id].reload(object);
+			}
+			this.debug = object.debug;
+		});
 	}
 
 	getRankEmoji(rank) {
@@ -52,7 +51,7 @@ class MainClass extends Base {
 					message.author.send("Vous avez déjà été déplacé dans l'ordre, attendez le prochain lancer");
 				} else {
 					var index = game.order.indexOf(message.author.id);
-					var position = game.order.length;
+					var position = 1;
 					if (index === 0) {
 						if (!args.length || isNaN(args[0])) {
 							message.author.send("En tant que premier joueur, précisez à quelle place vous voulez être ré-inséré");
@@ -67,7 +66,7 @@ class MainClass extends Base {
 					}
 
 					game.order.splice(index, 1);
-					game.order.splice(args[0] - 1, 0, message.author.id);
+					game.order.splice(position - 1, 0, message.author.id);
 
 					player.pushedBackUpOnce = true;
 
@@ -148,7 +147,7 @@ class MainClass extends Base {
 	com_delete(message, args, kwargs) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
-				// this.games[message.channel.id].delete_save();
+				this.games[message.channel.id].delete_save();
 				delete this.games[message.channel.id];
 				message.reply("Deleted");
 			};
@@ -158,11 +157,11 @@ class MainClass extends Base {
 	com_debug(message, args, kwargs) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			this.debug = !this.debug
-			// this.load("games").then(object =>{
-			// 	object.debug = this.debug;
-			// 	this.save("games", object);
-			// 	message.reply(this.debug);
-			// });
+			this.load("games").then(object =>{
+				object.debug = this.debug;
+				this.save("games", object);
+				message.reply(this.debug);
+			});
 		}
 	}
 
@@ -185,6 +184,8 @@ class MainClass extends Base {
 					acc[element] = Number(kwargs[element]);
 					return acc;
 				}, {});
+				game.save();
+
 				message.author.send("Wait duration now is " + game.waitDuration.minutes + " minutes and " + game.waitDuration.hours + " hours.");
 			}
 

@@ -1,3 +1,5 @@
+const Effects = require("./effects.js");
+
 class Tile {
 	constructor(mainclass, id, fallback) {
 		this.emoji = mainclass.client.emojis.cache.get(id) || fallback;
@@ -71,17 +73,7 @@ class Couch extends Tile {
 			message: "🛋️" + player.user.toString() + " est arrivé sur un canapé, et va vouloir y rester..️."
 		});
 
-		player.addEffect(game, {
-			name: "💤 Confortable 💤",
-			tryToMove: function(game, player, index) {
-				game.summary.push({
-					message: "💤 ️Le canapé est trop confortable pour que " + player.user.toString() + " en parte..."
-				});
-				this.used = true;
-
-				return false;
-			}
-		});
+		player.addEffect(game, new Effects.Comfortable());
 	}
 }
 
@@ -99,18 +91,7 @@ class Cart extends Tile {
 			message: "🛒" + player.user.toString() + " s'est installé dans le caddie"
 		});
 
-		player.addEffect(game, {
-			name: "⏩ Préparé ⏩",
-			preMove: function(game, player, index, amount) {
-				this.used = true;
-
-				game.summary.push({
-					message: "⏩ ️Zoom! " + player.user.toString() + " est allé deux fois plus loin grâce au caddie!"
-				});
-
-				return 2 * amount;
-			}
-		});
+		player.addEffect(game, new Effects.Prepared());
 	}
 }
 
@@ -216,31 +197,7 @@ class Dynamite extends Tile {
 	}
 
 	effect(game, player, index) {
-		player.addEffect(game, {
-			name: "🧨 Sous Pression 🧨",
-			index: index,
-			armed: false,
-			turnEnd: function(game, player, index) {
-				if (this.armed) {
-					this.used = true;
-
-					if (index === this.index) {
-						game.summary.push({
-							message: "💥 BOUM! " + player.user.toString() + " est resté trop longtemps au même endroit!"
-						});
-
-						var amount = -Math.floor(Math.random() * 11 + 2);
-						player.move(game, amount);
-					} else {
-						game.summary.push({
-							message: "🧨 " + player.user.toString() + " a bougé à temps"
-						});
-					}
-				} else {
-					this.armed = true;
-				}
-			}
-		});
+		player.addEffect(game, new Effects.Pressured({ index: index, armed: false }));
 	}
 }
 
@@ -254,21 +211,7 @@ class Bathtub extends Tile {
 	}
 
 	effect(game, player, index) {
-		player.addEffect(game, {
-			name: "🧼 Propre 🧼",
-			postMove: function(game, player, index) {
-				if (game.board[index].effect) {
-					game.summary.push({
-						message: "🧼 " + player.user.toString() + " n'active pas l'effet grâce à sa douche"
-					});
-					this.used = true;
-
-					return false;
-				}
-
-				return true;
-			}
-		});
+		player.addEffect(game, new Effects.Clean());
 	}
 }
 

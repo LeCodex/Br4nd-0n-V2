@@ -2,6 +2,7 @@ const {MessageEmbed} = require('discord.js');
 const {DateTime} = require('luxon');
 const Tiles = require('./tiles.js');
 const Player = require('./player.js');
+const Effects = require('./effects.js');
 
 function shuffle(a) {
 	for (let i = a.length - 1; i > 0; i--) {
@@ -30,9 +31,7 @@ class Game {
 		this.maxBoards = 20;
 		this.collector = null;
 		this.timeout = null;
-		this.gamerules = {
-			refillEmptyHands: false
-		};
+		this.gamerules = {};
 		this.waitDuration = {
 			minutes: 0,
 			hours: 1
@@ -44,14 +43,21 @@ class Game {
 		}
 	}
 
-	start() {
+	async start() {
 		this.generateBoard(60);
-		this.sendBoard();
+		await this.sendBoard(true);
+		this.setupTimeout();
+		this.save();
+	}
+
+	reload(object) {
+		this.parse(object);
 		this.setupTimeout();
 	}
 
 	setupTimeout() {
-		clearTimeout(this.timeout);
+		if (this.timeout) clearTimeout(this.timeout);
+
 		this.lastTimestamp = DateTime.local().setZone("Europe/Paris");
 		var nextHour = this.lastTimestamp.plus(this.waitDuration).set({ second: 0 });
 		if (!this.waitDuration.minutes) nextHour = nextHour.set({ minute: 0 });
@@ -202,6 +208,7 @@ class Game {
 		this.sendBoard(true);
 
 		this.setupTimeout();
+		this.save();
 	}
 
 	clearReactionCollector() {
@@ -249,6 +256,91 @@ class Game {
 
 		privateCollector.on('end', () => {
 			logMessage.delete();
+		});
+	}
+
+	serialize() {
+		var object = {
+			channel: this.channel.id,
+			players: {},
+			boardMessage: this.boardMessage ? this.boardMessage.id : null,
+			paused: this.paused,
+			lastTimestamp: this.lastTimestamp.toMillis(),
+			gamerules: this.gamerules,
+			board: this.board.map(e => e.constructor.name),
+			order: this.order,
+			summary: this.summary,
+			boards: this.boards.map(e => e.toJSON()),
+			enabled: this.enabled,
+			turn: this.turn,
+			waitDuration: this.waitDuration
+		};
+
+		for (var [k, e] of Object.entries(this.players)) {
+			object.players[k] = {
+				score: Number(e.score),
+				user: e.user.id,
+				effects: e.effects.map(f => {
+					return {
+						name: f.constructor.name,
+						data: f.data
+					};
+				}),
+				pushedBackUpOnce: e.pushedBackUpOnce,
+				index: e.index,
+				emoji: e.emoji.id ? e.emoji.id : e.emoji.name
+			}
+		}
+
+		return object;
+	}
+
+	async parse(object) {
+		this.channel = await this.client.channels.fetch(object.channel);
+		this.players = {};
+		this.paused = object.paused;
+		this.enabled = object.enabled;
+		this.gamerules = object.gamerules;
+		this.waitDuration = object.waitDuration;
+		this.summary = object.summary;
+		this.boards = object.boards.map(e => new MessageEmbed(e));
+		this.turn = object.turn
+		this.order = object.order
+		this.boardMessage = null;
+		if (object.boardMessage) {
+			this.boardMessage = await this.channel.messages.fetch(object.boardMessage).catch(e => this.client.error(this.channel, "Steeple", e));
+			await this.channel.messages.fetch({ after: object.boardMessage }).catch(e => this.client.error(this.channel, "Steeple", e));
+			this.setupReactionCollector();
+		}
+
+		for (var [k, e] of Object.entries(object.players)) {
+			var p = new Player(await this.client.users.fetch(e.user, true, true), this, true);
+			p.score = e.score;
+			p.effects = e.effects.map(f => new Effects[f.name](f.data));
+			p.pushedBackUpOnce = e.pushedBackUpOnce;
+			p.index = e.index
+			p.emoji = e.emoji
+
+			this.players[k] = p;
+		};
+
+		this.board = object.board.map(e => new Tiles[e](this.mainclass));
+		this.lastTimestamp = object.lastTimestamp ? DateTime.fromMillis(object.lastTimestamp).setZone("Europe/Paris") : this.lastTimestamp;
+	}
+
+	save() {
+		this.mainclass.load("games").then(object => {
+			object.games[this.channel.id] = this.serialize();
+			this.mainclass.save("games", object);
+		});
+	}
+
+	delete_save() {
+		this.clearReactionCollector();
+		clearTimeout(this.timeout);
+		this.mainclass.load("games").then(object => {
+			delete object.games[this.channel.id];
+			this.mainclass.save("games", object);
 		});
 	}
 }

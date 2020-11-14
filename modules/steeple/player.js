@@ -71,9 +71,7 @@ class Player {
 
 	turn(game, result) {
 		var place = game.order.indexOf(this.user.id);
-		if (place > result) return;
-
-		this.move(game, place + 1);
+		if (place <= result) this.move(game, place + 1);
 
 		this.effects.forEach(element => {
 			if (element.turnEnd) element.turnEnd(game, this, this.index);
