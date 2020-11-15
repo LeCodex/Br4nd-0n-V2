@@ -66,7 +66,7 @@ class Player {
 
 		this.effects = this.effects.filter(e => !e.used);
 
-		if (game.board[this.index].effect && canTriggerEffect) game.board[this.index].effect(game, this, this.index);
+		if (game.board[this.index].effect && canTriggerEffect) game.board[this.index].effect(game, this, this.index, amount);
 	}
 
 	turn(game, result) {

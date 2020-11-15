@@ -29,14 +29,15 @@ class Cactus extends Tile {
 		super(mainclass, "0", "🌵");
 
 		this.name = "Cactus";
-		this.description = "Empêche le mouvement sur cete case"
+		this.description = "Empêche le mouvement sur cette case"
 	}
 
-	tryToMove(game, player, index) {
+	effect(game, player, index, amount) {
 		game.summary.push({
-			message: "🌵" + player.user.toString() + " a refusé d'aller s'asseoir sur un cactus. Compréhensible."
+			message: "🌵" + player.user.toString() + " a refusé d'aller s'asseoir sur un cactus et est revenu en arrière."
 		});
-		return false;
+
+		player.index -= amount;
 	}
 }
 
@@ -49,12 +50,12 @@ class Fountain extends Tile {
 		this.description = "Te fais reculer de 1d6 cases"
 	}
 
-	effect(game, player, index) {
+	effect(game, player, index, amount) {
 		game.summary.push({
 			message: "💦 ️Splash! " + player.user.toString() + " est tombé dans la fontaine!"
 		});
 
-		var amount = -Math.floor(Math.random() * 6 + 1);
+		var rndAmount = -Math.floor(Math.random() * 6 + 1);
 		player.move(game, amount);
 	}
 }
@@ -68,7 +69,7 @@ class Couch extends Tile {
 		this.description = "Annule ton prochain mouvement"
 	}
 
-	effect(game, player, index) {
+	effect(game, player, index, amount) {
 		game.summary.push({
 			message: "🛋️" + player.user.toString() + " est arrivé sur un canapé, et va vouloir y rester..️."
 		});
@@ -86,7 +87,7 @@ class Cart extends Tile {
 		this.description = "Double ton prochain mouvement"
 	}
 
-	effect(game, player, index) {
+	effect(game, player, index, amount) {
 		game.summary.push({
 			message: "🛒" + player.user.toString() + " s'est installé dans le caddie"
 		});
@@ -104,7 +105,7 @@ class Carousel extends Tile {
 		this.description = "Rejoint le joueur le plus proche"
 	}
 
-	effect(game, player, index) {
+	effect(game, player, index, amount) {
 		var target = Object.values(game.players).reduce((acc, element) => {
 			var dist = Math.abs(element.index - player.index);
 			if (dist < acc.minDist && element != player) {
@@ -137,7 +138,7 @@ class BusStop extends Tile {
 		this.description = "Te téléporte à un autre 🚏 aléatoire"
 	}
 
-	effect(game, player, index) {
+	effect(game, player, index, amount) {
 		var stops = game.board.filter((e, i) => e.constructor.name === this.constructor.name && i != index);
 
 		if (stops.length) {
@@ -167,7 +168,7 @@ class Box extends Tile {
 		this.description = "Si plus de 3 joueurs sont dessus, ils doivent tous reculer de 2d6 cases"
 	}
 
-	effect(game, player, index) {
+	effect(game, player, index, amount) {
 		var playersOn = Object.values(game.players).filter(e => e.index === index);
 
 		if (playersOn.length > 1) {
@@ -176,7 +177,7 @@ class Box extends Tile {
 			});
 
 			playersOn.forEach(element => {
-				var amount = -Math.floor(Math.random() * 11 + 2);
+				var rndAmount = -Math.floor(Math.random() * 11 + 2);
 				element.move(game, amount);
 			});
 		} else {
@@ -196,7 +197,7 @@ class Dynamite extends Tile {
 		this.description = "Si tu restes dessus pendant un tour complet, elle explose et tu recules de 2d6 cases"
 	}
 
-	effect(game, player, index) {
+	effect(game, player, index, amount) {
 		player.addEffect(game, new Effects.Pressured({ index: index, armed: false }));
 	}
 }
@@ -210,7 +211,7 @@ class Bathtub extends Tile {
 		this.description = "Empêche le prochain effet de s'activer"
 	}
 
-	effect(game, player, index) {
+	effect(game, player, index, amount) {
 		player.addEffect(game, new Effects.Clean());
 	}
 }

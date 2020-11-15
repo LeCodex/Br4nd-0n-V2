@@ -312,7 +312,7 @@ class Game {
 			this.boardMessage = await this.channel.messages.fetch(object.boardMessage).catch(e => this.client.error(this.channel, "Steeple", e));
 			await this.channel.messages.fetch({ after: object.boardMessage }).catch(e => this.client.error(this.channel, "Steeple", e));
 		} else {
-			this.sendBoard();
+			await this.sendBoard();
 		}
 		this.setupReactionCollector();
 
