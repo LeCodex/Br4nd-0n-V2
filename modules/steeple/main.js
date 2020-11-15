@@ -42,7 +42,7 @@ class MainClass extends Base {
 				game.players[message.author.id] = new Player(message.author, game);
 				game.order.push(message.author.id);
 
-				//message.reply("Vous avez été rejoint la partie. Vous êtes placé à la " + game.order.length + (game.order.length == 1 ? "ère" : "ème") + " place dans l'ordre");
+				message.author.send("Vous avez été rejoint la partie. Vous êtes placé à la " + game.order.length + (game.order.length == 1 ? "ère" : "ème") + " place dans l'ordre");
 				game.sendBoard();
 				game.save();
 			} else {
@@ -205,7 +205,6 @@ class MainClass extends Base {
 
 				if (!game.players[user.id]) {
 					game.players[user.id] = new Player(user, game);
-					game.players[user.id].sendHand(game);
 				}
 
 				var player = game.players[user.id];
