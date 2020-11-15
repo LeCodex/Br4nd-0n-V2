@@ -24,6 +24,7 @@ class Player {
 		if (!this.effects.every(e => e.tryToMove ? e.tryToMove(game, this, newIndex) : true)) return;
 		if (!game.board[newIndex].tryToMove(game, this, newIndex)) return;
 
+		var oldIndex = this.index;
 		this.index += amount;
 
 		game.summary.push({
@@ -59,7 +60,7 @@ class Player {
 			}
 		}
 
-		var canTriggerEffect = true;
+		var canTriggerEffect = this.index != oldIndex;
 		this.effects.forEach(element => {
 			if (element.postMove) canTriggerEffect = element.postMove(game, this, this.index) && canTriggerEffect;
 		});
