@@ -111,6 +111,7 @@ class MainClass extends Base {
 			var game = this.games[message.channel.id];
 			game.deleteBoardMessage();
 			game.sendBoard();
+			game.save();
 		}
 
 		message.delete();
