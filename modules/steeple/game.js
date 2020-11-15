@@ -320,7 +320,7 @@ class Game {
 			p.effects = e.effects.map(f => new Effects[f.name](f.data));
 			p.pushedBackUpOnce = e.pushedBackUpOnce;
 			p.index = e.index;
-			p.emoji = isNaN(e.emoji) ? e.emoji : await this.client.emojis.fetch(e.emoji);
+			p.emoji = isNaN(e.emoji) ? e.emoji : await this.client.emojis.resolve(e.emoji);
 
 			this.players[k] = p;
 		};
