@@ -229,7 +229,7 @@ class Game {
 		var logMessage = await user.send(this.boards[0]);
 		var currentLogIndex = 0;
 
-		var emojis = ["⬅", "➡️", "❌"];
+		var emojis = ["⬅️", "➡️", "❌"];
 		for (var emoji of emojis) { await logMessage.react(emoji); }
 		var privateCollector = logMessage.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name), { idle: 300000 });
 
