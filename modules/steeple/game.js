@@ -178,7 +178,7 @@ class Game {
 
 				var player = this.players[user.id];
 				if (player) {
-					player.emoji = reaction.emoji;
+					player.emoji = reaction.emoji.id ? reaction.emoji : reaction.emoji.name;
 					this.sendBoard();
 					this.save();
 				}
@@ -289,7 +289,7 @@ class Game {
 				}),
 				pushedBackUpOnce: e.pushedBackUpOnce,
 				index: e.index,
-				emoji: e.emoji.id ? e.emoji.id : e.emoji.name
+				emoji: e.emoji.id ? e.emoji.id : e.emoji
 			}
 		}
 
