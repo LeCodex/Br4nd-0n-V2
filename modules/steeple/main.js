@@ -130,6 +130,7 @@ class MainClass extends Base {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].paused = false;
+				this.games[message.channel.id].setupTimeout(false);
 				message.reply("Unpaused");
 			} else {
 				this.games[message.channel.id] = new Game(this, message);
@@ -141,6 +142,7 @@ class MainClass extends Base {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].paused = true;
+				clearTimeout(this.games[message.channel.id].timeout);
 				message.reply("Paused");
 			};
 		};

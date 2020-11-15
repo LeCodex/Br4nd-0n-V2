@@ -25,7 +25,7 @@ class Game {
 		this.boards = [];
 		this.paused = false;
 		this.boardMessage = null;
-		this.lastTimestamp = DateTime.local().setZone("Europe/Paris");
+		this.nextTimestamp = DateTime.local();
 		this.enabled = Object.keys(Tiles).slice(1);
 		this.turn = 1;
 		this.maxBoards = 20;
@@ -50,18 +50,20 @@ class Game {
 		this.save();
 	}
 
-	reload(object) {
-		this.parse(object);
-		this.setupTimeout();
+	async reload(object) {
+		await this.parse(object);
+		this.setupTimeout(false);
 	}
 
-	setupTimeout() {
+	setupTimeout(newTurn = true) {
 		if (this.timeout) clearTimeout(this.timeout);
 
-		this.lastTimestamp = DateTime.local().setZone("Europe/Paris");
-		var nextHour = this.lastTimestamp.plus(this.waitDuration).set({ second: 0 });
-		if (!this.waitDuration.minutes) nextHour = nextHour.set({ minute: 0 });
-		var time = nextHour.toMillis() - this.lastTimestamp.toMillis();
+		var now = DateTime.local();
+		if (newTurn) {
+			this.nextTimestamp = now.plus(this.waitDuration).set({ second: 0 });
+			if (!this.waitDuration.minutes) this.nextTimestamp = this.nextTimestamp.set({ minute: 0 });
+		}
+		var time = this.nextTimestamp.toMillis() - now.toMillis();
 
 		this.timeout = setTimeout(() => {this.throwDice()}, time);
 	}
@@ -266,7 +268,7 @@ class Game {
 			players: {},
 			boardMessage: this.boardMessage ? this.boardMessage.id : null,
 			paused: this.paused,
-			lastTimestamp: this.lastTimestamp.toMillis(),
+			nextTimestamp: this.nextTimestamp.toMillis(),
 			gamerules: this.gamerules,
 			board: this.board.map(e => e.constructor.name),
 			order: this.order,
@@ -328,7 +330,7 @@ class Game {
 		};
 
 		this.board = object.board.map(e => new Tiles[e](this.mainclass));
-		this.lastTimestamp = object.lastTimestamp ? DateTime.fromMillis(object.lastTimestamp).setZone("Europe/Paris") : this.lastTimestamp;
+		this.nextTimestamp = object.nextTimestamp ? DateTime.fromMillis(object.nextTimestamp) : this.nextTimestamp;
 	}
 
 	save() {
