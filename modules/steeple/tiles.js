@@ -56,7 +56,7 @@ class Fountain extends Tile {
 		});
 
 		var rndAmount = -Math.floor(Math.random() * 6 + 1);
-		player.move(game, amount);
+		player.move(game, rndAmount);
 	}
 }
 
@@ -178,7 +178,7 @@ class Box extends Tile {
 
 			playersOn.forEach(element => {
 				var rndAmount = -Math.floor(Math.random() * 11 + 2);
-				element.move(game, amount);
+				element.move(game, rndAmount);
 			});
 		} else {
 			game.summary.push({

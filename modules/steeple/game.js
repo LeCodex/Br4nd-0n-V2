@@ -52,6 +52,10 @@ class Game {
 
 	async reload(object) {
 		await this.parse(object);
+		if (!this.boardMessage) {
+			await this.sendBoard();
+			this.save();
+		}
 		this.setupTimeout(false);
 	}
 
@@ -91,9 +95,15 @@ class Game {
 				if (lineSize * i + j >= this.board.length) break;
 
 				boardLine += this.board[lineSize * i + j].emoji;
-				var lines = Object.values(this.players).filter(e => e.index == lineSize * i + j).map(e => e.emoji.toString());
-				playerLines.push(lines);
-				maxPlayers = Math.max(maxPlayers, lines.length);
+				var column = Object.values(this.players).filter(e => e.index == lineSize * i + j).map(e => e.emoji.toString());
+				playerLines.push(column);
+				maxPlayers = Math.max(maxPlayers, column.length);
+			}
+
+			for (var j = playerLines.length; j > 0; j--) {
+				console.log(playerLines[j - 1], playerLines[j - 1].length);
+				if (playerLines[j - 1].length) break;
+				playerLines.pop();
 			}
 
 			var line = "";
@@ -143,7 +153,7 @@ class Game {
 		if (this.order.length) {
 			embed.addField(
 				"Ordre",
-				this.order.map((e, i) => (i + 1) + ". " + (this.players[e].pushedBackUpOnce ? "" : "*") + this.players[e].user.toString() + (this.players[e].pushedBackUpOnce ? "" : "*")  + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")).join("")
+				this.order.map((e, i) => (i + 1) + ". " + (this.players[e].pushedBackUpOnce ? "" : "__") + this.players[e].user.toString() + (this.players[e].pushedBackUpOnce ? "" : "__")  + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")).join("")
 			);
 		}
 
@@ -262,6 +272,12 @@ class Game {
 		});
 	}
 
+	async resendMessage() {
+		this.deleteBoardMessage();
+		await this.sendBoard();
+		this.save();
+	}
+
 	serialize() {
 		var object = {
 			channel: this.channel.id,
@@ -313,10 +329,8 @@ class Game {
 		if (object.boardMessage) {
 			this.boardMessage = await this.channel.messages.fetch(object.boardMessage).catch(e => this.client.error(this.channel, "Steeple", e));
 			await this.channel.messages.fetch({ after: object.boardMessage }).catch(e => this.client.error(this.channel, "Steeple", e));
-		} else {
-			await this.sendBoard();
+			this.setupReactionCollector();
 		}
-		this.setupReactionCollector();
 
 		for (var [k, e] of Object.entries(object.players)) {
 			var p = new Player(await this.client.users.fetch(e.user, true, true), this, true);

@@ -109,9 +109,7 @@ class MainClass extends Base {
 	com_show(message, args, kwargs) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
-			game.deleteBoardMessage();
-			game.sendBoard();
-			game.save();
+			game.resendMessage();
 		}
 
 		message.delete();
