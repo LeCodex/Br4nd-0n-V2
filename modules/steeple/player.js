@@ -36,6 +36,21 @@ class Player {
 			if (element.onMove) element.onMove(game, this, this.index, amount);
 		});
 
+		this.checkForWrapping();
+
+		var canTriggerEffect = this.index != oldIndex;
+		this.effects.forEach(element => {
+			if (element.postMove) canTriggerEffect = element.postMove(game, this, this.index) && canTriggerEffect;
+		});
+
+		this.effects = this.effects.filter(e => !e.used);
+
+		if (game.board[this.index].effect && canTriggerEffect) game.board[this.index].effect(game, this, this.index, amount);
+
+		this.checkForWrapping();
+	}
+
+	checkForWrapping() {
 		if (this.index >= game.board.length) {
 			this.index -= game.board.length;
 			this.score ++;
@@ -59,15 +74,6 @@ class Player {
 				});
 			}
 		}
-
-		var canTriggerEffect = this.index != oldIndex;
-		this.effects.forEach(element => {
-			if (element.postMove) canTriggerEffect = element.postMove(game, this, this.index) && canTriggerEffect;
-		});
-
-		this.effects = this.effects.filter(e => !e.used);
-
-		if (game.board[this.index].effect && canTriggerEffect) game.board[this.index].effect(game, this, this.index, amount);
 	}
 
 	turn(game, result) {

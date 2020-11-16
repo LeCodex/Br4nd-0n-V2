@@ -101,7 +101,6 @@ class Game {
 			}
 
 			for (var j = playerLines.length; j > 0; j--) {
-				console.log(playerLines[j - 1], playerLines[j - 1].length);
 				if (playerLines[j - 1].length) break;
 				playerLines.pop();
 			}
