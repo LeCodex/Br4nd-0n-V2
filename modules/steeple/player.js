@@ -36,7 +36,7 @@ class Player {
 			if (element.onMove) element.onMove(game, this, this.index, amount);
 		});
 
-		this.checkForWrapping();
+		this.checkForWrapping(game);
 
 		var canTriggerEffect = this.index != oldIndex;
 		this.effects.forEach(element => {
@@ -47,10 +47,10 @@ class Player {
 
 		if (game.board[this.index].effect && canTriggerEffect) game.board[this.index].effect(game, this, this.index, amount);
 
-		this.checkForWrapping();
+		this.checkForWrapping(game);
 	}
 
-	checkForWrapping() {
+	checkForWrapping(game) {
 		if (this.index >= game.board.length) {
 			this.index -= game.board.length;
 			this.score ++;
