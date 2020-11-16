@@ -16,7 +16,7 @@ class Player {
 	move(game, amount) {
 		if (!amount) {
 			game.summary.push({
-				message: "⏺️ " + this.user.toString() + " a fait du sur-place")
+				message: "⏺️ " + this.user.toString() + " a fait du sur-place"
 			});
 			return;
 		}
