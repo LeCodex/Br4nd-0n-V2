@@ -14,7 +14,12 @@ class Player {
 	}
 
 	move(game, amount) {
-		if (!amount) return;
+		if (!amount) {
+			game.summary.push({
+				message: "⏺️ " + this.user.toString() + " a fait du sur-place")
+			});
+			return;
+		}
 
 		this.effects.forEach(element => {
 			if (element.preMove) amount = element.preMove(game, this, this.index, amount);
@@ -28,8 +33,7 @@ class Player {
 		this.index += amount;
 
 		game.summary.push({
-			message: (amount > 0 ? "▶️" : "◀️") + " " + this.user.toString() + " a " + (amount > 0 ? "avancé" : "reculé") + " de " + Math.abs(amount) + (Math.abs(amount) > 1 ? " cases" : " case"),
-			persistent: false
+			message: (amount > 0 ? "▶️" : "◀️") + " " + this.user.toString() + " a " + (amount > 0 ? "avancé" : "reculé") + " de " + Math.abs(amount) + (Math.abs(amount) > 1 ? " cases" : " case")
 		});
 
 		this.effects.forEach(element => {
