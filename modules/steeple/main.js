@@ -43,8 +43,7 @@ class MainClass extends Base {
 				game.order.push(message.author.id);
 
 				message.author.send("Vous avez été rejoint la partie. Vous êtes placé à la " + game.order.length + (game.order.length == 1 ? "ère" : "ème") + " place dans l'ordre");
-				game.sendBoard();
-				game.save();
+				game.sendBoard().then(() => {game.save();});
 			} else {
 				var player = game.players[message.author.id];
 
@@ -72,7 +71,7 @@ class MainClass extends Base {
 					player.pushedBackUpOnce = true;
 
 					//message.reply("Vous avez été remonté dans l'ordre. Vous êtes maintenant à la 1ère place");
-					game.sendBoard();
+					game.sendBoard().then(() => {game.save();});
 				}
 			}
 		}
