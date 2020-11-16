@@ -158,6 +158,11 @@ class Game {
 
 		embed.addField("Plateau", board);
 
+		if (save) {
+			this.boards.unshift(embed);
+			if (this.boards.length > this.maxBoards) this.boards.pop();
+		}
+
 		if (this.boardMessage) {
 			var length = this.channel.messages.cache.keyArray().length
 			if (length - this.channel.messages.cache.keyArray().indexOf(this.boardMessage.id) > 10) {
@@ -171,11 +176,6 @@ class Game {
 			this.boardMessage = await this.channel.send(embed);
 			this.setupReactionCollector();
 		}
-
-		if (save) {
-			this.boards.unshift(embed);
-			if (this.boards.length > this.maxBoards) this.boards.pop();
-		}
 	}
 
 	setupReactionCollector() {
@@ -187,8 +187,9 @@ class Game {
 			try {
 				if (this.paused) return;
 
+				var banned_emojis = ["⬛", "◼", "◾", "▪", "🖤", "〰", "➗", "✖", "➖", "➕", "➰"];
 				var player = this.players[user.id];
-				if (player) {
+				if (player && !banned_emojis.includes(reaction.emoji.name)) {
 					player.emoji = reaction.emoji.id ? reaction.emoji : reaction.emoji.name;
 					this.sendBoard();
 					this.save();
