@@ -150,10 +150,22 @@ class Game {
 
 		var nbPlayersPerLine = 2;
 		if (this.order.length) {
-			embed.addField(
-				"Ordre",
-				this.order.map((e, i) => (i + 1) + ". " + (this.players[e].pushedBackUpOnce ? "" : "__") + this.players[e].user.toString() + (this.players[e].pushedBackUpOnce ? "" : "__")  + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")).join("")
-			);
+			var field = {
+				name: "Ordre",
+				value: ""
+			}
+			this.order.forEach((e, i) => {
+				var string = (i + 1) + ". " + (this.players[e].pushedBackUpOnce ? "" : "__") + this.players[e].user.toString() + (this.players[e].pushedBackUpOnce ? "" : "__")  + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")
+
+				if (field.value.length + string.length >= 1024) {
+					embed.addFields(field);
+					field.value = "";
+					field.name = "Suite de l'ordre"
+				}
+
+				field.value += string;
+			});
+			if (field.value.length) embed.addFields(field);
 		}
 
 		embed.addField("Plateau", board);
