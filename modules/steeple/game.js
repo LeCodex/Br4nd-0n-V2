@@ -119,7 +119,7 @@ class Game {
 		var embed = new MessageEmbed()
 			.setTitle("Steeple Chaise")
 			.setColor(this.mainclass.color)
-			.setFooter("Tour #" + this.turn)
+			.setFooter("Tour #" + this.turn + " • Mettez une réaction à ce message pour changer de pion!")
 
 		if (this.summary.length) {
 			var totalLength = 0;
