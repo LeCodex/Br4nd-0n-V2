@@ -293,7 +293,7 @@ class Game {
 	async nextTurn() {
 		Object.values(this.players).forEach((element) => { element.turnedOnce = false; });
 
-		while (this.pawn.x != this.goal.x || this.pawn.y != this.goal.y) {
+		while ((this.pawn.x != this.goal.x || this.pawn.y != this.goal.y) && this.path.length) {
 			this.pawn = this.path.shift();
 
 			if (this.items.find(e => e.x === this.pawn.x && e.y === this.pawn.y)) this.pickedUp ++;
