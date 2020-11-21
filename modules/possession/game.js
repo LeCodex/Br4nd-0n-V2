@@ -80,7 +80,7 @@ class Game {
 		}
 		var time = this.nextTimestamp.toMillis() - now.toMillis();
 
-		this.timeout = setTimeout(() => {this.turn()}, time);
+		this.timeout = setTimeout(() => {this.nextTurn()}, time);
 	}
 
 	clearReactionCollector() {
