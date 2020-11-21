@@ -49,7 +49,7 @@ class MainClass extends Base {
 			if (!game.players[message.author.id]) {
 				game.players[message.author.id] = new Player(message.author, game);
 				game.sendBoard();
-
+			}
 		}
 
 		message.delete();
