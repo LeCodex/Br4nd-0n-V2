@@ -7,13 +7,13 @@ const Player = require("./player.js");
 class MainClass extends Base {
 	constructor(client) {
 		super(client);
-		this.name = "Le Bar plays Labyrinthe";
-		this.description = "Contrôle une pauvre personne dans un labyrinthe";
+		this.name = "Dédalleux";
+		this.description = "Donne ta liste de course à Brax";
 		this.help = {
 			"": "Rejoins la partie",
 			"show": "Redescends le message d'info de la partie"
 		};
-		this.commandText = "poss";
+		this.commandText = "dédale";
 		this.color = 0x144350;
 		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
 

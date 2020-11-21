@@ -35,26 +35,28 @@ class Game {
 		this.nextTimestamp = DateTime.local();
 		// this.enabled = Object.keys(Tiles).slice(1);
 		this.turn = 1;
+		this.pickedUp = 0;
 		// this.maxBoards = 20;
 		this.collector = null;
 		this.timeout = null;
+		this.clockwiseRotation = true;
 		this.gamerules = {};
 		this.waitDuration = {
 			minutes: 0,
 			hours: 1
 		};
-		this.colors = ["🟥", "🟦", "🟩", "🟨", "🟪", "🔴", "🔵", "🟢", "🟡", "🟣"];
-		this.availableObjects = ["🧀", "🥩", "🌶️", "🧅", "🥕", "🥑", "🥔", "🍎", "🍒", "🍇", "🌮", "🥞", "🍙", "🍩", "🥬", "🍺"];
-		this.objects = [];
 		this.pawn = {
 			x: 0,
 			y: 0
-		}
+		};
 		this.goal = {
 			x: 10,
 			y: 10
-		}
-		this.clockwiseRotation = true;
+		};
+		this.colors = ["🟥", "🟦", "🟩", "🟨", "🟪", "🛑", "♾️", "💚", "📀", "🟣"];
+		this.availableItems = ["🍅", "🥩", "🌶️", "🧅", "🥕", "🥑", "🥔", "🍯", "🌰", "🍍", "🌮", "🧀", "🍐", "🌭", "🥦", "🥓"];
+		this.items = [];
+		this.pawnEmoji = (this.client.emojis.cache.get("497047504043376643") || "📍").toString();
 
 		if (message) {
 			this.channel = message.channel;
@@ -66,7 +68,7 @@ class Game {
 		this.createWalls();
 		this.generateBoard();
 		this.path = this.aStar(this.pawn, this.goal);
-		this.placeObjects();
+		this.placeItems();
 		await this.sendBoard();
 	}
 
@@ -141,28 +143,35 @@ class Game {
 		});
 	}
 
-	placeObjects() {
-		this.objects = [];
+	placeItems() {
+		this.items = [];
+		var borderItemsCount = 0;
 
-		this.availableObjects.forEach((element, i) => {
+		this.availableItems.forEach((element, i) => {
 			var x, y;
 			do {
 				x = Math.floor(Math.random() * (this.board.length + 1) / 2) * 2;
 				y = Math.floor(Math.random() * (this.board.length + 1) / 2) * 2;
-			} while (this.objects.find(e => e.x === x && e.y === y));
+			} while (
+				this.items.find(e => e.x === x && e.y === y) ||
+				x === y === 0 || x === y === this.board.length - 1 || x === 0 && y === this.board.length - 1 || x === this.board.length - 1 && y === 0 ||
+				(x === 0 || y === 0 || x === this.board.length - 1 || y === this.board.length - 1) && borderItemsCount >= 4
+			);
 
-			this.objects.push({
+			this.items.push({
 				x: x,
 				y: y,
-				object: element
+				item: element
 			});
+
+			if (x === 0 || y === 0 || x === this.board.length - 1 || y === this.board.length - 1) borderItemsCount ++;
 		});
 	}
 
 	async sendBoard() {
 		var embed = new MessageEmbed()
 			.setTitle(this.mainclass.name)
-			.setFooter("Tour " + this.turn)
+			.setFooter("Tour #" + this.turn + " • Nombres d'ingrédients ramassés: " + this.pickedUp)
 			.setColor(this.mainclass.color)
 
 		if (Object.values(this.players).length) {
@@ -187,11 +196,11 @@ class Game {
 
 		var board = this.board.map((e, ty) =>
 			e.map((f, tx) => {
-				if (this.pawn.x === tx && this.pawn.y === ty) return "📍";
+				if (this.pawn.x === tx && this.pawn.y === ty) return this.pawnEmoji;
 				if (this.goal.x === tx && this.goal.y === ty) return "🎯";
 
-				var object = this.objects.find(e => e.x === tx && e.y === ty);
-				if (object) return object.object;
+				var o = this.items.find(e => e.x === tx && e.y === ty);
+				if (o) return o.item;
 
 				if (this.path.filter(e => e.x === tx && e.y === ty).length) return "🔸";
 				return f === -1 ? "⬛" : this.colors[f];
@@ -223,7 +232,7 @@ class Game {
 	async setupReactionCollector() {
 		this.clearReactionCollector();
 
-		var emojis = this.colors.slice(0, this.colors.length / 2);
+		var emojis = this.colors.slice(this.colors.length / 2);
 		for (var i = 0; i < emojis.length; i ++) {
 			await this.boardMessage.react(emojis[i]);
 		};
@@ -238,23 +247,35 @@ class Game {
 				if (player) {
 					if (!player.turnedOnce) {
 						player.turnedOnce = true;
-						var index = this.colors.indexOf(reaction.emoji.name);
+						var index = this.colors.indexOf(reaction.emoji.name) - this.colors.length / 2;
 
-						for (var i = 0; i < this.walls.length; i ++) {
-							var element = this.walls[i];
+						var moved = true;
+						var turned = [];
+						while (moved) {
+							moved = false;
+							for (var i = 0; i < this.walls.length; i ++) {
+								var element = this.walls[i];
 
-							if (element.color === index) {
-								var newDir = (element.direction + (this.clockwiseRotation ? 1 : -1) + 4) % 4;
-								var d = Math.round(Math.cos(newDir * Math.PI / 2)) + this.colors.length / 2 * Math.round(Math.sin(newDir * Math.PI / 2));
+								if (element.color === index) {
+									var shouldTurn = true;
+									var newDir = (element.direction + (this.clockwiseRotation ? 1 : -1) + 4) % 4;
+									var d = Math.round(Math.cos(newDir * Math.PI / 2)) + this.colors.length / 2 * Math.round(Math.sin(newDir * Math.PI / 2));
 
-								if (i + d >= 0 && i + d < this.walls.length) {
-									var neighbor = this.walls[i + d];
-									if ((neighbor.direction + 2) % 4 === newDir) continue;
+									if (i + d >= 0 && i + d < this.walls.length) {
+										var neighbor = this.walls[i + d];
+										if ((neighbor.direction + 2) % 4 === newDir) shouldTurn = false;
+									}
+
+									if (shouldTurn && !turned.includes(i)) {
+										turned.push(i);
+										element.direction = newDir;
+										moved = true;
+
+										//console.log(turned);
+									}
 								}
-
-								element.direction = newDir;
 							}
-						};
+						}
 
 						this.generateBoard();
 						this.path = this.aStar(this.pawn, this.goal);
@@ -270,19 +291,21 @@ class Game {
 	}
 
 	async nextTurn() {
-		Object.values(this.players).forEach((element) => {
-			element.turnedOnce = false;
-			if (this.path.find(e => e.x === this.objects[element.object].x && e.y === this.objects[element.object].y)) element.gainOnePoint(this);
-		});
+		Object.values(this.players).forEach((element) => { element.turnedOnce = false; });
 
-		this.pawn.x = this.goal.x;
-		this.pawn.y = this.goal.y
+		while (this.pawn.x != this.goal.x || this.pawn.y != this.goal.y) {
+			this.pawn = this.path.shift();
+
+			if (this.items.find(e => e.x === this.pawn.x && e.y === this.pawn.y)) this.pickedUp ++;
+			Object.values(this.players).forEach((element) => { if (this.pawn.x === this.items[element.item].x && this.pawn.y === this.items[element.item].y) element.gainOnePoint(this); });
+		}
+
 		do {
 			this.goal.x = Math.floor(Math.random() * (this.board.length + 1) / 2) * 2;
 			this.goal.y = Math.floor(Math.random() * (this.board.length + 1) / 2) * 2;
 
 			//console.log("Tried " + this.goal.x + "/" + this.goal.y + ": " + getDist(this.pawn, this.goal) + "(" + this.pawn.x + "/" + this.pawn.y + " .. " + this.goal.x + "/" + this.goal.y + ")");
-		} while (getDist(this.pawn, this.goal) < 5);
+		} while (getDist(this.pawn, this.goal) < 7);
 
 		this.path = this.aStar(this.pawn, this.goal);
 
