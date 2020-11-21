@@ -286,6 +286,8 @@ class Game {
 
 		this.path = this.aStar(this.pawn, this.goal);
 
+		this.turn ++;
+
 		this.clockwiseRotation = !this.clockwiseRotation;
 		await this.sendBoard();
 
@@ -306,6 +308,7 @@ class Game {
 		}
 
 		var openSet = [start];
+		var closedSet = [];
 		var cameFrom = new WeakMap();
 		var gScore = new WeakMap();
 		var fScore = new WeakMap();
@@ -318,6 +321,7 @@ class Game {
 			if (current.x === goal.x && current.y === goal.y) return reconstructPath(cameFrom, current);
 
 			//console.log("Position: " + current.x + "/" + current.y)
+			closedSet.push(current);
 			openSet.splice(openSet.indexOf(current), 1);
 			for (var r = 0; r < 4; r ++) {
 				var dx = Math.round(Math.cos(r * Math.PI / 2));
@@ -338,7 +342,7 @@ class Game {
 							gScore.set(neighbor, tentative_gScore);
 							fScore.set(neighbor, gScore.get(neighbor) + h(neighbor));
 
-							if (!openSet.find(e => e.x === neighbor.x && e.y === neighbor.y)) openSet.push(neighbor);
+							if (!openSet.find(e => e.x === neighbor.x && e.y === neighbor.y) && !closedSet.find(e => e.x === neighbor.x && e.y === neighbor.y)) openSet.push(neighbor);
 						}
 					}
 				}
