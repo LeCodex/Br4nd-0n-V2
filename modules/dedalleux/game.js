@@ -53,10 +53,9 @@ class Game {
 			x: 10,
 			y: 10
 		};
-		this.colors = ["🟥", "🟦", "🟩", "🟨", "🟪", "🛑", "♾️", "💚", "📀", "🟣"];
+		this.colors = Object.values(this.mainclass.colors).slice(0, 10);
 		this.availableItems = ["🍅", "🥩", "🌶️", "🧅", "🥕", "🥑", "🥔", "🍯", "🌰", "🍍", "🌮", "🧀", "🍐", "🌭", "🥦", "🥓"];
 		this.items = [];
-		this.pawnEmoji = (this.client.emojis.cache.get("497047504043376643") || "📍").toString();
 
 		if (message) {
 			this.channel = message.channel;
@@ -170,7 +169,7 @@ class Game {
 
 	async sendBoard() {
 		var embed = new MessageEmbed()
-			.setTitle(this.mainclass.name)
+			.setTitle(this.mainclass.name + " • Sens de rotation des murs: " + (this.clockwiseRotation ? "🔁" : "🔄"))
 			.setFooter("Tour #" + this.turn + " • Nombres d'ingrédients ramassés: " + this.pickedUp)
 			.setColor(this.mainclass.color)
 
@@ -196,23 +195,20 @@ class Game {
 
 		var board = this.board.map((e, ty) =>
 			e.map((f, tx) => {
-				if (this.pawn.x === tx && this.pawn.y === ty) return this.pawnEmoji;
+				if (this.pawn.x === tx && this.pawn.y === ty) return this.mainclass.pawnEmoji.toString();
 				if (this.goal.x === tx && this.goal.y === ty) return "🎯";
 
 				var o = this.items.find(e => e.x === tx && e.y === ty);
 				if (o) return o.item;
 
 				if (this.path.filter(e => e.x === tx && e.y === ty).length) return "🔸";
-				return f === -1 ? "⬛" : this.colors[f];
+				return f === -1 ? "⬛" : this.colors[f].toString();
 			}).join("")
 		).join("\n");
 
 		//console.log(this.path);
 
-		embed.addField(
-			"Labyrinthe • Sens de rotation des murs: " + (this.clockwiseRotation ? "🔁" : "🔄"),
-			board
-		)
+		embed.setDescription(board);
 
 		if (this.boardMessage) {
 			var length = this.channel.messages.cache.keyArray().length
@@ -237,7 +233,7 @@ class Game {
 			await this.boardMessage.react(emojis[i]);
 		};
 
-		this.collector = this.boardMessage.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name) && !user.bot);
+		this.collector = this.boardMessage.createReactionCollector((reaction, user) => (emojis.includes(reaction.emoji.name) || emojis.includes(reaction.emoji)) && !user.bot);
 
 		this.collector.on('collect', (reaction, user) => {
 			try {
@@ -247,7 +243,9 @@ class Game {
 				if (player) {
 					if (!player.turnedOnce) {
 						player.turnedOnce = true;
-						var index = this.colors.indexOf(reaction.emoji.name) - this.colors.length / 2;
+						var index = this.colors.indexOf(reaction.emoji.name);
+						if (index == -1) index = this.colors.indexOf(reaction.emoji);
+						index -= this.colors.length / 2
 
 						var moved = true;
 						var turned = [];

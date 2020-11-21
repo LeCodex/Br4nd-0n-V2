@@ -23,8 +23,11 @@ class Player {
 	}
 
 	async sendItem(game) {
-		if (this.itemMessage) this.itemMessage.delete();
-		
+		if (this.itemMessage) {
+			await this.itemMessage.delete();
+			this.itemMessage = null;
+		}
+
 		this.itemMessage = await this.user.send(
 			new MessageEmbed()
 			.setTitle("Ingrédient à récupérer: " + game.items[this.item].item)

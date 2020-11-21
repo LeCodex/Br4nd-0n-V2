@@ -27,6 +27,20 @@ class MainClass extends Base {
 		// });
 		this.debug = false;
 		this.games = {};
+
+		this.colors = {
+			redSquare: this.client.emojis.cache.get("779815888353493043") || "🟥",
+			blueSquare: this.client.emojis.cache.get("779815888580902922") || "🟦",
+			greenSquare: this.client.emojis.cache.get("779815888252567563") || "🟩",
+			yellowSquare: this.client.emojis.cache.get("779815888701751296") || "🟨",
+			purpleSquare: this.client.emojis.cache.get("779815888261087234") || "🟪",
+			redCirle: this.client.emojis.cache.get("779815888831512606") || "🛑",
+			blueCircle: this.client.emojis.cache.get("779815888337633302") || "♾️",
+			greenCircle: this.client.emojis.cache.get("779815888592568380") || "💚",
+			yellowCircle: this.client.emojis.cache.get("779815888630972446") || "📀",
+			purpleCircle: this.client.emojis.cache.get("779815888601874472") || "🟣"
+		};
+		this.pawnEmoji = this.client.emojis.cache.get("497047504043376643") || "📍";
 	}
 
 	command(message, args, kwargs) {
@@ -35,8 +49,10 @@ class MainClass extends Base {
 			if (!game.players[message.author.id]) {
 				game.players[message.author.id] = new Player(message.author, game);
 				game.sendBoard();
-			}
+
 		}
+
+		message.delete();
 	}
 
 	com_show(message, args, kwargs) {
