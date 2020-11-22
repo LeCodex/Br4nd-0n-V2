@@ -12,11 +12,19 @@ class Effect {
 		return amount;
 	}
 
+	onMove(game, player, index, amount) {
+		return;
+	}
+
 	postMove(game, player, index) {
 		return true;
 	}
 
 	turnEnd(game, player, index) {
+		return;
+	}
+
+	throwEnd(game, player) {
 		return;
 	}
 }
@@ -82,9 +90,11 @@ class Pressured extends Effect {
 					message: "🧨 " + player.user.toString() + " a bougé à temps"
 				});
 			}
-		} else {
-			this.data.armed = true;
 		}
+	}
+
+	throwEnd(game, player) {
+		this.data.armed = true;
 	}
 }
 

@@ -22,11 +22,11 @@ class Player {
 		}
 
 		this.effects.forEach(element => {
-			if (element.preMove) amount = element.preMove(game, this, this.index, amount);
+			amount = element.preMove(game, this, this.index, amount);
 		});
 
 		var newIndex = (this.index + amount + game.board.length) % game.board.length;
-		if (!this.effects.every(e => e.tryToMove ? e.tryToMove(game, this, newIndex) : true)) return;
+		if (!this.effects.every(e => e.tryToMove(game, this, newIndex))) return;
 		if (!game.board[newIndex].tryToMove(game, this, newIndex)) return;
 
 		var oldIndex = this.index;
@@ -37,14 +37,14 @@ class Player {
 		});
 
 		this.effects.forEach(element => {
-			if (element.onMove) element.onMove(game, this, this.index, amount);
+			element.onMove(game, this, this.index, amount);
 		});
 
 		this.checkForWrapping(game);
 
 		var canTriggerEffect = this.index != oldIndex;
 		this.effects.forEach(element => {
-			if (element.postMove) canTriggerEffect = element.postMove(game, this, this.index) && canTriggerEffect;
+			canTriggerEffect = element.postMove(game, this, this.index) && canTriggerEffect;
 		});
 
 		this.effects = this.effects.filter(e => !e.used);
