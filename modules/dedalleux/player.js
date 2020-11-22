@@ -7,11 +7,13 @@ class Player {
 		this.item = Math.floor(Math.random() * game.availableItems.length);
 		this.turnedOnce = false;
 		this.itemMessage = null;
+		this.gainedOnePoint = false;
 
 		if (!reload) this.sendItem(game);
 	}
 
 	gainOnePoint(game) {
+		this.gainedOnePoint = true;
 		var newItem;
 		do {
 			newItem = Math.floor(Math.random() * game.availableItems.length);

@@ -306,8 +306,10 @@ class Game {
 			this.pawn = this.path.shift();
 
 			if (this.items.find(e => e.x === this.pawn.x && e.y === this.pawn.y)) this.pickedUp ++;
-			Object.values(this.players).forEach((element) => { if (this.pawn.x === this.items[element.item].x && this.pawn.y === this.items[element.item].y) element.gainOnePoint(this); });
+			Object.values(this.players).forEach((element) => { if (this.pawn.x === this.items[element.item].x && this.pawn.y === this.items[element.item].y && !element.gainedOnePoint) element.gainOnePoint(this); });
 		}
+
+		Object.values(this.players).forEach((element) => { element.gainedOnePoint = false; });
 
 		do {
 			this.goal.x = Math.floor(Math.random() * (this.board.length + 1) / 2) * 2;
