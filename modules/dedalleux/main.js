@@ -27,16 +27,16 @@ class MainClass extends Base {
 		});
 
 		this.colors = {
-			redSquare: this.client.emojis.cache.get("779815888353493043") || "🟥",
-			blueSquare: this.client.emojis.cache.get("779815888580902922") || "🟦",
-			greenSquare: this.client.emojis.cache.get("779815888252567563") || "🟩",
-			yellowSquare: this.client.emojis.cache.get("779815888701751296") || "🟨",
-			purpleSquare: this.client.emojis.cache.get("779815888261087234") || "🟪",
-			redCirle: this.client.emojis.cache.get("779815888831512606") || "🛑",
-			blueCircle: this.client.emojis.cache.get("779815888337633302") || "♾️",
-			greenCircle: this.client.emojis.cache.get("779815888592568380") || "💚",
-			yellowCircle: this.client.emojis.cache.get("779815888630972446") || "📀",
-			purpleCircle: this.client.emojis.cache.get("779815888601874472") || "🟣"
+			redSquare: this.client.emojis.cache.get("780049456263069706") || "🟥",
+			blueSquare: this.client.emojis.cache.get("780049455830270002") || "🟦",
+			greenSquare: this.client.emojis.cache.get("780049456048766976") || "🟩",
+			yellowSquare: this.client.emojis.cache.get("780049455562358825") || "🟨",
+			purpleSquare: this.client.emojis.cache.get("780049455608889345") || "🟪",
+			redCirle: this.client.emojis.cache.get("780049455511765003") || "🛑",
+			blueCircle: this.client.emojis.cache.get("780049455911141376") || "♾️",
+			greenCircle: this.client.emojis.cache.get("780049455897772032") || "💚",
+			yellowCircle: this.client.emojis.cache.get("780049456322183170") || "📀",
+			purpleCircle: this.client.emojis.cache.get("780049455935914014") || "🟣"
 		};
 		this.pawnEmoji = this.client.emojis.cache.get("497047504043376643") || "📍";
 	}
