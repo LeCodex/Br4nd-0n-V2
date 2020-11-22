@@ -185,7 +185,7 @@ class Game {
 						buffer.lastIndex = e.index;
 						buffer.rank++;
 					}
-					buffer.message += getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + ": **" + e.score + "**\n";
+					buffer.message += getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + ": **" + e.score + "**" + (e.gainedOnePoint ? " (+1)" : "") + "\n";
 					return buffer;
 				}, {message: "", rank: 0, lastScore: Infinity, lastIndex: Infinity}).message
 			);
