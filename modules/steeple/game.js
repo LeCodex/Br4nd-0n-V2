@@ -227,6 +227,13 @@ class Game {
 			});
 		});
 
+		this.order.forEach(element => {
+			var player = this.players[element];
+			player.effects.forEach(effect => {
+				effect.throwEnd(this, player);
+			});
+		});
+
 		// this.sendBoard();
 
 		this.turn++;
