@@ -17,16 +17,14 @@ class MainClass extends Base {
 		this.color = 0x144350;
 		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
 
-		// this.load("games", { games : {}, debug: false }).then(object => {
-		// 	this.games = {};
-		// 	for (var [channel_id, object] of Object.entries(object.games)) {
-		// 		this.games[channel_id] = new Game(this)
-		// 		this.games[channel_id].reload(object);
-		// 	}
-		// 	this.debug = object.debug;
-		// });
-		this.debug = false;
 		this.games = {};
+		this.load("games", { games : {}, debug: false }).then(object => {
+			for (var [channel_id, object] of Object.entries(object.games)) {
+				this.games[channel_id] = new Game(this)
+				this.games[channel_id].reload(object);
+			}
+			this.debug = object.debug;
+		});
 
 		this.colors = {
 			redSquare: this.client.emojis.cache.get("779815888353493043") || "🟥",
@@ -48,7 +46,7 @@ class MainClass extends Base {
 			var game = this.games[message.channel.id];
 			if (!game.players[message.author.id]) {
 				game.players[message.author.id] = new Player(message.author, game);
-				game.sendBoard();
+				game.sendBoard().then(() => { game.save(); });
 			}
 		}
 
@@ -58,7 +56,7 @@ class MainClass extends Base {
 	com_show(message, args, kwargs) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
-			//game.resendMessage();
+			game.resendMessage();
 		}
 
 		message.delete();
@@ -89,7 +87,7 @@ class MainClass extends Base {
 	com_delete(message, args, kwargs) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
-				//this.games[message.channel.id].delete_save();
+				this.games[message.channel.id].delete_save();
 				delete this.games[message.channel.id];
 				message.reply("Deleted");
 			};
@@ -99,11 +97,11 @@ class MainClass extends Base {
 	com_debug(message, args, kwargs) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			this.debug = !this.debug
-			// this.load("games").then(object =>{
-			// 	object.debug = this.debug;
-			// 	this.save("games", object);
-			// 	message.reply(this.debug);
-			// });
+			this.load("games").then(object =>{
+				object.debug = this.debug;
+				this.save("games", object);
+				message.reply(this.debug);
+			});
 		}
 	}
 
@@ -126,7 +124,7 @@ class MainClass extends Base {
 					acc[element] = Number(kwargs[element]);
 					return acc;
 				}, {});
-				//game.save();
+				game.save();
 
 				message.author.send("Wait duration now is " + game.waitDuration.minutes + " minutes and " + game.waitDuration.hours + " hours.");
 			}
@@ -150,7 +148,7 @@ class MainClass extends Base {
 					player[key] = kwargs[key];
 				});
 
-				//this.games[message.channel.id].save();
+				game.save();
 				message.reply("Set " + player.user.username + ": " + Object.keys(kwargs).map(k => k + "=" + player[k]).join(", "));
 			};
 		}

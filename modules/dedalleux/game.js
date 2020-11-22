@@ -63,12 +63,23 @@ class Game {
 		}
 	}
 
+	async reload(object) {
+		await this.parse(object);
+		if (!this.boardMessage) {
+			await this.sendBoard();
+			this.save();
+		}
+		this.setupTimeout(false);
+	}
+
 	async start() {
 		this.createWalls();
 		this.generateBoard();
 		this.path = this.aStar(this.pawn, this.goal);
 		this.placeItems();
 		await this.sendBoard();
+
+		this.save();
 	}
 
 	setupTimeout(newTurn = true) {
@@ -82,19 +93,6 @@ class Game {
 		var time = this.nextTimestamp.toMillis() - now.toMillis();
 
 		this.timeout = setTimeout(() => {this.nextTurn()}, time);
-	}
-
-	clearReactionCollector() {
-		if (this.boardMessage) this.boardMessage.reactions.removeAll();
-		if (this.collector) this.collector.stop();
-	}
-
-	deleteBoardMessage() {
-		if (this.boardMessage) {
-			this.boardMessage.delete();
-			this.boardMessage = null;
-		}
-		this.clearReactionCollector();
 	}
 
 	createWalls() {
@@ -170,7 +168,7 @@ class Game {
 	async sendBoard() {
 		var embed = new MessageEmbed()
 			.setTitle(this.mainclass.name + " • Sens de rotation des murs: " + (this.clockwiseRotation ? "🔁" : "🔄"))
-			.setFooter("Tour #" + this.turn + " • Nombres d'ingrédients ramassés: " + this.pickedUp)
+			.setFooter("Tour #" + this.turn + " • Nombre d'ingrédients ramassés: " + this.pickedUp)
 			.setColor(this.mainclass.color)
 
 		if (Object.values(this.players).length) {
@@ -277,7 +275,7 @@ class Game {
 
 						this.generateBoard();
 						this.path = this.aStar(this.pawn, this.goal);
-						this.sendBoard();
+						this.sendBoard().then(() => { this.save(); });
 					}
 				}
 
@@ -286,6 +284,19 @@ class Game {
 				this.client.error(this.channel, "Labyrinthe", e);
 			}
 		});
+	}
+
+	clearReactionCollector() {
+		//if (this.boardMessage) this.boardMessage.reactions.removeAll();
+		if (this.collector) this.collector.stop();
+	}
+
+	deleteBoardMessage() {
+		if (this.boardMessage) {
+			this.boardMessage.delete();
+			this.boardMessage = null;
+		}
+		this.clearReactionCollector();
 	}
 
 	async nextTurn() {
@@ -313,6 +324,7 @@ class Game {
 		await this.sendBoard();
 
 		this.setupTimeout(true);
+		this.save();
 	}
 
 	aStar(start, goal) {
@@ -374,6 +386,102 @@ class Game {
 
 		this.channel.stopTyping();
 		return [start];
+	}
+
+	async resendMessage() {
+		this.deleteBoardMessage();
+		await this.sendBoard();
+		this.save();
+	}
+
+	serialize() {
+		var object = {
+			channel: this.channel.id,
+			players: {},
+			boardMessage: this.boardMessage ? this.boardMessage.id : null,
+			paused: this.paused,
+			nextTimestamp: this.nextTimestamp.toMillis(),
+			gamerules: this.gamerules,
+			enabled: this.enabled,
+			turn: this.turn,
+			waitDuration: this.waitDuration,
+			walls: this.walls,
+			path: this.path,
+			pickedUp: this.pickedUp,
+			clockwiseRotation: this.clockwiseRotation,
+			pawn: this.pawn,
+			goal: this.goal,
+			items: this.items
+		};
+
+		for (var [k, e] of Object.entries(this.players)) {
+			object.players[k] = {
+				score: Number(e.score),
+				user: e.user.id,
+				turnedOnce: e.turnedOnce,
+				item: e.item,
+				itemChannel: e.itemMessage ? e.itemMessage.channel.id : null,
+				itemMessage: e.itemMessage ? e.itemMessage.id : null
+			}
+		}
+
+		return object;
+	}
+
+	async parse(object) {
+		this.channel = await this.client.channels.fetch(object.channel);
+		this.players = {};
+		this.paused = object.paused;
+		this.enabled = object.enabled;
+		this.gamerules = object.gamerules;
+		this.waitDuration = object.waitDuration;
+		this.turn = object.turn;
+		this.walls = object.walls;
+		this.path = object.path;
+		this.pickedUp = object.pickedUp;
+		this.clockwiseRotation = object.clockwiseRotation;
+		this.pawn = object.pawn;
+		this.goal = object.goal;
+		this.items = object.items;
+		this.nextTimestamp = object.nextTimestamp ? DateTime.fromMillis(object.nextTimestamp) : this.nextTimestamp;
+		this.boardMessage = null;
+		if (object.boardMessage) {
+			this.boardMessage = await this.channel.messages.fetch(object.boardMessage);
+			await this.channel.messages.fetch({ after: object.boardMessage });
+			this.setupReactionCollector();
+		}
+
+		for (var [k, e] of Object.entries(object.players)) {
+			var p = new Player(await this.client.users.fetch(e.user, true, true), this, true);
+			p.score = e.score;
+			p.turnedOnce = e.turnedOnce;
+			p.item = e.item;
+			p.itemMessage = null;
+			if (e.itemChannel) {
+				var channel = await this.client.channels.fetch(e.itemChannel);
+				if (e.itemMessage) p.itemMessage = await channel.messages.fetch(e.itemMessage);
+			}
+
+			this.players[k] = p;
+		};
+
+		this.generateBoard();
+	}
+
+	save() {
+		this.mainclass.load("games").then(object => {
+			object.games[this.channel.id] = this.serialize();
+			this.mainclass.save("games", object);
+		});
+	}
+
+	delete_save() {
+		this.clearReactionCollector();
+		clearTimeout(this.timeout);
+		this.mainclass.load("games").then(object => {
+			delete object.games[this.channel.id];
+			this.mainclass.save("games", object);
+		});
 	}
 }
 

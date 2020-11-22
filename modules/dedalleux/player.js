@@ -27,7 +27,7 @@ class Player {
 			await this.itemMessage.delete();
 			this.itemMessage = null;
 		}
-
+		
 		this.itemMessage = await this.user.send(
 			new MessageEmbed()
 			.setTitle("Ingrédient à récupérer: " + game.items[this.item].item)
