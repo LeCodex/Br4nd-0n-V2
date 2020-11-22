@@ -25,16 +25,15 @@ class Player {
 	}
 
 	async sendItem(game) {
-		if (this.itemMessage) {
-			this.itemMessage.delete().catch(console.error);
-			this.itemMessage = null;
-		}
-
-		this.itemMessage = await this.user.send(
-			new MessageEmbed()
+		var embed = new MessageEmbed()
 			.setTitle("Ingrédient à récupérer: " + game.items[this.item].item)
-			.setColor(game.mainclass.color)
-		);
+			.setColor(game.mainclass.color);
+
+		if (this.itemMessage) {
+			this.itemMessage.edit(embed);
+		} else {
+			this.itemMessage = await this.user.send(embed);
+		}
 	}
 }
 
