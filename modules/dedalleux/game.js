@@ -257,7 +257,7 @@ class Game {
 									var newDir = (element.direction + (this.clockwiseRotation ? 1 : -1) + 4) % 4;
 									var d = Math.round(Math.cos(newDir * Math.PI / 2)) + this.colors.length / 2 * Math.round(Math.sin(newDir * Math.PI / 2));
 
-									if (i + d >= 0 && i + d < this.walls.length) {
+									if (i + d >= 0 && i + d < this.walls.length && !(d === -1 && i % (this.colors.length / 2) === 0) && !(d === 1 && (i + 1) % (this.colors.length / 2) === 0)) {
 										var neighbor = this.walls[i + d];
 										if ((neighbor.direction + 2) % 4 === newDir) shouldTurn = false;
 									}
@@ -300,7 +300,7 @@ class Game {
 	}
 
 	async nextTurn() {
-		Object.values(this.players).forEach((element) => { element.turnedOnce = false; });
+		Object.values(this.players).forEach((element) => { element.turnedOnce = false; element.gainedOnePoint = false; });
 
 		while ((this.pawn.x != this.goal.x || this.pawn.y != this.goal.y) && this.path.length) {
 			this.pawn = this.path.shift();
@@ -308,8 +308,6 @@ class Game {
 			if (this.items.find(e => e.x === this.pawn.x && e.y === this.pawn.y)) this.pickedUp ++;
 			Object.values(this.players).forEach((element) => { if (this.pawn.x === this.items[element.item].x && this.pawn.y === this.items[element.item].y && !element.gainedOnePoint) element.gainOnePoint(this); });
 		}
-
-		Object.values(this.players).forEach((element) => { element.gainedOnePoint = false; });
 
 		do {
 			this.goal.x = Math.floor(Math.random() * (this.board.length + 1) / 2) * 2;
