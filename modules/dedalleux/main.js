@@ -32,11 +32,13 @@ class MainClass extends Base {
 			greenSquare: this.client.emojis.cache.get("780049456048766976") || "🟩",
 			yellowSquare: this.client.emojis.cache.get("780049455562358825") || "🟨",
 			purpleSquare: this.client.emojis.cache.get("780049455608889345") || "🟪",
+			//orangeSquare: this.client.emojis.cache.get("780488746502979645") || "🟧",
 			redCirle: this.client.emojis.cache.get("780049455511765003") || "🛑",
 			blueCircle: this.client.emojis.cache.get("780049455911141376") || "♾️",
 			greenCircle: this.client.emojis.cache.get("780049455897772032") || "💚",
 			yellowCircle: this.client.emojis.cache.get("780049456322183170") || "📀",
-			purpleCircle: this.client.emojis.cache.get("780049455935914014") || "🟣"
+			purpleCircle: this.client.emojis.cache.get("780049455935914014") || "🟣",
+			//orangeCircle: this.client.emojis.cache.get("780488746822533163") || "🟠"
 		};
 		this.pawnEmoji = this.client.emojis.cache.get("497047504043376643") || "📍";
 	}
