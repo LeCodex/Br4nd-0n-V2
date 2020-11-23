@@ -117,12 +117,12 @@ class Carousel extends Tile {
 
 		if (target) {
 			game.summary.push({
-				message: "🎠" + player.user.toString() + " prend le carrousel pour inverser de place avec " + target.user.toString() + "!"
+				message: "🎠" + player.user.toString() + " a pris le carrousel pour inverser de place avec " + target.user.toString() + "!"
 			});
 
 			var index = target.index;
 			target.index = player.index;
-			player.move(game, index - player.index);
+			player.index = index;
 		} else {
 			game.summary.push({
 				message: "🎠" + player.user.toString() + " n'avait personne avec qui échanger de place..."
