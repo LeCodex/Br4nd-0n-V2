@@ -53,7 +53,7 @@ class Game {
 			x: 10,
 			y: 10
 		};
-		this.colors = Object.values(this.mainclass.colors).slice(0, 10);
+		this.colors = Object.values(this.mainclass.colors);
 		this.availableItems = ["🍅", "🥩", "🌶️", "🧅", "🥕", "🥑", "🥔", "🍯", "🌰", "🍍", "🌮", "🧀", "🍐", "🌭", "🥦", "🥓"];
 		this.items = [];
 
@@ -172,7 +172,7 @@ class Game {
 			.setColor(this.mainclass.color)
 
 		if (Object.values(this.players).length) {
-			var sorted = Object.values(this.players).sort((a, b) => b.score != a.score ? b.score - a.score : b.index - a.index);
+			var sorted = Object.values(this.players).sort((a, b) => b.score - a.score);
 
 			embed.addField(
 				"Joueurs",
