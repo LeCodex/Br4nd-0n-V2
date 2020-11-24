@@ -64,7 +64,7 @@ class Game {
 
 		var now = DateTime.local();
 		if (newTurn) {
-			this.nextTimestamp = now.plus(this.waitDuration).set({ second: 0 });
+			this.nextTimestamp = this.nextTimestamp.plus(this.waitDuration).set({ second: 0 });
 			if (!this.waitDuration.minutes) this.nextTimestamp = this.nextTimestamp.set({ minute: 0 });
 		}
 		var time = this.nextTimestamp.toMillis() - now.toMillis();
