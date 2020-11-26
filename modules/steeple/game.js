@@ -137,7 +137,7 @@ class Game {
 				}
 				field.value += element.message + "\n";
 			});
-			if (field.value.length) embed.addFields(field);
+			if (field.value.trim().length) embed.addFields(field);
 		}
 
 		var activeEffects = Object.values(this.players).filter(e => e.effects.length).map(e => e.user.toString() + ": " + e.effects.map(f => f.name).join(", ")).join("\n")
@@ -165,7 +165,7 @@ class Game {
 
 				field.value += string;
 			});
-			if (field.value.length) embed.addFields(field);
+			if (field.value.trim().length) embed.addFields(field);
 		}
 
 		embed.addField("Plateau", board);
