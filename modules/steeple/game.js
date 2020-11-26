@@ -347,8 +347,10 @@ class Game {
 		this.boardMessage = null;
 		if (object.boardMessage) {
 			this.boardMessage = await this.channel.messages.fetch(object.boardMessage).catch(e => this.client.error(this.channel, "Steeple", e));
-			await this.channel.messages.fetch({ after: object.boardMessage }).catch(e => this.client.error(this.channel, "Steeple", e));
-			this.setupReactionCollector();
+			if (this.boardMessage) {
+				await this.channel.messages.fetch({ after: object.boardMessage }).catch(e => this.client.error(this.channel, "Steeple", e));
+				this.setupReactionCollector();
+			}
 		}
 
 		for (var [k, e] of Object.entries(object.players)) {
