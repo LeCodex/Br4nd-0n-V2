@@ -39,7 +39,7 @@ class Base {
 	}
 
 	_testForAuth(message) {
-		var content = message.content.split(" ").slice(1);
+		var content = message.content.split(/\s+/g).slice(1);
 		var args = [], kwargs = {};
 		var insideQuotes = false;
 		for (var element of content) {
