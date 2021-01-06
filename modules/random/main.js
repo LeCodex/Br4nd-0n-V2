@@ -12,16 +12,17 @@ class MainClass extends Base {
 			"vowel": "Sends a random vowel",
 			"consonnant": "Sends a random consonnant",
 			"letter": "Sends a random letter",
-			"rps (or) shifumi": "Throws a random Rock-Paper-Scissors symbol"
+			"rps (or) shifumi": "Throws a random Rock-Paper-Scissors symbol",
+			"card": "Draws a random card"
 		}
 		this.commandText = "random";
-		this.color = 0x66ff00;
+		this.color = 0xff6600;
 	}
 
 	command(message, args, kwargs) {
 		message.reply(
 			new MessageEmbed()
-			.setDescription("🎲 Result of the D6: **" + Math.floor(Math.random() * 6) + "**")
+			.setDescription("🎲 Result of the D6: **" + Math.floor(Math.random() * 6 + 1) + "**")
 			.setColor(this.color)
 		);
 	}
@@ -29,16 +30,22 @@ class MainClass extends Base {
 	com_dice(message, args, kwargs) {
 		var faceCount = args[1];
 
-		if (isNaN(faceCount) || faceCount <= 0) {
+		if (isNaN(faceCount) || faceCount <= 0 || faceCount == Math.floor(faceCount)) {
 			message.reply(
 				new MessageEmbed()
 				.setDescription("❌ Invalid face count")
 				.setColor(this.color)
 			);
+		} else if (faceCount > Number.MAX_SAFE_INTEGER) {
+			message.reply(
+				new MessageEmbed()
+				.setDescription("♾️ Number of faces too big to be safe")
+				.setColor(this.color)
+			);
 		} else {
 			message.reply(
 				new MessageEmbed()
-				.setDescription("🎲 Result of the D" + faceCount + ": **" + Math.floor(Math.random() * faceCount) + "**")
+				.setDescription("🎲 Result of the D" + faceCount + ": **" + Math.floor(Math.random() * faceCount + 1) + "**")
 				.setColor(this.color)
 			);
 		}
@@ -86,6 +93,18 @@ class MainClass extends Base {
 
 	com_shifumi(message, args, kwargs) {
 		this.com_rps(message, args, kwargs);
+	}
+
+	com_card(message, args, kwargs) {
+		var suits = ["💙", "☘️", "♠", "🔶"];
+		var value = Math.floor(Math.random() * 13) + 1;
+		value = value < 10 ? value + 1 : "AJKQ"[value - 10];
+
+		message.reply(
+			new MessageEmbed()
+			.setDescription("🃏 Card drawn: **" + value + "** " + suits[Math.floor(Math.random() * 4)])
+			.setColor(this.color)
+		);
 	}
 }
 
