@@ -28,9 +28,9 @@ class MainClass extends Base {
 	}
 
 	com_dice(message, args, kwargs) {
-		var faceCount = args[1];
+		var faceCount = Number(args[1]);
 
-		if (isNaN(faceCount) || faceCount <= 0 || faceCount == Math.floor(faceCount)) {
+		if (isNaN(faceCount) || faceCount <= 0 || !Number.isInteger(faceCount)) {
 			message.reply(
 				new MessageEmbed()
 				.setDescription("❌ Invalid face count")
