@@ -7,7 +7,7 @@ class MainClass extends Base {
 	constructor(client) {
 		super(client);
 		this.name = "Dice";
-		this.description = "Throws dice following standard";
+		this.description = "Throws dice following Roll20 dice throw syntax";
 		this.help = {
 			"XdY": "Throws a X dice with Y faces",
 			"dX + dY": "Throws multiple dices with different face counts"
