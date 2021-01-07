@@ -8,7 +8,6 @@ class MainClass extends Base {
 		this.description = "Multiple random things";
 		this.help = {
 			"": "Throws a d6",
-			"dice X": "Throws a dice with X faces",
 			"vowel": "Sends a random vowel",
 			"consonnant": "Sends a random consonnant",
 			"letter": "Sends a random letter",
@@ -22,33 +21,9 @@ class MainClass extends Base {
 	command(message, args, kwargs) {
 		message.reply(
 			new MessageEmbed()
-			.setDescription("🎲 Result of the D6: **" + Math.floor(Math.random() * 6 + 1) + "**")
+			.setDescription("🎲 Result of the default D6: **" + Math.floor(Math.random() * 6 + 1) + "**")
 			.setColor(this.color)
 		);
-	}
-
-	com_dice(message, args, kwargs) {
-		var faceCount = Number(args[1]);
-
-		if (isNaN(faceCount) || faceCount <= 0 || !Number.isInteger(faceCount)) {
-			message.reply(
-				new MessageEmbed()
-				.setDescription("❌ Invalid face count")
-				.setColor(this.color)
-			);
-		} else if (faceCount > Number.MAX_SAFE_INTEGER) {
-			message.reply(
-				new MessageEmbed()
-				.setDescription("♾️ Number of faces too big to be safe")
-				.setColor(this.color)
-			);
-		} else {
-			message.reply(
-				new MessageEmbed()
-				.setDescription("🎲 Result of the D" + faceCount + ": **" + Math.floor(Math.random() * faceCount + 1) + "**")
-				.setColor(this.color)
-			);
-		}
 	}
 
 	com_vowel(message, args, kwargs) {
@@ -96,7 +71,7 @@ class MainClass extends Base {
 	}
 
 	com_card(message, args, kwargs) {
-		var suits = ["💙", "☘️", "♠", "🔶"];
+		var suits = ["❤️", "☘️", "♠️", "🔷"];
 		var value = Math.floor(Math.random() * 13) + 1;
 		value = value < 10 ? value + 1 : "AJKQ"[value - 10];
 
