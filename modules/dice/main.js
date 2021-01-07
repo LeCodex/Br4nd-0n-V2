@@ -1,6 +1,7 @@
 const {MessageEmbed} = require('discord.js');
 const {Base} = require(module.parent.path + "/base/main.js");
 const {evaluate} = require("mathjs");
+var XRegExp = require('xregexp');
 
 class MainClass extends Base {
 	constructor(client) {
@@ -39,14 +40,27 @@ class MainClass extends Base {
 		}
 	}
 
-	parse(expression, results = []) {
+	parse(expression, results) {
 		//console.log(expression);
+		var insideBrackets;
 
- 		expression = expression.replace(/\[\[(.*)\]\]/g, (m, p1) => {
-			var result = this.parse(p1, results);
-			return result ? evaluate(result) : "Invalid";
-		});
-		if (expression.includes("Invalid")) return null;
+		try {
+			insideBrackets = XRegExp.matchRecursive(expression, '\\[\\[', '\\]\\]', 'g');
+		} catch {
+			results.push("❌ Error while parsing brackets in " + expression);
+			return null;
+		}
+
+		// console.log(insideBrackets);
+		for (var string of insideBrackets) {
+			expression = expression.replace("[" + string + "]", m => {
+				// console.log(m);
+				var result = this.parse(m.slice(1, m.length - 1), results);
+				return result ? evaluate(result) : "Invalid";
+			});
+
+			if (expression.includes("Invalid")) return null;
+		}
 		//console.log("Nested done: " + expression);
 
 		var result = expression.replace(/(\d+)(d\d+)/g, (m, p1, p2) => {
@@ -56,7 +70,7 @@ class MainClass extends Base {
 			return Array(p1).fill(p2).join(" + ");
 		});
 		if (result.includes("Invalid")) {
-			results.push("❌ Error while parsing " + expression);
+			results.push("❌ Error while parsing dice counts in " + expression);
 			return null;
 		};
 		//console.log("Dices decomposition: " + expression);
@@ -69,7 +83,7 @@ class MainClass extends Base {
 			results.push("• Result of " + expression + ": " + result + (result != evaluation ? " = " + evaluation : ""));
 			return result;
 		} catch {
-			results.push("❌ Error while parsing " + expression);
+			results.push("❌ Error while parsing dice throws, or other error in " + expression);
 			return null;
 		}
 	}
