@@ -65,7 +65,7 @@ class MainClass extends Base {
 
 		var result = expression.replace(/(\d+)(d\d+)/g, (m, p1, p2) => {
 			p1 = Number(p1);
-			if (!Number.isInteger(p1) || p1 <= 0 || p1 > Number.MAX_SAFE_INTEGER) return "Invalid";
+			if (!Number.isInteger(p1) || p1 <= 0 || p1 > 65535) return "Invalid";
 
 			return Array(p1).fill(p2).join(" + ");
 		});
@@ -92,7 +92,7 @@ class MainClass extends Base {
 		var match = expression.match(/d(\d+)/); //(![!(>\d+)(<\d+)\d+]?)?
 		var faceCount = Number(match[1]);
 
-		if (!Number.isInteger(faceCount) || faceCount <= 0 || faceCount > Number.MAX_SAFE_INTEGER) return "Invalid";
+		if (!Number.isInteger(faceCount) || faceCount <= 0 || faceCount > 65535) return "Invalid";
 
 		//console.log("Dice: " + expression, match, faceCount);
 
