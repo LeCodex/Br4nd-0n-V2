@@ -53,9 +53,9 @@ class MainClass extends Base {
 
 		// console.log(insideBrackets);
 		for (var string of insideBrackets) {
-			expression = expression.replace("[" + string + "]", m => {
+			expression = expression.replace("[[" + string + "]]", m => {
 				// console.log(m);
-				var result = this.parse(m.slice(1, m.length - 1), results);
+				var result = this.parse(m.slice(2, m.length - 2), results);
 				return result ? evaluate(result) : "Invalid";
 			});
 
