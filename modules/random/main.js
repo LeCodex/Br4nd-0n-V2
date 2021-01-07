@@ -28,30 +28,48 @@ class MainClass extends Base {
 
 	com_vowel(message, args, kwargs) {
 		var vowels = "AAAAAAAAAEEEEEEEEEEEEEEEIIIIIIIIOOOOOOUUUUUUY";
+		var result = [];
+		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
+
+		for (var i = 0; i < amount; i ++) {
+			result.push(vowels[Math.floor(Math.random() * vowels.length)]);
+		}
 
 		message.reply(
 			new MessageEmbed()
-			.setDescription("🔠 Result of the random vowel: **" + vowels[Math.floor(Math.random() * vowels.length)] + "**")
+			.setDescription("🔠 Result of the random vowel(s): **" + result.join(", ") + "**")
 			.setColor(this.color)
 		);
 	}
 
 	com_consonnant(message, args, kwargs) {
 		var consonnants = "BBCCDDDFFGGHHJKLLLLLMMMNNNNNNPPQRRRRRRSSSSSSTTTTTTVVWXZ";
+		var result = [];
+		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
+
+		for (var i = 0; i < amount; i ++) {
+			result.push(consonnants[Math.floor(Math.random() * consonnants.length)]);
+		}
 
 		message.reply(
 			new MessageEmbed()
-			.setDescription("🔠 Result of the random consonnant: **" + consonnants[Math.floor(Math.random() * consonnants.length)] + "**")
+			.setDescription("🔠 Result of the random consonnant(s): **" + result.join(", ") + "**")
 			.setColor(this.color)
 		);
 	}
 
 	com_letter(message, args, kwargs) {
 		var letters = "AAAAAAAAABBCCDDDEEEEEEEEEEEEEEEFFGGHHIIIIIIIIJKLLLLLMMMNNNNNNOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUUUVVWXYZ";
+		var result = [];
+		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
+
+		for (var i = 0; i < amount; i ++) {
+			result.push(letters[Math.floor(Math.random() * letters.length)]);
+		}
 
 		message.reply(
 			new MessageEmbed()
-			.setDescription("🔠 Result of the random letter: **" + letters[Math.floor(Math.random() * letters.length)] + "**")
+			.setDescription("🔠 Result of the random letter(s): **" + result.join(", ") + "**")
 			.setColor(this.color)
 		);
 	}
@@ -72,12 +90,23 @@ class MainClass extends Base {
 
 	com_card(message, args, kwargs) {
 		var suits = ["❤️", "☘️", "♠️", "🔷"];
-		var value = Math.floor(Math.random() * 13) + 1;
-		value = value < 10 ? value + 1 : "AJKQ"[value - 10];
+		var result = [];
+		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 52 ? Number(args[1]) : 52);
+
+		for (var i = 0; i < amount; i ++) {
+			var card;
+			do {
+				var value = Math.floor(Math.random() * 13) + 1;
+				value = value < 10 ? value + 1 : "AJKQ"[value - 10];
+				card = "**" + value + "** " + suits[Math.floor(Math.random() * 4)]
+			} while (result.includes(card));
+
+			result.push(card);
+		}
 
 		message.reply(
 			new MessageEmbed()
-			.setDescription("🃏 Card drawn: **" + value + "** " + suits[Math.floor(Math.random() * 4)])
+			.setDescription("🃏 Card(s) drawn: " + result.join(", "))
 			.setColor(this.color)
 		);
 	}
