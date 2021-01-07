@@ -66,8 +66,9 @@ class MainClass extends Base {
 		var result = expression.replace(/(\d+)(d\d+)/g, (m, p1, p2) => {
 			p1 = Number(p1);
 			if (!Number.isInteger(p1) || p1 <= 0 || p1 > 65535) return "Invalid";
+			if (p1 == 1) return p2;
 
-			return Array(p1).fill(p2).join(" + ");
+			return "(" + Array(p1).fill(p2).join(" + ") + ")";
 		});
 		if (result.includes("Invalid")) {
 			results.push("❌ Error while parsing dice counts in " + expression);
