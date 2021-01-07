@@ -10,7 +10,7 @@ class MainClass extends Base {
 			"": "Throws a d6",
 			"vowel": "Sends a random vowel",
 			"consonnant": "Sends a random consonnant",
-			"letter": "Sends a random letter",
+			"letter": "Sends a random letter. All random letters are spread out according to the Scrabble point distribution",
 			"rps (or) shifumi": "Throws a random Rock-Paper-Scissors symbol",
 			"card": "Draws a random card"
 		}
@@ -27,7 +27,7 @@ class MainClass extends Base {
 	}
 
 	com_vowel(message, args, kwargs) {
-		var vowels = "AEIOUY";
+		var vowels = "AAAAAAAAAEEEEEEEEEEEEEEEIIIIIIIIOOOOOOUUUUUUY";
 
 		message.reply(
 			new MessageEmbed()
@@ -37,7 +37,7 @@ class MainClass extends Base {
 	}
 
 	com_consonnant(message, args, kwargs) {
-		var consonnants = "BCDFGHJKLMNPQRSTVWXZ";
+		var consonnants = "BBCCDDDFFGGHHJKLLLLLMMMNNNNNNPPQRRRRRRSSSSSSTTTTTTVVWXZ";
 
 		message.reply(
 			new MessageEmbed()
@@ -47,7 +47,7 @@ class MainClass extends Base {
 	}
 
 	com_letter(message, args, kwargs) {
-		var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		var letters = "AAAAAAAAABBCCDDDEEEEEEEEEEEEEEEFFGGHHIIIIIIIIJKLLLLLMMMNNNNNNOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUUUVVWXYZ";
 
 		message.reply(
 			new MessageEmbed()
