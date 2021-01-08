@@ -15,6 +15,7 @@ class Base {
 	 * @property {number} color - The module's description, used for the help command.
 	 * @property {Array<external:Snowflake>} auth - The ID of the users that are authorized to run this command. Authorizes everyone if it's empty.
 	 * @property {boolean} dmEnabled - Whether or not the command can be run from DMs. Defaults to false.
+	 * @property {boolean} core - Wheter or not this is a core module and it can be disaled or not. Defaults to false.
 	 */
 	constructor(client) {
 		this.client = client;
@@ -27,6 +28,7 @@ class Base {
 		this.color = 0xffffff;
 		this.auth = [];
 		this.dmEnabled = false;
+		this.core = false;
 	}
 
 	/**
