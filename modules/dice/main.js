@@ -14,6 +14,7 @@ class MainClass extends Base {
 		}
 		this.commandText = "roll";
 		this.color = 0xff3300;
+		this.dmEnabled = true;
 	}
 
 	command(message, args, kwargs, flags) {

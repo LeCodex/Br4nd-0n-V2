@@ -16,6 +16,7 @@ class MainClass extends Base {
 		}
 		this.commandText = "random";
 		this.color = 0xff6600;
+		this.dmEnabled = true;
 	}
 
 	reply(message, content) {
