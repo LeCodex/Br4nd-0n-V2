@@ -5,7 +5,7 @@ class MainClass extends Base {
 	constructor(client) {
 		super(client);
 		this.name = "Random";
-		this.description = "Multiple random things";
+		this.description = "Multiple random generators";
 		this.help = {
 			"": "Throws a d6",
 			"vowel [amount]": "Sends a random vowel",
@@ -26,11 +26,11 @@ class MainClass extends Base {
 		);
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		this.reply(message, "🎲 Result of the default D6: **" + Math.floor(Math.random() * 6 + 1) + "**");
 	}
 
-	com_vowel(message, args, kwargs) {
+	com_vowel(message, args, kwargs, flags) {
 		var vowels = "AAAAAAAAAEEEEEEEEEEEEEEEIIIIIIIIOOOOOOUUUUUUY";
 		var result = [];
 		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
@@ -42,7 +42,7 @@ class MainClass extends Base {
 		this.reply(message, "🔠 Result of the random vowel(s): **" + result.join(", ") + "**");
 	}
 
-	com_consonnant(message, args, kwargs) {
+	com_consonnant(message, args, kwargs, flags) {
 		var consonnants = "BBCCDDDFFGGHHJKLLLLLMMMNNNNNNPPQRRRRRRSSSSSSTTTTTTVVWXZ";
 		var result = [];
 		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
@@ -54,7 +54,7 @@ class MainClass extends Base {
 		this.reply(message, "🔠 Result of the random consonnant(s): **" + result.join(", ") + "**");
 	}
 
-	com_letter(message, args, kwargs) {
+	com_letter(message, args, kwargs, flags) {
 		var letters = "AAAAAAAAABBCCDDDEEEEEEEEEEEEEEEFFGGHHIIIIIIIIJKLLLLLMMMNNNNNNOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUUUVVWXYZ";
 		var result = [];
 		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
@@ -66,21 +66,21 @@ class MainClass extends Base {
 		this.reply(message, "🔠 Result of the random letter(s): **" + result.join(", ") + "**");
 	}
 
-	com_rps(message, args, kwargs) {
+	com_rps(message, args, kwargs, flags) {
 		var throws = [":rock: Rock", "📄 Paper", "✂️ Scissors"];
 
 		this.reply(message, "✊ Result of the throw: **" + throws[Math.floor(Math.random() * throws.length)] + "**");
 	}
 
-	com_shifumi(message, args, kwargs) {
-		this.com_rps(message, args, kwargs);
+	com_shifumi(message, args, kwargs, flags) {
+		this.com_rps(message, args, kwargs, flags);
 	}
 
-	com_card(message, args, kwargs) {
+	com_card(message, args, kwargs, flags) {
 		var suits = ["❤️", "☘️", "♠️", "🔷"];
 		var result = [];
 		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 52 ? Number(args[1]) : 52);
-		var noRepeat = kwargs.noRepeat === "false" ? false : true;
+		var noRepeat = flags.includes("allowRepeat") ? false : true;
 
 		for (var i = 0; i < amount; i ++) {
 			var card;
