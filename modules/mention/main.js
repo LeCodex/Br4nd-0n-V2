@@ -7,8 +7,9 @@ class MainClass extends Base {
 		this.name = "Mention";
 		this.description = "Redirects mentions of the bot to other modules";
 		this.help = {
-			"": "Sends the current module the mentions calls",
-			"<module>": "Sets the module the mentions will call"
+			"": "Sends the current module the mentions calls (in this channel if it was set)",
+			"--channel": "Resets the module called in this channel",
+			"<module> [--channel]": "Sets the module the mentions will call. Use --channel to apply this change only to this channel",
 		};
 		this.commandText = "mention";
 		this.color = 0x222222;
@@ -18,17 +19,27 @@ class MainClass extends Base {
 	}
 
 	command(message, args, kwargs, flags) {
+		if (!this.moduleList[message.guild.id]) this.moduleList[message.guild.id] = { server: "ping", channels: {} };
+		console.log(this.moduleList[message.guild.id]);
+
 		if (args.length) {
-			this.moduleList[message.guild.id] = args[0];
-			this.save("modules", this.moduleList);
-			message.reply("The linked command is now: `" + process.env.PREFIX + this.moduleList[message.guild.id] + "`")
-		} else {
-			if (!this.moduleList[message.guild.id]) {
-				this.moduleList[message.guild.id] = "ping";
-				this.save("modules", this.moduleList);
+			if (flags.includes("channel")) {
+				this.moduleList[message.guild.id].channels[message.channel.id] = args[0];
+			} else {
+				this.moduleList[message.guild.id].server = args[0];
 			}
-			message.reply("The linked command is currently: `" + process.env.PREFIX + this.moduleList[message.guild.id] + "`");
+
+			this.save("modules", this.moduleList);
+			message.reply("The linked command is now: `" + process.env.PREFIX + args[0] + "`" + (flags.includes("channel") ? " (In this channel)" : ""));
+		} else {
+			if (this.moduleList[message.guild.id].channels[message.channel.id]) {
+				message.reply("The linked command is currently: `" + process.env.PREFIX + this.moduleList[message.guild.id].channels[message.channel.id] + "` (In this channel)");
+			} else {
+				message.reply("The linked command is currently: `" + process.env.PREFIX + this.moduleList[message.guild.id].server + "`");
+			}
 		}
+
+		this.save("modules", this.moduleList);
 	}
 
 	on_message(message) {
@@ -37,11 +48,15 @@ class MainClass extends Base {
 
 			var index = message.content.search(MessageMentions.USERS_PATTERN);
 			if (!this.moduleList[message.guild.id]) {
-				this.moduleList[message.guild.id] = "ping";
+				this.moduleList[message.guild.id] = { server: "ping", channels: {} };
 				this.save("modules", this.moduleList);
 			}
-			if (index == 0 && message.mentions.users.first().id == this.client.user.id && this.client.modules[this.moduleList[message.guild.id]]) {
-				this.client.modules[this.moduleList[message.guild.id]]._testForAuth(message);
+
+			var moduleName = this.moduleList[message.guild.id].server
+			if (this.moduleList[message.guild.id].channels[message.channel.id]) moduleName = this.moduleList[message.guild.id].channels[message.channel.id];
+
+			if (index == 0 && message.mentions.users.first().id == this.client.user.id && this.client.modules[moduleName]) {
+				this.client.modules[moduleName]._testForAuth(message);
 			}
 		}
 	}
