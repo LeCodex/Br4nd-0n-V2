@@ -40,7 +40,7 @@ class Base {
 
 	_testForAuth(message) {
 		var content = message.content.split(/\s+/g).slice(1);
-		var args = [], kwargs = {};
+		var args = [], kwargs = {}, flags = [];
 		var insideQuotes = false;
 		for (var element of content) {
 			if (element.search(/\S+=\S+/) != -1) {
@@ -48,11 +48,15 @@ class Base {
 				var value = element.match(/=\S+/)[0];
 				kwargs[key.substring(0, key.length - 1)] = value.substring(1);
 			} else if (!insideQuotes) {
-			 	if (element.startsWith("\"") && !element.endsWith("\"")) {
-					insideQuotes = true;
-					element = element.slice(1);
+				if (element.startsWith("--")) {
+					flags.push(element.slice(2));
+				} else {
+					if (element.startsWith("\"") && !element.endsWith("\"")) {
+						insideQuotes = true;
+						element = element.slice(1);
+					}
+					args.push(element);
 				}
-				args.push(element);
 			} else {
 				if (element.endsWith("\"")) {
 					insideQuotes = false;
@@ -63,19 +67,19 @@ class Base {
 		}
 
 		if (this.auth.length == 0 || this.auth.includes(message.author.id)) {
-			this._executeCommand(message, args, kwargs);
+			this._executeCommand(message, args, kwargs, flags);
 		} else {
 			message.reply("You are not authorized to run this command.");
 		}
 	}
 
-	_executeCommand(message, args, kwargs) {
-		//console.log(args, kwargs);
+	_executeCommand(message, args, kwargs, flags) {
+		console.log(args, kwargs, flags);
 
 		if (this["com_" + args[0]]) {
-			this["com_" + args[0]](message, args, kwargs);
+			this["com_" + args[0]](message, args, kwargs, flags);
 		} else {
-			this.command(message, args, kwargs);
+			this.command(message, args, kwargs, flags);
 		}
 	}
 

@@ -29,7 +29,7 @@ class MainClass extends Base {
 		}
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		this.check_if_data_exists(message);
 		var data = this.data[message.guild.id];
 		var channel = this.client.channels.cache.get(data.channel);
@@ -41,7 +41,7 @@ class MainClass extends Base {
 			: "Some parameters are missing");
 	}
 
-	com_role(message, args, kwargs) {
+	com_role(message, args, kwargs, flags) {
 		this.check_if_data_exists(message);
 
 		if (args[1] == "reset") {
@@ -62,7 +62,7 @@ class MainClass extends Base {
 		this.save("data", this.data);
 	}
 
-	com_channel(message, args, kwargs) {
+	com_channel(message, args, kwargs, flags) {
 		this.check_if_data_exists(message);
 
 		if (args[1] == "reset") {
@@ -82,7 +82,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_words(message, args, kwargs) {
+	com_words(message, args, kwargs, flags) {
 		this.check_if_data_exists(message);
 
 		if (args[1] == "reset") {
@@ -102,7 +102,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_welcome(message, args, kwargs) {
+	com_welcome(message, args, kwargs, flags) {
 		this.check_if_data_exists(message);
 
 		if (args[1] == "reset") {
@@ -122,7 +122,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_welcome_channel(message, args, kwargs) {
+	com_welcome_channel(message, args, kwargs, flags) {
 		this.check_if_data_exists(message);
 
 		if (args[1] == "reset") {

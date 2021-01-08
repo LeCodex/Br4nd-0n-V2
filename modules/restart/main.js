@@ -13,7 +13,7 @@ class MainClass extends Base {
 		this.auth = [ process.env.ADMIN ];
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		message.reply("The bot will restart.")
 			.then(() => process.exit(1));
 	}

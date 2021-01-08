@@ -14,7 +14,7 @@ class MainClass extends Base {
 		this.auth = process.env.ADMIN;
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		message.channel.send(args.join(" "));
 		message.delete();
 	}

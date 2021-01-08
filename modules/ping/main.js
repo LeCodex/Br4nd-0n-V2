@@ -14,7 +14,7 @@ class MainClass extends Base {
 		this.color = 0x00ffff;
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		message.reply(
 			new MessageEmbed()
 			.setDescription("🏓 Pong! (**" + (Date.now() - message.createdTimestamp)

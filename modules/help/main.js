@@ -14,7 +14,7 @@ class MainClass extends Base {
 		this.color = 0x00ff00;
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		if (args.length) {
 			var commandText = args.join(" ").toLowerCase();
 			if (Object.keys(this.client.modules).includes(commandText)) {

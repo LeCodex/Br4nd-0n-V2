@@ -13,7 +13,7 @@ class MainClass extends Base {
 		this.color = 0xfffffe;
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		message.reply(
 			new MessageEmbed()
 			.setThumbnail(this.client.user.displayAvatarURL())

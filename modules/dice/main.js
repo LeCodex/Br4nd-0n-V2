@@ -16,7 +16,7 @@ class MainClass extends Base {
 		this.color = 0xff3300;
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		var results = []
 		var lastResult = this.parse(args.join(" "), results);
 

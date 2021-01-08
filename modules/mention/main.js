@@ -17,7 +17,7 @@ class MainClass extends Base {
 		this.load("modules", {}).then(e => {this.moduleList = e;});
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		if (args.length) {
 			this.moduleList[message.guild.id] = args[0];
 			this.save("modules", this.moduleList);

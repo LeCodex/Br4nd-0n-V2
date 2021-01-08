@@ -45,7 +45,7 @@ class MainClass extends Base {
 		return "🏅";
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id]
 			if (game.paused) return;
@@ -88,7 +88,7 @@ class MainClass extends Base {
 		message.delete();
 	}
 
-	com_rank(message, args, kwargs) {
+	com_rank(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
 			var sorted = Object.values(game.players).sort((a, b) => b.score - a.score);
@@ -110,7 +110,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_show(message, args, kwargs) {
+	com_show(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
 			if (game.stackMessage) game.deleteStackMessage();
@@ -118,7 +118,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_start(message, args, kwargs) {
+	com_start(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].paused = false;
@@ -129,7 +129,7 @@ class MainClass extends Base {
 		};
 	}
 
-	com_stop(message, args, kwargs) {
+	com_stop(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].paused = true;
@@ -138,7 +138,7 @@ class MainClass extends Base {
 		};
 	}
 
-	com_delete(message, args, kwargs) {
+	com_delete(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].delete_save();
@@ -148,7 +148,7 @@ class MainClass extends Base {
 		};
 	}
 
-	com_refill(message, args, kwargs) {
+	com_refill(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].refill();
@@ -158,7 +158,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_enable(message, args, kwargs) {
+	com_enable(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].enabled.push(...args.slice(1).filter(e => !this.games[message.channel.id].enabled.includes(e)));
@@ -168,7 +168,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_newStack(message, args, kwargs) {
+	com_newStack(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].needRefill = true;
@@ -177,7 +177,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_disable(message, args, kwargs) {
+	com_disable(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				for (var cup of args.slice(1)) {
@@ -189,7 +189,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_set(message, args, kwargs) {
+	com_set(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];
@@ -211,7 +211,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_gamerules(message, args, kwargs) {
+	com_gamerules(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];
@@ -225,7 +225,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_debug(message, args, kwargs) {
+	com_debug(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			this.debug = !this.debug
 			this.load("games").then(object =>{

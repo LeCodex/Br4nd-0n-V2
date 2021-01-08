@@ -19,12 +19,12 @@ class MainClass extends Base {
 		this.statLogics = [];
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		if (args.length) {
 			if (this.statLogics[message.author.id]) {
-				this.statLogics[message.author.id].close().then(() => this.openNewScoreboard(message, args, kwargs))
+				this.statLogics[message.author.id].close().then(() => this.openNewScoreboard(message, args, kwargs, flags))
 			} else {
-				this.openNewScoreboard(message, args, kwargs)
+				this.openNewScoreboard(message, args, kwargs, flags)
 			}
 		} else {
 			var embed = new MessageEmbed().setTitle("[STATS] Stored Scoreboards").setColor(this.color);
@@ -39,7 +39,7 @@ class MainClass extends Base {
 		}
 	}
 
-	openNewScoreboard(message, args, kwargs) {
+	openNewScoreboard(message, args, kwargs, flags) {
 		var name = args.map(e => e = e.substr(0, 1).toUpperCase() + e.substr(1).toLowerCase()).join(" ");
 		if (!this.stats[message.guild.id]) this.stats[message.guild.id] = {};
 		if (!this.stats[message.guild.id][name]) {

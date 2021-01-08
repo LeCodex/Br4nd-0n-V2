@@ -104,19 +104,19 @@ class Base {
 		}
 
 		if (this.auth.length == 0 || this.auth.includes(message.author.id)) {
-			this._executeCommand(message, args, kwargs);
+			this._executeCommand(message, args, kwargs, flags);
 		} else {
 			message.reply("You are not authorized to run this command.");
 		}
 	}
 
-	_executeCommand(message, args, kwargs) {
-		//console.log(args, kwargs);
+	_executeCommand(message, args, kwargs, flags) {
+		//console.log(args, kwargs, flags);
 
 		if (this["com_" + args[0]]) {
-			this["com_" + args[0]](message, args, kwargs);
+			this["com_" + args[0]](message, args, kwargs, flags);
 		} else {
-			this.command(message, args, kwargs);
+			this.command(message, args, kwargs, flags);
 		}
 	}
 

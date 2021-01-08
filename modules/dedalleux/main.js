@@ -43,7 +43,7 @@ class MainClass extends Base {
 		this.pawnEmoji = this.client.emojis.cache.get("497047504043376643") || "📍";
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
 			if (!game.players[message.author.id]) {
@@ -55,7 +55,7 @@ class MainClass extends Base {
 		message.delete();
 	}
 
-	com_show(message, args, kwargs) {
+	com_show(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
 			game.resendMessage();
@@ -64,7 +64,7 @@ class MainClass extends Base {
 		message.delete();
 	}
 
-	com_start(message, args, kwargs) {
+	com_start(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].paused = false;
@@ -76,7 +76,7 @@ class MainClass extends Base {
 		};
 	}
 
-	com_stop(message, args, kwargs) {
+	com_stop(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].paused = true;
@@ -86,7 +86,7 @@ class MainClass extends Base {
 		};
 	}
 
-	com_delete(message, args, kwargs) {
+	com_delete(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].delete_save();
@@ -96,7 +96,7 @@ class MainClass extends Base {
 		};
 	}
 
-	com_debug(message, args, kwargs) {
+	com_debug(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			this.debug = !this.debug
 			this.load("games").then(object =>{
@@ -107,7 +107,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_turn(message, args, kwargs) {
+	com_turn(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
 			if (this.pseudo_auth.includes(message.author.id)) {
 				var game = this.games[message.channel.id];
@@ -118,7 +118,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_wait(message, args, kwargs) {
+	com_wait(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
 			if (this.pseudo_auth.includes(message.author.id)) {
 				var game = this.games[message.channel.id];
@@ -135,7 +135,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_set(message, args, kwargs) {
+	com_set(message, args, kwargs, flags) {
 		if (this.pseudo_auth.includes(message.author.id)) {
 			if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];
