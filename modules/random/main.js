@@ -8,11 +8,11 @@ class MainClass extends Base {
 		this.description = "Multiple random generators";
 		this.help = {
 			"": "Throws a d6",
-			"vowel [amount]": "Sends a random vowel",
-			"consonnant [amount]": "Sends a random consonnant",
-			"letter [amount]": "Sends a random letter. All random letters are spread out according to the Scrabble point distribution",
+			"vowel [amount]": "Sends a random vowel using Scrabble distribution. Use --uniform for a uniform one",
+			"consonnant [amount]": "Sends a random consonnant using Scrabble distribution. Use --uniform for a uniform one",
+			"letter [amount]": "Sends a random letter using Scrabble distribution. Use --uniform for a uniform one",
 			"rps (or) shifumi": "Throws a random Rock-Paper-Scissors symbol",
-			"card [amount]": "Draws a random card. Use noRepeat=false to allow the bot to draw the same card mutliple times"
+			"card [amount]": "Draws a random card. Use --noRepeat to make sure all cards drawn are unique"
 		}
 		this.commandText = "random";
 		this.color = 0xff6600;
@@ -36,8 +36,14 @@ class MainClass extends Base {
 		var result = [];
 		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
 
+		if (flags.includes("uniform")) vowels = "AEIOUY";
+
 		for (var i = 0; i < amount; i ++) {
-			result.push(vowels[Math.floor(Math.random() * vowels.length)]);
+			var choice = Math.floor(Math.random() * vowels.length);
+
+			result.push(vowels[choice]);
+			if (flags.includes("noRepeat")) vowels = vowels.slice(0, choice) + vowels.slice(choice + 1, vowels.length);
+			if (!vowels.length) break;
 		}
 
 		this.reply(message, "🔠 Result of the random vowel(s): **" + result.join(", ") + "**");
@@ -48,8 +54,14 @@ class MainClass extends Base {
 		var result = [];
 		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
 
+		if (flags.includes("uniform")) consonnants = "BCDFGHJKLMNPQRSTVWXZ";
+
 		for (var i = 0; i < amount; i ++) {
-			result.push(consonnants[Math.floor(Math.random() * consonnants.length)]);
+			var choice = Math.floor(Math.random() * consonnants.length);
+
+			result.push(consonnants[choice]);
+			if (flags.includes("noRepeat")) consonnants = consonnants.slice(0, choice) + consonnants.slice(choice + 1, consonnants.length);
+			if (!consonnants.length) break;
 		}
 
 		this.reply(message, "🔠 Result of the random consonnant(s): **" + result.join(", ") + "**");
@@ -60,8 +72,14 @@ class MainClass extends Base {
 		var result = [];
 		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
 
+		if (flags.includes("uniform")) letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
 		for (var i = 0; i < amount; i ++) {
-			result.push(letters[Math.floor(Math.random() * letters.length)]);
+			var choice = Math.floor(Math.random() * letters.length);
+
+			result.push(letters[choice]);
+			if (flags.includes("noRepeat")) letters = letters.slice(0, choice) + letters.slice(choice + 1, letters.length);
+			if (!letters.length) break;
 		}
 
 		this.reply(message, "🔠 Result of the random letter(s): **" + result.join(", ") + "**");
@@ -81,7 +99,7 @@ class MainClass extends Base {
 		var suits = ["❤️", "☘️", "♠️", "🔷"];
 		var result = [];
 		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 52 ? Number(args[1]) : 52);
-		var noRepeat = flags.includes("allowRepeat") ? false : true;
+		var noRepeat = flags.includes("noRepeat") ? true : false;
 
 		for (var i = 0; i < amount; i ++) {
 			var card;

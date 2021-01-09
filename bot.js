@@ -93,7 +93,6 @@ client.error = function(channel, name, error) {
 		channel.send(embed.setFooter("This message will be deleted in one minute")).then(message => {
 			message.delete({ timeout: 60000 });
 		}).catch(console.error);
-
 }
 
 client.getUserFromMention = function(mention) {
