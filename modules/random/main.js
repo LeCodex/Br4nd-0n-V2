@@ -8,11 +8,11 @@ class MainClass extends Base {
 		this.description = "Multiple random generators";
 		this.help = {
 			"": "Throws a d6",
-			"vowel [amount]": "Sends a random vowel using Scrabble distribution. Use --uniform for a uniform one",
-			"consonnant [amount]": "Sends a random consonnant using Scrabble distribution. Use --uniform for a uniform one",
-			"letter [amount]": "Sends a random letter using Scrabble distribution. Use --uniform for a uniform one",
+			"vowel [amount]": "Sends a random vowel using Scrabble distribution.\nUse --uniform for a uniform one.\nUse --unique to avoid repeats",
+			"consonant [amount]": "Sends a random consonant using Scrabble distribution.\nUse --uniform for a uniform one.\nUse --unique to avoid repeats",
+			"letter [amount]": "Sends a random letter using Scrabble distribution.\nUse --uniform for a uniform one.\nUse --unique to avoid repeats",
 			"rps (or) shifumi": "Throws a random Rock-Paper-Scissors symbol",
-			"card [amount]": "Draws a random card. Use --noRepeat to make sure all cards drawn are unique"
+			"card [amount]": "Draws a random card.\nUse --unique to make sure all cards drawn are unique"
 		}
 		this.commandText = "random";
 		this.color = 0xff6600;
@@ -42,29 +42,29 @@ class MainClass extends Base {
 			var choice = Math.floor(Math.random() * vowels.length);
 
 			result.push(vowels[choice]);
-			if (flags.includes("noRepeat")) vowels = vowels.slice(0, choice) + vowels.slice(choice + 1, vowels.length);
+			if (flags.includes("unique")) vowels = vowels.slice(0, choice) + vowels.slice(choice + 1, vowels.length);
 			if (!vowels.length) break;
 		}
 
 		this.reply(message, "🔠 Result of the random vowel(s): **" + result.join(", ") + "**");
 	}
 
-	com_consonnant(message, args, kwargs, flags) {
-		var consonnants = "BBCCDDDFFGGHHJKLLLLLMMMNNNNNNPPQRRRRRRSSSSSSTTTTTTVVWXZ";
+	com_consonant(message, args, kwargs, flags) {
+		var consonants = "BBCCDDDFFGGHHJKLLLLLMMMNNNNNNPPQRRRRRRSSSSSSTTTTTTVVWXZ";
 		var result = [];
 		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
 
-		if (flags.includes("uniform")) consonnants = "BCDFGHJKLMNPQRSTVWXZ";
+		if (flags.includes("uniform")) consonants = "BCDFGHJKLMNPQRSTVWXZ";
 
 		for (var i = 0; i < amount; i ++) {
-			var choice = Math.floor(Math.random() * consonnants.length);
+			var choice = Math.floor(Math.random() * consonants.length);
 
-			result.push(consonnants[choice]);
-			if (flags.includes("noRepeat")) consonnants = consonnants.slice(0, choice) + consonnants.slice(choice + 1, consonnants.length);
-			if (!consonnants.length) break;
+			result.push(consonants[choice]);
+			if (flags.includes("unique")) consonants = consonants.slice(0, choice) + consonants.slice(choice + 1, consonants.length);
+			if (!consonants.length) break;
 		}
 
-		this.reply(message, "🔠 Result of the random consonnant(s): **" + result.join(", ") + "**");
+		this.reply(message, "🔠 Result of the random consonant(s): **" + result.join(", ") + "**");
 	}
 
 	com_letter(message, args, kwargs, flags) {
@@ -78,7 +78,7 @@ class MainClass extends Base {
 			var choice = Math.floor(Math.random() * letters.length);
 
 			result.push(letters[choice]);
-			if (flags.includes("noRepeat")) letters = letters.slice(0, choice) + letters.slice(choice + 1, letters.length);
+			if (flags.includes("unique")) letters = letters.slice(0, choice) + letters.slice(choice + 1, letters.length);
 			if (!letters.length) break;
 		}
 
@@ -99,7 +99,7 @@ class MainClass extends Base {
 		var suits = ["❤️", "☘️", "♠️", "🔷"];
 		var result = [];
 		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 52 ? Number(args[1]) : 52);
-		var noRepeat = flags.includes("noRepeat") ? true : false;
+		var unique = flags.includes("unique") ? true : false;
 
 		for (var i = 0; i < amount; i ++) {
 			var card;
@@ -107,7 +107,7 @@ class MainClass extends Base {
 				var value = Math.floor(Math.random() * 13) + 1;
 				value = value < 10 ? value + 1 : "AJKQ"[value - 10];
 				card = "**" + value + "** " + suits[Math.floor(Math.random() * 4)]
-			} while (result.includes(card) && noRepeat);
+			} while (result.includes(card) && unique);
 
 			result.push(card);
 		}
