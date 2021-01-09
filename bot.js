@@ -17,9 +17,9 @@ client.path = module.path;
 async function loadModules() {
 	if (process.env.MONGO_DB_URL) console.log("MongoDB connected");
 
-	try {
-		const files = await fs.promises.readdir('./modules');
-		for (const file of files) {
+	const files = await fs.promises.readdir('./modules');
+	for (const file of files) {
+		try {
 			const path = './modules/' + file
 			const stat = await fs.promises.stat(path);
 
@@ -29,9 +29,9 @@ async function loadModules() {
 				client.modules[mod.commandText] = mod;
 				console.log("Loaded module " + mod.name + " (" + mod.description + "), command text: " + process.env.PREFIX + mod.commandText + "");
 			}
+		} catch(e) {
+			console.error("Failed to load module from " + file + ": ", e);
 		}
-	} catch(e) {
-		console.error("Failed to load modules: ", e);
 	}
 }
 
