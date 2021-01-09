@@ -34,16 +34,20 @@ class MainClass extends Base {
 	com_vowel(message, args, kwargs, flags) {
 		var vowels = "AAAAAAAAAEEEEEEEEEEEEEEEIIIIIIIIOOOOOOUUUUUUY";
 		var result = [];
-		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
+
+		var max = flags.includes("noRepeat") ? 6 : 100;
+		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < max ? Number(args[1]) : max);
 
 		if (flags.includes("uniform")) vowels = "AEIOUY";
 
 		for (var i = 0; i < amount; i ++) {
-			var choice = Math.floor(Math.random() * vowels.length);
+			var index, choice;
+			do {
+				index = Math.floor(Math.random() * vowels.length);
+				choice = vowels[index];
+			} while (result.includes(choice) && flags.includes("noRepeat"))
 
-			result.push(vowels[choice]);
-			if (flags.includes("noRepeat")) vowels = vowels.slice(0, choice) + vowels.slice(choice + 1, vowels.length);
-			if (!vowels.length) break;
+			result.push(choice);
 		}
 
 		this.reply(message, "🔠 Result of the random vowel(s): **" + result.join(", ") + "**");
@@ -52,16 +56,20 @@ class MainClass extends Base {
 	com_consonnant(message, args, kwargs, flags) {
 		var consonnants = "BBCCDDDFFGGHHJKLLLLLMMMNNNNNNPPQRRRRRRSSSSSSTTTTTTVVWXZ";
 		var result = [];
-		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
+
+		var max = flags.includes("noRepeat") ? 20 : 100;
+		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < max ? Number(args[1]) : max);
 
 		if (flags.includes("uniform")) consonnants = "BCDFGHJKLMNPQRSTVWXZ";
 
 		for (var i = 0; i < amount; i ++) {
-			var choice = Math.floor(Math.random() * consonnants.length);
+			var index, choice;
+			do {
+				index = Math.floor(Math.random() * consonnants.length);
+				choice = consonnants[index];
+			} while (result.includes(choice) && flags.includes("noRepeat"))
 
-			result.push(consonnants[choice]);
-			if (flags.includes("noRepeat")) consonnants = consonnants.slice(0, choice) + consonnants.slice(choice + 1, consonnants.length);
-			if (!consonnants.length) break;
+			result.push(choice);
 		}
 
 		this.reply(message, "🔠 Result of the random consonnant(s): **" + result.join(", ") + "**");
@@ -70,16 +78,20 @@ class MainClass extends Base {
 	com_letter(message, args, kwargs, flags) {
 		var letters = "AAAAAAAAABBCCDDDEEEEEEEEEEEEEEEFFGGHHIIIIIIIIJKLLLLLMMMNNNNNNOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUUUVVWXYZ";
 		var result = [];
-		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < 100 ? Number(args[1]) : 100);
+
+		var max = flags.includes("noRepeat") ? 20 : 100;
+		var amount = isNaN(args[1]) ? 1 : (Number(args[1]) < max ? Number(args[1]) : max);
 
 		if (flags.includes("uniform")) letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 		for (var i = 0; i < amount; i ++) {
-			var choice = Math.floor(Math.random() * letters.length);
+			var index, choice;
+			do {
+				index = Math.floor(Math.random() * letters.length);
+				choice = letters[index];
+			} while (result.includes(choice) && flags.includes("noRepeat"))
 
-			result.push(letters[choice]);
-			if (flags.includes("noRepeat")) letters = letters.slice(0, choice) + letters.slice(choice + 1, letters.length);
-			if (!letters.length) break;
+			result.push(choice);
 		}
 
 		this.reply(message, "🔠 Result of the random letter(s): **" + result.join(", ") + "**");
