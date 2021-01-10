@@ -420,6 +420,7 @@ class Game {
 				user: e.user.id,
 				turnedOnce: e.turnedOnce,
 				item: e.item,
+				gainedOnePoint: e.gainedOnePoint,
 				itemChannel: e.itemMessage ? e.itemMessage.channel.id : null,
 				itemMessage: e.itemMessage ? e.itemMessage.id : null
 			}
@@ -457,6 +458,7 @@ class Game {
 			p.turnedOnce = e.turnedOnce;
 			p.item = e.item;
 			p.itemMessage = null;
+			p.gainedOnePoint = e.gainedOnePoint;
 			if (e.itemChannel) {
 				var channel = await this.client.channels.fetch(e.itemChannel);
 				if (e.itemMessage) p.itemMessage = await channel.messages.fetch(e.itemMessage);
