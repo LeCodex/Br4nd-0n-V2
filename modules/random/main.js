@@ -11,7 +11,7 @@ class MainClass extends Base {
 			"vowel [amount]": "Sends a random vowel using Scrabble distribution.\nUse --uniform for a uniform one.\nUse --unique to avoid repeats",
 			"consonant [amount]": "Sends a random consonant using Scrabble distribution.\nUse --uniform for a uniform one.\nUse --unique to avoid repeats",
 			"letter [amount]": "Sends a random letter using Scrabble distribution.\nUse --uniform for a uniform one.\nUse --unique to avoid repeats",
-			"rps (or) shifumi": "Throws a random Rock-Paper-Scissors symbol",
+			"rps/shifumi": "Throws a random Rock-Paper-Scissors symbol",
 			"card [amount]": "Draws a random card.\nUse --unique to make sure all cards drawn are unique"
 		}
 		this.commandText = "random";
