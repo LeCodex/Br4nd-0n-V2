@@ -15,7 +15,7 @@ math.import({
 }, { override: true });
 
 function parse(expression, results = []) {
-	console.log(expression);
+	// console.log(expression);
 
 	var insideBrackets;
 	try {
@@ -23,19 +23,19 @@ function parse(expression, results = []) {
 	} catch (e) {
 		return [null, "❌ **Error while parsing brackets in " + expression + "**:\n" + e];
 	}
-	console.log(insideBrackets);
+	// console.log(insideBrackets);
 
 	for (var string of insideBrackets) {
 		expression = expression.replace("[[" + string + "]]", m => {
 			console.log(m);
 			var result;
 			[result, results] = parse(m.slice(2, m.length - 2), results);
-			return result ? evaluate(result) : "Invalid";
+			return result ? limitedEvaluate(result) : "Invalid";
 		});
 
 		if (expression.includes("Invalid")) return null;
 	}
-	console.log("Nested done: " + expression);
+	// console.log("Nested done: " + expression);
 
 	var result = expression.replace(/([\d.]+)(d[\d.]+)/g, (m, p1, p2) => {
 		p1 = Number(p1);
@@ -47,10 +47,10 @@ function parse(expression, results = []) {
 	if (result.includes("Invalid")) {
 		return [null, "❌ Error while parsing dice counts in " + expression];
 	};
-	console.log("Dices decomposition: " + expression);
+	// console.log("Dices decomposition: " + expression);
 
 	result = result.replace(/d[\d.]+/g, m => parseDice(m));
-	console.log("Dices done: " + expression);
+	// console.log("Dices done: " + expression);
 
 	try {
 		var evaluation = limitedEvaluate(result);
@@ -67,7 +67,7 @@ function parseDice(expression) {
 
 	if (!Number.isInteger(faceCount) || faceCount <= 0 || faceCount > 65535) return "Invalid";
 
-	console.log("Dice: " + expression, match, faceCount);
+	// console.log("Dice: " + expression, match, faceCount);
 
 	return Math.floor(Math.random() * faceCount) + 1;
 }
