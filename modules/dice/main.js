@@ -1,7 +1,7 @@
 const {MessageEmbed} = require('discord.js');
 const {Base} = require(module.parent.path + "/base/main.js");
 const workerpool = require('workerpool');
-const pool = workerpool.pool("./modules/dice/worker.js", { maxWorkers: 7 });
+const pool = workerpool.pool("./modules/dice/worker.js");
 const { create, all } = require('mathjs');
 
 const math = create(all);
@@ -31,7 +31,7 @@ class MainClass extends Base {
 	}
 
 	command(message, args, kwargs, flags) {
-		pool.exec("parse", [args.join(" ")])
+		var promise = pool.exec("parse", [args.join(" ")])
 			.then(([lastResult, results]) => {
 				if (lastResult) {
 					// console.log(lastResult, results);
@@ -58,10 +58,9 @@ class MainClass extends Base {
 				.setTitle("🎲 Dice Roll Failed")
 				.setDescription("❌ **The process returned the following error:**\n" + e)
 				.setColor(this.color)
-			))
-			.then(() => pool.terminate());
+			));
 
-		setTimeout(() => pool.terminate(true), 5000);
+		promise.timeout(5000);
 	}
 }
 
