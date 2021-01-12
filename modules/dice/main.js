@@ -1,7 +1,7 @@
 const {MessageEmbed} = require('discord.js');
 const {Base} = require(module.parent.path + "/base/main.js");
 const workerpool = require('workerpool');
-const pool = workerpool.pool("./modules/dice/worker.js");
+const pool = workerpool.pool("./modules/dice/worker.js", {maxWorkers: 5});
 const { create, all } = require('mathjs');
 
 const math = create(all);
@@ -60,7 +60,7 @@ class MainClass extends Base {
 				.setColor(this.color)
 			));
 
-		promise.timeout(5000);
+		promise.timeout(10000);
 	}
 }
 
