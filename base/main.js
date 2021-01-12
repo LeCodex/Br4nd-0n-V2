@@ -68,7 +68,7 @@ class Base {
 			}
 		}
 
-		if (this.auth.length == 0 || this.auth.includes(message.author.id)) {
+		if (this.auth.length === 0 || this.auth.includes(message.author.id)) {
 			this._executeCommand(message, args, kwargs, flags);
 		} else {
 			message.reply("You are not authorized to run this command.");
