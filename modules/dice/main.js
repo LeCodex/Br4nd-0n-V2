@@ -34,7 +34,7 @@ class MainClass extends Base {
 		pool.exec("parse", [args.join(" ")])
 			.then(([lastResult, results]) => {
 				if (lastResult) {
-					console.log(lastResult, results);
+					// console.log(lastResult, results);
 					lastResult = limitedEvaluate(lastResult);
 					var content = "```" + results.join("\n") + "```";
 
@@ -58,7 +58,8 @@ class MainClass extends Base {
 				.setTitle("🎲 Dice Roll Failed")
 				.setDescription("❌ **The process returned the following error:**\n" + e)
 				.setColor(this.color)
-			));
+			))
+			.then(() => pool.terminate());
 
 		setTimeout(() => pool.terminate(true), 5000);
 	}
