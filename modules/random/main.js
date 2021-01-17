@@ -12,7 +12,8 @@ class MainClass extends Base {
 			"consonant [amount]": "Sends a random consonant using Scrabble distribution.\nUse --uniform for a uniform one.\nUse --unique to avoid repeats",
 			"letter [amount]": "Sends a random letter using Scrabble distribution.\nUse --uniform for a uniform one.\nUse --unique to avoid repeats",
 			"rps/shifumi": "Throws a random Rock-Paper-Scissors symbol",
-			"card [amount]": "Draws a random card.\nUse --unique to make sure all cards drawn are unique"
+			"card [amount]": "Draws a random card.\nUse --unique to make sure all cards drawn are unique",
+			"choices [list of choices seperated by spaces]": "Returns one of the choices at random, following a uniform distribution"
 		}
 		this.commandText = "random";
 		this.color = 0xff6600;
@@ -113,6 +114,11 @@ class MainClass extends Base {
 		}
 
 		this.reply(message, "🃏 Card(s) drawn: " + result.join(", "));
+	}
+
+	com_choice(message, args, kwargs, flags) {
+		args.splice();
+		this.reply(message, "🔮 I choose **" + args[Math.floor(Math.random() * args.length)] + "**!");
 	}
 }
 
