@@ -13,7 +13,8 @@ class MainClass extends Base {
 			"letter [amount]": "Sends a random letter using Scrabble distribution.\nUse --uniform for a uniform one.\nUse --unique to avoid repeats",
 			"rps/shifumi": "Throws a random Rock-Paper-Scissors symbol",
 			"card [amount]": "Draws a random card.\nUse --unique to make sure all cards drawn are unique",
-			"choices [list of choices seperated by spaces]": "Returns one of the choices at random, following a uniform distribution"
+			"choices [list of choices seperated by spaces]": "Returns one of the choices at random, following a uniform distribution",
+			"8ball": "Get a answer to your question from the magic 8-ball"
 		}
 		this.commandText = "random";
 		this.color = 0xff6600;
