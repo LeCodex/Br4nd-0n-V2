@@ -8,7 +8,8 @@ class MainClass extends Base {
 		this.description = "Redirects mentions of the bot and other macros to other modules";
 		this.help = {
 			"": "Sends the current module the mentions calls (in this channel if it was set) and all other macros.",
-			"mention <module> [--channel]": "Sets the module the mentions will call.\nUse --channel to apply this change only to this channel.",
+			"mention <command> [--channel]": "Sets the command the mentions will call. You don't need to specify the prefix in the command.\nUse --channel to apply this change only to this channel.",
+			"mention clear": "Clears the link to mentions in this channel",
 			"create <macro> <command> [--exact] [--ignoreCase] [--channel]": "Creates a macro. You don't need to specify the prefix in the command for the macro. If the command is not one of the modules', it will instead just send it as a message"
 				// + "\nUse %n to add arguments and use them in the command.",
 				+ "\nUse --exact to require the macro to be sent in its own message, instead of triggering when it's detected in any message. Anything typed after the macro will be added as arguments."
@@ -60,19 +61,30 @@ class MainClass extends Base {
 		console.log(this.moduleList[message.guild.id]);
 
 		if (args.length) {
-			if (flags.includes("channel")) {
-				this.moduleList[message.guild.id].mention.channels[message.channel.id] = args[1];
-			} else {
-				this.moduleList[message.guild.id].mention.server = args[1];
-			}
+			if (args[1] === "clear") {
+				if (this.moduleList[message.guild.id].mention.channels[message.channel.id]) {
+					delete this.moduleList[message.guild.id].mention.channels[message.channel.id];
+					this.save("modules", this.moduleList);
 
-			this.save("modules", this.moduleList);
-			message.reply("The linked module is now: `" + process.env.PREFIX + args[1] + "`" + (flags.includes("channel") ? " (In this channel)" : ""));
+					message.reply("The link to the mention has been removed in this channel");
+				} else {
+					message.reply("No link to the mention has been found in this channel");
+				}
+			} else {
+				if (flags.includes("channel")) {
+					this.moduleList[message.guild.id].mention.channels[message.channel.id] = args[1];
+				} else {
+					this.moduleList[message.guild.id].mention.server = args[1];
+				}
+
+				this.save("modules", this.moduleList);
+				message.reply("The linked command/message is now: `" + args[1] + "`" + (flags.includes("channel") ? " (In this channel)" : ""));
+			}
 		} else {
 			if (this.moduleList[message.guild.id].mention.channels[message.channel.id]) {
-				message.reply("The linked module is currently: `" + process.env.PREFIX + this.moduleList[message.guild.id].mention.channels[message.channel.id] + "` (In this channel)");
+				message.reply("The linked command/message is currently: `" + this.moduleList[message.guild.id].mention.channels[message.channel.id] + "` (In this channel)");
 			} else {
-				message.reply("The linked module is currently: `" + process.env.PREFIX + this.moduleList[message.guild.id].mention.server + "`");
+				message.reply("The linked command/message is currently: `" + this.moduleList[message.guild.id].mention.server + "`");
 			}
 		}
 	}
@@ -128,11 +140,23 @@ class MainClass extends Base {
 			var index = message.content.search(MessageMentions.USERS_PATTERN);
 			this.checkSave(message);
 
-			var moduleName = list.mention.channels[message.channel.id];
-			if (!moduleName) moduleName = list.mention.server;
+			var command = list.mention.channels[message.channel.id];
+			if (!command) command = list.mention.server;
 
-			if (index === 0 && message.mentions.users.first().id == this.client.user.id && this.client.modules[moduleName]) {
-				this.client.modules[moduleName]._testForAuth(message, message.content);
+			if (index === 0 && message.mentions.users.first().id == this.client.user.id) {
+				var content = message.content.split(" ").slice(1).join(" ");
+				for (var element of Object.values(this.client.modules)) {
+					try {
+						if (element.commandText === command.split(" ")[0]) {
+							element._testForAuth(message, command + " " + content);
+							return;
+						}
+					} catch(e) {
+						client.error(message.channel, element.name, e);
+					}
+				};
+
+				message.channel.send(command);
 			}
 
 			Object.keys(list.macros.server).forEach(element => this.checkForMacro(element, list.macros.server[element], message));
