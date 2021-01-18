@@ -18,8 +18,8 @@ class MainClass extends Base {
 		message.reply(
 			new MessageEmbed()
 			.setDescription("🏓 Pong! (**" + (Date.now() - message.createdTimestamp)
-				+ "ms**).\n🤖 __" + this.client.user.username + "__ has been up for **" + humanizeDuration(this.client.uptime, { largest: 2, round: true, conjunction: " and ", serialComma: false })
-				+ "**.\n🔄 Average websocket ping: **" + this.client.ws.ping + "ms**.")
+				+ " ms**).\n🤖 __" + this.client.user.username + "__ has been up for **" + humanizeDuration(this.client.uptime, { largest: 2, round: true, conjunction: " and ", serialComma: false })
+				+ "**.\n🔄 Average websocket ping: **" + this.client.ws.ping + " ms**.")
 			.setColor(this.color)
 		);
 	}
