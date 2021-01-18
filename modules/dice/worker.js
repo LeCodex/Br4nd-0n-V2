@@ -37,7 +37,7 @@ function parse(expression, results = []) {
 	}
 	console.log("Nested done: " + expression);
 
-	var result = expression.replace(/([^\s()\[\],]+)(d[^\s()\[\],]+)/g, (m, p1, p2) => {
+	var result = expression.replace(/([^\s()\[\]\,]+)(d[^\s()\[\]\,]+)/g, (m, p1, p2) => {
 		p1 = Number(p1);
 		if (isNaN(p1) || !Number.isInteger(p1) || p1 <= 0 || p1 > 65535) return "Invalid";
 		if (p1 == 1) return p2;
@@ -49,7 +49,7 @@ function parse(expression, results = []) {
 	};
 	console.log("Dices decomposition: " + result);
 
-	result = result.replace(/d[^\s()\[\],]+/g, m => parseDice(m));
+	result = result.replace(/d[^\s()\[\]\,]+/g, m => parseDice(m));
 	console.log("Dices done: " + result);
 
 	try {
@@ -62,7 +62,7 @@ function parse(expression, results = []) {
 }
 
 function parseDice(expression) {
-	var match = expression.match(/d([^\s()\[\],]+)/); //(![!(>\d+)(<\d+)\d+]?)?
+	var match = expression.match(/d([^\s()\[\]\,]+)/); //(![!(>\d+)(<\d+)\d+]?)?
 	var faceCount = Number(match[1]);
 
 	if (isNaN(faceCount) || !Number.isInteger(faceCount) || faceCount <= 0 || faceCount > 65535) return "Invalid";
