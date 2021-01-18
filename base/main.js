@@ -40,15 +40,17 @@ class Base {
 		return ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
 	}
 
-	_testForAuth(message) {
-		var content = message.content.split(/\s+/g).slice(1);
+	_testForAuth(message, content) {
+		if (!message.guild && !this.dmEnabled) return;
+
+		var content = content.split(/\s+/g).slice(1);
 		var args = [], kwargs = {}, flags = [];
 		var insideQuotes = false;
 		for (var element of content) {
 			if (element.search(/\S+=\S+/) != -1) {
-				var key = element.match(/\S+=/)[0];
-				var value = element.match(/=\S+/)[0];
-				kwargs[key.substring(0, key.length - 1)] = value.substring(1);
+				var key = element.match(/\S+=/)[0].substring(0, key.length - 1);
+				var value = element.match(/=\S+/)[0].substring(1);
+				kwargs[key] = value;
 			} else if (!insideQuotes) {
 				if (element.startsWith("--")) {
 					flags.push(element.slice(2));
@@ -91,8 +93,8 @@ class Base {
 	 * @param {external:Message} message - The message that was sent.
 	 */
 	on_message(message) {
-		if (message.content.startsWith(process.env.PREFIX) && message.content.split(" ")[0] === process.env.PREFIX + this.commandText && (message.guild || this.dmEnabled)) {
-			this._testForAuth(message);
+		if (message.content.startsWith(process.env.PREFIX) && message.content.split(" ")[0] === process.env.PREFIX + this.commandText) {
+			this._testForAuth(message, message.content);
 		}
 	}
 

@@ -53,15 +53,19 @@ client.on('ready', () => {
 
 client.on('message', message => {
 	if (!message.author.bot) {
-		Object.values(client.modules).forEach((element) => {
-			try {
-				element.on_message(message);
-			} catch(e) {
-				client.error(message.channel, element.name, e);
-			}
-		});
+		client.checkModulesOnMessage(message);
 	}
 });
+
+client.checkModulesOnMessage = function(message) {
+	Object.values(client.modules).forEach((element) => {
+		try {
+			element.on_message(message);
+		} catch(e) {
+			client.error(message.channel, element.name, e);
+		}
+	});
+}
 
 client.on('guildMemberAdd', member => {
 	Object.values(client.modules).forEach((element) => {
