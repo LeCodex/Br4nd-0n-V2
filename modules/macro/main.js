@@ -40,11 +40,11 @@ class MainClass extends Base {
 		message.reply(
 			new MessageEmbed()
 			.setTitle("[MACRO] Macro list")
-			.addField("Mention", "**Server:** `" + list.mention.server + "`" + (mentionChannels.length ? "\n**Channels:**\n" + mentionChannels.map(e => this.client.channels.cache.get(e).toString() + ": `" + list.mention.channels[e] + "`").join("\n") : ""))
+			.addField("Mention", "**Server:** `" + list.mention.server + "`" + (mentionChannels.length ? "\n\n**Channels:**\n" + mentionChannels.map(e => this.client.channels.cache.get(e).toString() + ": `" + list.mention.channels[e] + "`").join("\n") : ""))
 			.addField("Macros", "**Server:**\n"
 				+ Object.keys(list.macros.server).map(e => e + " -> `" + list.macros.server[e].command + "`" + (list.macros.server[e].exact ? " (Exact)": "")).join("\n")
 				+ (macroChannels.length ?
-					"\n**Channels:**\n"
+					"\n\n**Channels:**\n"
 					+ macroChannels.map(e =>
 						this.client.channels.cache.get(e).toString() + ":\n--• "
 						+ Object.keys(list.macros.channels[e]).map(f => f + " -> `" + list.macros.channels[e][f].command + "`" + (list.macros.channels[e][f].exact ? " (Exact)": "")).join("\n--• ")
