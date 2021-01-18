@@ -1,6 +1,13 @@
 const {MessageEmbed, MessageMentions} = require('discord.js');
 const {Base} = require(module.parent.path + "/base/main.js");
 
+function format(a, arguments) {
+    for (var k in arguments) {
+        if (!isNaN(k)) a = a.replace(new RegExp("\%" + k, 'g'), arguments[k]);
+    }
+	return a;
+}
+
 class MainClass extends Base {
 	constructor(client) {
 		super(client);
@@ -11,7 +18,7 @@ class MainClass extends Base {
 			"mention <command> [--channel]": "Sets the command the mentions will call. You don't need to specify the prefix in the command.\nUse --channel to apply this change only to this channel.",
 			"mention clear": "Clears the link to mentions in this channel",
 			"create <macro> <command> [--exact] [--ignoreCase] [--channel]": "Creates a macro. You don't need to specify the prefix in the command for the macro. If the command is not one of the modules', it will instead just send it as a message"
-				// + "\nUse %n to add arguments and use them in the command.",
+				+ "\nUse %n to add arguments and %[0, 1, 2, ...] to use them in the command. Use %a in the command to add the mention of the message's author"
 				+ "\nUse --exact to require the macro to be sent in its own message, instead of triggering when it's detected in any message. Anything typed after the macro will be added as arguments."
 				+ "\nUse --ignoreCase to make the search ignore the case of the macro."
 				+ "\nUse --channel to apply this macro only in this channel.",
@@ -126,7 +133,7 @@ class MainClass extends Base {
 
 			message.reply("Deleted the channel macro " + args[1]);
 		} else {
-			message.reply("No macro with this name has been found")
+			message.reply("No macro with this name has been found");
 		}
 
 		this.save("modules", this.moduleList);
@@ -166,20 +173,28 @@ class MainClass extends Base {
 
 	checkForMacro(key, value, message) {
 		var content = message.content;
+		var match = content.match(new RegExp((value.exact ? "^" : "") + key.replace(/%n/g, "(\\S+)"), (value.ignoreCase ? "i" : "")));
 
-		if (value.ignoreCase) {
-			key = key.toLowerCase();
-			content = message.content.toLowerCase();
-		}
-		var index = content.search(key);
+		if (match) {
+			var command;
 
-		if (index === 0 && value.exact) {
-			console.log("Found exact", value.command);
-			var content = content.replace(key, process.env.PREFIX + value.command);
+			if (value.exact) {
+				command = content.replace(key, value.command);
+			} else {
+				command = value.command;
+			}
+
+		 	match.shift();
+			console.log(match);
+			command = format(command, match);
+			command = command.replace(/\%a/g, message.author.toString());
+
+			console.log(command);
+
 			for (var element of Object.values(this.client.modules)) {
 				try {
 					if (element.commandText === value.command.split(" ")[0]) {
-						element._testForAuth(message, content);
+						element._testForAuth(message, command);
 						return;
 					}
 				} catch(e) {
@@ -187,21 +202,7 @@ class MainClass extends Base {
 				}
 			};
 
-			message.channel.send(value.command);
-		} else if (index != -1 && !value.exact) {
-			console.log("Found non exact");
-			for (var element of Object.values(this.client.modules)) {
-				try {
-					if (element.commandText === value.command.split(" ")[0]) {
-						element._testForAuth(message, value.command);
-						return;
-					}
-				} catch(e) {
-					client.error(message.channel, element.name, e);
-				}
-			};
-
-			message.channel.send(value.command);
+			message.channel.send(command);
 		}
 	}
 }
