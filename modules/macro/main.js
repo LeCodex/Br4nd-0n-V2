@@ -173,13 +173,14 @@ class MainClass extends Base {
 
 	checkForMacro(key, value, message) {
 		var content = message.content;
-		var match = content.match(new RegExp((value.exact ? "^" : "") + key.replace(/%n/g, "(\\S+)"), (value.ignoreCase ? "i" : "")));
+		var regex = new RegExp((value.exact ? "^" : "") + key.replace(/%n/g, "(\\S+)"), (value.ignoreCase ? "i" : ""));
+		var match = content.match(regex);
 
 		if (match) {
 			var command;
 
 			if (value.exact) {
-				command = content.replace(key, value.command);
+				command = content.replace(regex, value.command);
 			} else {
 				command = value.command;
 			}
