@@ -48,9 +48,9 @@ class Base {
 		var insideQuotes = false;
 		for (var element of content) {
 			if (element.search(/\S+=\S+/) != -1) {
-				var key = element.match(/\S+=/)[0].substring(0, key.length - 1);
-				var value = element.match(/=\S+/)[0].substring(1);
-				kwargs[key] = value;
+				var key = element.match(/\S+=/)[0];
+				var value = element.match(/=\S+/)[0];
+				kwargs[key.substring(0, key.length - 1)] = value.substring(1);
 			} else if (!insideQuotes) {
 				if (element.startsWith("--")) {
 					flags.push(element.slice(2));
