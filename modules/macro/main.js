@@ -188,7 +188,7 @@ class MainClass extends Base {
 		 	match.shift();
 			console.log(match);
 			command = format(command, match);
-			command = command.replace(/\%a/g, message.author.toString());
+			command = command.replace(/%a/g, message.author.toString());
 
 			console.log(command);
 
@@ -203,7 +203,11 @@ class MainClass extends Base {
 				}
 			};
 
-			message.channel.send(command);
+			var msg = value.command;
+			msg = format(msg, match);
+			msg = msg.replace(/%a/g, message.author.toString());
+
+			message.channel.send(msg);
 		}
 	}
 }
