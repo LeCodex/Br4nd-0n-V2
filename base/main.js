@@ -43,31 +43,40 @@ class Base {
 	_testForAuth(message, content) {
 		if (!message.guild && !this.dmEnabled) return;
 
-		var content = content.split(/\s+/g).slice(1);
+		var content = content.match(/[^\s"]+|"([^"]*)"\s/g).slice(1); //content.split(/\s+/g).slice(1);
 		var args = [], kwargs = {}, flags = [];
-		var insideQuotes = false;
+		// var insideQuotes = false;
 		for (var element of content) {
+			if (element.startsWith("\"")) element = element.substring(1, element.length - 2);
+			if (!element.length) continue;
+
 			if (element.search(/\S+=\S+/) != -1) {
 				var key = element.match(/\S+=/)[0];
 				var value = element.match(/=\S+/)[0];
 				kwargs[key.substring(0, key.length - 1)] = value.substring(1);
-			} else if (!insideQuotes) {
-				if (element.startsWith("--")) {
-					flags.push(element.slice(2));
-				} else {
-					if (element.startsWith("\"") && !element.endsWith("\"")) {
-						insideQuotes = true;
-						element = element.slice(1);
-					}
-					args.push(element);
-				}
+			} else if (element.startsWith("--")) {
+				flags.push(element.slice(2));
 			} else {
-				if (element.endsWith("\"")) {
-					insideQuotes = false;
-					element = element.slice(0, -1);
-				}
-				args[args.length - 1] += " " + element;
+				args.push(element);
 			}
+
+			// } else if (!insideQuotes) {
+			// 	if (element.startsWith("--")) {
+			// 		flags.push(element.slice(2));
+			// 	} else {
+			// 		if (element.startsWith("\"") && !element.endsWith("\"")) {
+			// 			insideQuotes = true;
+			// 			element = element.slice(1);
+			// 		}
+			// 		args.push(element);
+			// 	}
+			// } else {
+			// 	if (element.endsWith("\"")) {
+			// 		insideQuotes = false;
+			// 		element = element.slice(0, -1);
+			// 	}
+			// 	args[args.length - 1] += " " + element;
+			// }
 		}
 
 		if (this.auth.length === 0 || this.auth.includes(message.author.id)) {
