@@ -10,7 +10,8 @@ class MainClass extends Base {
 			"": "Sends the current queue",
 			"add [mention]": "Add yourself to the queue. If a mention is given, add that user instead",
 			"remove [mention/index]": "Remove yourself from the queue. If a mention or an index is given, remove that user instead",
-			"next": "Removes the first person in the queue and pings them"
+			"next": "Removes the first person in the queue and pings them",
+			"clear": "Removes all the users from the queue"
 		}
 		this.commandText = "queue";
 		this.color = 0x4e6c75;
@@ -102,6 +103,18 @@ class MainClass extends Base {
 		var index = queue.indexOf(user);
 		queue.splice(index, 1);
 		message.reply(user.username + " was removed from the queue.");
+	}
+
+	com_clear(message, args, kwargs, flags) {
+		var queue = this.checkQueue(message);
+
+		if (!queue.length) {
+			message.reply("The queue is empty");
+			return;
+		}
+
+		queue.splice(0, queue.length);
+		message.reply("The queue was cleared");
 	}
 }
 
