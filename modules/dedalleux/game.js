@@ -173,20 +173,21 @@ class Game {
 
 		if (Object.values(this.players).length) {
 			var sorted = Object.values(this.players).sort((a, b) => b.score - a.score);
+			var roundValue = sorted.reduce((acc, e) => e.gainedOnePoint ? acc + 1 : acc, 0);
 
 			embed.addField(
-				"Joueurs",
-				sorted.reduce((buffer, e) => {
-					if (e.score < buffer.lastScore) {
-						buffer.lastScore = e.score;
-						buffer.lastIndex = e.index;
-						buffer.rank++;
-					} else if (e.index < buffer.lastIndex) {
-						buffer.lastIndex = e.index;
-						buffer.rank++;
+				"Joueurs", // • Nombre de joueurs qui ont récupéré leur ingrédient: " + roundValue
+				sorted.reduce((acc, e) => {
+					if (e.score < acc.lastScore) {
+						acc.lastScore = e.score;
+						acc.lastIndex = e.index;
+						acc.rank++;
+					} else if (e.index < acc.lastIndex) {
+						acc.lastIndex = e.index;
+						acc.rank++;
 					}
-					buffer.message += getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + ": **" + e.score + "**" + (e.gainedOnePoint ? " (+1)" : "") + "\n";
-					return buffer;
+					acc.message += getRankEmoji(acc.rank) + " **" + acc.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + ": **" + e.score + "**" + (e.gainedOnePoint ? " (+" + roundValue + ")" : "") + "\n";
+					return acc;
 				}, {message: "", rank: 0, lastScore: Infinity, lastIndex: Infinity}).message
 			);
 		}
@@ -302,11 +303,16 @@ class Game {
 	async nextTurn() {
 		Object.values(this.players).forEach((element) => { element.turnedOnce = false; element.gainedOnePoint = false; });
 
+		var winners = [];
 		while ((this.pawn.x != this.goal.x || this.pawn.y != this.goal.y) && this.path.length) {
 			this.pawn = this.path.shift();
 
 			if (this.items.find(e => e.x === this.pawn.x && e.y === this.pawn.y)) this.pickedUp ++;
-			Object.values(this.players).forEach((element) => { if (this.pawn.x === this.items[element.item].x && this.pawn.y === this.items[element.item].y && !element.gainedOnePoint) element.gainOnePoint(this); });
+			Object.values(this.players).forEach((element) => { if (this.pawn.x === this.items[element.item].x && this.pawn.y === this.items[element.item].y) winners.push(element) });
+		}
+
+		for (var player of winners) {
+			player.gainPoints(this, winners.length);
 		}
 
 		do {

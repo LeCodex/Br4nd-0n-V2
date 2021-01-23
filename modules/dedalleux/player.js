@@ -12,13 +12,13 @@ class Player {
 		if (!reload) this.sendItem(game);
 	}
 
-	gainOnePoint(game) {
+	gainPoints(game, amount) {
 		this.gainedOnePoint = true;
 		var newItem;
 		do {
 			newItem = Math.floor(Math.random() * game.availableItems.length);
 		} while (newItem == this.item);
-		this.score ++;
+		this.score += amount;
 		this.item = newItem;
 
 		this.sendItem(game);
