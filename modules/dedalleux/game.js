@@ -174,9 +174,10 @@ class Game {
 		if (Object.values(this.players).length) {
 			var sorted = Object.values(this.players).sort((a, b) => b.score - a.score);
 			var roundValue = sorted.reduce((acc, e) => e.gainedOnePoint ? acc + 1 : acc, 0);
+			var hiddenItem = this.items.find(g => this.goal.x === g.x && this.goal.y === g.y);
 
 			embed.addField(
-				"Joueurs", // • Nombre de joueurs qui ont récupéré leur ingrédient: " + roundValue
+				"Joueurs" + (hiddenItem ? " • Ingrédient caché par la cible: " + hiddenItem.item: ""), // • Nombre de joueurs qui ont récupéré leur ingrédient: " + roundValue
 				sorted.reduce((acc, e) => {
 					if (e.score < acc.lastScore) {
 						acc.lastScore = e.score;
@@ -197,10 +198,10 @@ class Game {
 				if (this.pawn.x === tx && this.pawn.y === ty) return this.mainclass.pawnEmoji.toString();
 				if (this.goal.x === tx && this.goal.y === ty) return "🎯";
 
-				var o = this.items.find(e => e.x === tx && e.y === ty);
+				var o = this.items.find(g => g.x === tx && g.y === ty);
 				if (o) return o.item;
 
-				if (this.path.filter(e => e.x === tx && e.y === ty).length) return "🔸";
+				if (this.path.filter(g => g.x === tx && g.y === ty).length) return "🔸";
 				return f === -1 ? "⬛" : this.colors[f].toString();
 			}).join("")
 		).join("\n");
