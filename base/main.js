@@ -43,11 +43,12 @@ class Base {
 	_testForAuth(message, content) {
 		if (!message.guild && !this.dmEnabled) return;
 
-		var content = content.match(/[^\s"]+|"([^"]*)"\s/g).slice(1); //content.split(/\s+/g).slice(1);
+		var content = content.match(/[^\s"]+|"[^"]*"/g).slice(1); //content.split(/\s+/g).slice(1);
 		var args = [], kwargs = {}, flags = [];
+		console.log(content);
 		// var insideQuotes = false;
 		for (var element of content) {
-			if (element.startsWith("\"")) element = element.substring(1, element.length - 2);
+			if (element.startsWith("\"")) element = element.substring(1, element.length - 1);
 			if (!element.length) continue;
 
 			if (element.search(/\S+=\S+/) != -1) {
