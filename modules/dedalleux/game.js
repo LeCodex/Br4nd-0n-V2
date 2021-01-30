@@ -32,7 +32,7 @@ class Game {
 		this.path = [];
 		this.paused = false;
 		this.boardMessage = null;
-		this.nextTimestamp = DateTime.local();
+		this.nextTimestamp = null;
 		// this.enabled = Object.keys(Tiles).slice(1);
 		this.turn = 1;
 		this.pickedUp = 0;
@@ -78,6 +78,7 @@ class Game {
 		this.path = this.aStar(this.pawn, this.goal);
 		this.placeItems();
 		await this.sendBoard();
+		this.setupTimeout();
 
 		this.save();
 	}
@@ -87,11 +88,13 @@ class Game {
 
 		var now = DateTime.local();
 		if (newTurn) {
+			if (!this.nextTimestamp) this.nextTimestamp = DateTime.local();
 			this.nextTimestamp = this.nextTimestamp.plus(this.waitDuration).set({ second: 0 });
 			if (!this.waitDuration.minutes) this.nextTimestamp = this.nextTimestamp.set({ minute: 0 });
 		}
 		var time = this.nextTimestamp.toMillis() - now.toMillis();
 
+		console.log(this.nextTimestamp, now, this.waitDuration, time);
 		this.timeout = setTimeout(() => {this.nextTurn()}, time);
 	}
 
@@ -173,7 +176,7 @@ class Game {
 
 		if (Object.values(this.players).length) {
 			var sorted = Object.values(this.players).sort((a, b) => b.score - a.score);
-			var roundValue = sorted.reduce((acc, e) => e.gainedOnePoint ? acc + 1 : acc, 0);
+			var roundValue = Object.keys(this.players).length - sorted.reduce((acc, e) => e.gainedOnePoint ? acc + 1 : acc, -1);
 			var hiddenItem = this.items.find(g => this.goal.x === g.x && this.goal.y === g.y);
 
 			embed.addField(
@@ -237,7 +240,13 @@ class Game {
 
 		this.collector.on('collect', (reaction, user) => {
 			try {
+				reaction.users.remove(user);
+				
 				if (this.paused) return;
+
+				var now = DateTime.local().toMillis();
+				if (this.nextTimestamp - now <= 30000) return;
+
 				var player = this.players[user.id];
 
 				if (player) {
@@ -280,8 +289,6 @@ class Game {
 						this.sendBoard().then(() => { this.save(); });
 					}
 				}
-
-				reaction.users.remove(user);
 			} catch (e) {
 				this.client.error(this.channel, "Labyrinthe", e);
 			}
@@ -313,7 +320,7 @@ class Game {
 		}
 
 		for (var player of winners) {
-			player.gainPoints(this, winners.length);
+			player.gainPoints(this, Object.keys(this.players).length - winners.length + 1);
 		}
 
 		do {
