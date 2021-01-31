@@ -29,7 +29,9 @@ class DB {
 		}
 
 		if (process.env.MONGO_DB_URL) {
-			return await this.client.mongo.db(mdl).collection(name).findOne();
+			var res = await this.client.mongo.db(mdl).collection(name).findOne();
+			if (res._id) delete res._id;
+			return res;
 		} else {
 			var string = fs.readFileSync(_getSavePath(mdl) + name + ".json");
 			return JSON.parse(string);
