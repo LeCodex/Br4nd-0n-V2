@@ -1,6 +1,5 @@
 const {MessageEmbed} = require('discord.js');
 const {Base} = require(module.parent.path + "/base/main.js");
-const DB = require(module.parent.path + "/db.js");
 
 class MainClass extends Base {
 	constructor(client) {
@@ -60,7 +59,7 @@ class MainClass extends Base {
 			.setColor(this.color)
 		);
 
-		DB.save("core", "modules", this.client.enabledModules);
+		this.client.dbSystem.save("core", "modules", this.client.enabledModules);
 	}
 
 	com_disable(message, args, kwargs, flags) {
@@ -91,7 +90,7 @@ class MainClass extends Base {
 			.setColor(this.color)
 		);
 
-		DB.save("core", "modules", this.client.enabledModules);
+		this.client.dbSystem.save("core", "modules", this.client.enabledModules);
 	}
 }
 
