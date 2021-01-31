@@ -9,6 +9,8 @@ const fs = require('fs');
 const toml = require('toml');
 const concat = require('concat-stream');
 
+var ready = false;
+
 if (process.env.MONGO_DB_URL) client.mongo = new MongoClient(process.env.MONGO_DB_URL, { useUnifiedTopology: true });
 client.config = require("./config.toml");
 client.modules = {};
@@ -33,6 +35,8 @@ async function loadModules() {
 			console.error("Failed to load module from " + file + ": ", e);
 		}
 	}
+
+	ready = true;
 }
 
 client.on('ready', () => {
@@ -52,7 +56,7 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
-	if (!message.author.bot) {
+	if (!message.author.bot && ready) {
 		client.checkModulesOnMessage(message);
 	}
 });
