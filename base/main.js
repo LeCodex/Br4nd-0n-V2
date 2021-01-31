@@ -1,5 +1,5 @@
-const fs = require('fs');
 const {MessageEmbed} = require('discord.js');
+const DB = require(module.parent.parent.path + "/db.js");
 
 /** The Base module class. Every module's MainClass must extend from this. DO NOT INSTANTIATE AS IS. */
 class Base {
@@ -16,6 +16,8 @@ class Base {
 	 * @property {Array<external:Snowflake>} auth - The ID of the users that are authorized to run this command. Authorizes everyone if it's empty.
 	 * @property {boolean} dmEnabled - Whether or not the command can be run from DMs. Defaults to false.
 	 * @property {boolean} core - Wheter or not this is a core module and it can be disaled or not. Defaults to false.
+	 * @property {boolean} startDisabled - Wheter or not this module will be disabled by default on new servers. Defaults to false.
+	 * @property {boolean} hidden - Wheter or not this module will be hidden and not ba activalbe except by the bot's admin. Defaults to false.
 	 */
 	constructor(client) {
 		this.client = client;
@@ -29,6 +31,8 @@ class Base {
 		this.auth = [];
 		this.dmEnabled = false;
 		this.core = false;
+		this.startDisabled = false;
+		this.hidden = false;
 	}
 
 	/**
@@ -178,21 +182,14 @@ class Base {
 			.catch(e => this.client.error(channel, this.name, e));
 	}
 
-	_getSavePath() {
-		return this.client.path + "\\saves\\" + this.name.toLowerCase() + "\\";
-	}
-
 	/**
 	 * Checks the database to see if a save already exists. If no URL is set in the environement, instead checks for a JSON file.
 	 * @async
 	 * @param {string} name - The name of the collection to look for. The database has the same name as the module.
+	 * @returns {boolean} True if the save already exists, false otherwise
 	 */
 	async saveExists(name) {
-		if (process.env.MONGO_DB_URL) {
-			return await this.client.mongo.db(this.name.toLowerCase().replace(" ", "_")).listCollections({name: name}).hasNext();
-		} else {
-			return fs.existsSync(this._getSavePath() + name + ".json");
-		}
+		return DB.saveExists(this.name.toLowerCase().replace(" ", "_"), name);
 	}
 
 	/**
@@ -202,16 +199,7 @@ class Base {
 	 * @param {Object} data - The data to be stored into the database.
 	 */
 	async save(name, data) {
-		if (process.env.MONGO_DB_URL) {
-			const collection = this.client.mongo.db(this.name.toLowerCase().replace(" ", "_")).collection(name);
-			await collection.replaceOne({}, data, { upsert: true });
-			console.log(this.name + " Database Saved");
-		} else {
-			var string = JSON.stringify(data);
-			if (!fs.existsSync(this._getSavePath())) fs.mkdirSync(this._getSavePath());
-			fs.writeFile(this._getSavePath() + name + ".json", string, err => {if (err != null) console.log(err)});
-			console.log(this.name + " JSON Data Saved");
-		}
+		DB.save(this.name.toLowerCase().replace(" ", "_"), name, data);
 	}
 
 	/**
@@ -222,18 +210,7 @@ class Base {
 	 * @returns {Object} The object fetched from the database, or the fallback object if no save exists.
 	 */
 	async load(name, fallback) {
-		if (!await this.saveExists(name)) {
-			this.save(name, fallback);
-			return fallback;
-		}
-
-		if (process.env.MONGO_DB_URL) {
-			return await this.client.mongo.db(this.name.toLowerCase().replace(" ", "_")).collection(name).findOne();
-		} else {
-			var string = fs.readFileSync(this._getSavePath() + name + ".json");
-			return JSON.parse(string);
-		}
-
+		return DB.load(this.name.toLowerCase().replace(" ", "_"), name, fallback)
 	}
 }
 

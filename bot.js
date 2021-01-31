@@ -1,6 +1,7 @@
 const {Client, MessageEmbed, Intents} = require('discord.js');
 const client = new Client({ ws: { intents: Intents.ALL } });
 const {MongoClient} = require("mongodb");
+const DB = require("./db.js");
 
 require('dotenv').config();
 require('toml-require').install();
@@ -14,6 +15,11 @@ var ready = false;
 if (process.env.MONGO_DB_URL) client.mongo = new MongoClient(process.env.MONGO_DB_URL, { useUnifiedTopology: true });
 client.config = require("./config.toml");
 client.modules = {};
+client.modulesConstants = {
+	dm: [],
+	core: [],
+	default: []
+}
 client.path = module.path;
 
 async function loadModules() {
@@ -29,6 +35,11 @@ async function loadModules() {
 				const mainfile = require(path + '/main.js');
 				const mod = new mainfile.MainClass(client);
 				client.modules[mod.commandText] = mod;
+
+				if (mod.dmEnabled) client.modulesConstants.dm.push(mod.commandText);
+				if (mod.core) client.modulesConstants.core.push(mod.commandText);
+				if (!mod.startDisabled && !mod.core && !mod.hidden) client.modulesConstants.default.push(mod.commandText);
+
 				console.log("Loaded module " + mod.name + " (" + mod.description + "), command text: " + process.env.PREFIX + mod.commandText + "");
 			}
 		} catch(e) {
@@ -36,6 +47,7 @@ async function loadModules() {
 		}
 	}
 
+	client.enabledModules = await DB.load("core", "modules", {});
 	ready = true;
 }
 
@@ -48,7 +60,7 @@ client.on('ready', () => {
 		client.mongo.connect(err => {
 			if (err) {
 				console.error(err);
-				return
+				return;
 			}
 			loadModules();
 		});
@@ -59,10 +71,24 @@ client.on('message', message => {
 	if (!message.author.bot && ready) {
 		client.checkModulesOnMessage(message);
 	}
+
 });
 
 client.checkModulesOnMessage = function(message) {
-	Object.values(client.modules).forEach((element) => {
+	var modules = [...client.modulesConstants.dm];
+	if (message.guild) {
+		if (!client.enabledModules[message.guild.id]) {
+			client.enabledModules[message.guild.id] = [...client.modulesConstants.default];
+			DB.save("core", "modules", client.enabledModules);
+		}
+
+		modules = [...client.enabledModules[message.guild.id]];
+		modules.push(...client.modulesConstants.core);
+	}
+
+	modules.forEach((key) => {
+		var element = client.modules[key];
+
 		try {
 			element.on_message(message);
 		} catch(e) {
