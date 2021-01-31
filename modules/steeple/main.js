@@ -17,6 +17,7 @@ class MainClass extends Base {
 		this.commandText = "steeple";
 		this.color = 0xC1694F;
 		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
+		this.startDisabled = true;
 
 		this.load("games", { games : {}, debug: false }).then(object => {
 			this.games = {};
