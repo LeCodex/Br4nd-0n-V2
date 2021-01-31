@@ -21,6 +21,7 @@ client.modulesConstants = {
 	default: []
 }
 client.path = module.path;
+client.dbSystem = new DB(client);
 
 async function loadModules() {
 	if (process.env.MONGO_DB_URL) console.log("MongoDB connected");
@@ -47,7 +48,7 @@ async function loadModules() {
 		}
 	}
 
-	client.enabledModules = await DB.load("core", "modules", {});
+	client.enabledModules = await client.dbSystem.load("core", "modules", {});
 
 	for (var guildID of Object.keys(client.enabledModules)) client.enabledModules[guildID] = client.enabledModules[guildID].filter(e => !client.modulesConstants.core.includes(e));
 	ready = true;
@@ -81,7 +82,7 @@ client.checkModulesOnMessage = function(message) {
 	if (message.guild) {
 		if (!client.enabledModules[message.guild.id]) {
 			client.enabledModules[message.guild.id] = [...client.modulesConstants.default];
-			DB.save("core", "modules", client.enabledModules);
+			client.dbSystem.save("core", "modules", client.enabledModules);
 		}
 
 		modules = [...client.enabledModules[message.guild.id]];

@@ -1,5 +1,4 @@
 const {MessageEmbed} = require('discord.js');
-const DB = require(module.parent.parent.path + "/db.js");
 
 /** The Base module class. Every module's MainClass must extend from this. DO NOT INSTANTIATE AS IS. */
 class Base {
@@ -189,7 +188,7 @@ class Base {
 	 * @returns {boolean} True if the save already exists, false otherwise
 	 */
 	async saveExists(name) {
-		return DB.saveExists(this.name.toLowerCase().replace(" ", "_"), name);
+		return this.client.dbSystem.saveExists(this.name.toLowerCase().replace(" ", "_"), name);
 	}
 
 	/**
@@ -199,7 +198,7 @@ class Base {
 	 * @param {Object} data - The data to be stored into the database.
 	 */
 	async save(name, data) {
-		DB.save(this.name.toLowerCase().replace(" ", "_"), name, data);
+		this.client.dbSystem.save(this.name.toLowerCase().replace(" ", "_"), name, data);
 	}
 
 	/**
@@ -210,7 +209,7 @@ class Base {
 	 * @returns {Object} The object fetched from the database, or the fallback object if no save exists.
 	 */
 	async load(name, fallback) {
-		return DB.load(this.name.toLowerCase().replace(" ", "_"), name, fallback)
+		return this.client.dbSystem.load(this.name.toLowerCase().replace(" ", "_"), name, fallback)
 	}
 }
 
