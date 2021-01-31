@@ -9,7 +9,7 @@ class MainClass extends Base {
 		this.help = {
 			"": "Envoie votre compte de tasses en MP",
 			"add <mention list> <amount>": "Donne autant de tasses à ces utilisateurs. Accepte les chiffres négatifs",
-			"set <mention list> <amount>": "Met le comtpe de tasses de ces utilisateurs au montatn indiqué"
+			"set <mention list> <amount>": "Met le compte de tasses de ces utilisateurs au montant indiqué"
 		}
 		this.commandText = "sak";
 		this.color = 0xffff66;
@@ -29,6 +29,10 @@ class MainClass extends Base {
 		if (user && !this.sak[guild.id][user.id]) this.sak[guild.id][user.id] = 0;
 	}
 
+	validate(member) {
+		return member.roles.cache.has("472348007267041280") || member.user.id == process.env.ADMIN
+	}
+
 	command(message, args, kwargs, flags) {
 		this.checkExistence(message.guild, message.author);
 
@@ -43,7 +47,7 @@ class MainClass extends Base {
 	}
 
 	getUsersAndAmount(message, args, kwargs, flags) {
-		if (!message.member.roles.cache.get("472348007267041280")) {
+		if (!this.validate(message.member)) {
 			this.command(message, args, kwargs, flags);
 			return [null, null];
 		}
@@ -141,7 +145,7 @@ class MainClass extends Base {
 	}
 
 	com_rank(message, args, kwargs, flags) {
-		if (!message.member.roles.cache.get("472348007267041280")) {
+		if (!this.validate(message.member)) {
 			this.command(message, args, kwargs, flags);
 			return;
 		}
