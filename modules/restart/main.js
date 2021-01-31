@@ -11,6 +11,7 @@ class MainClass extends Base {
 		this.commandText = "restart";
 		this.color = 0xffffff;
 		this.auth = [ process.env.ADMIN ];
+		this.hidden = true;
 	}
 
 	command(message, args, kwargs, flags) {
