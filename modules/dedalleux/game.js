@@ -94,7 +94,7 @@ class Game {
 		}
 		var time = this.nextTimestamp.toMillis() - now.toMillis();
 
-		console.log(this.nextTimestamp, now, this.waitDuration, time);
+		// console.log(this.nextTimestamp, now, this.waitDuration, time);
 		this.timeout = setTimeout(() => {this.nextTurn()}, time);
 	}
 
@@ -241,7 +241,7 @@ class Game {
 		this.collector.on('collect', (reaction, user) => {
 			try {
 				reaction.users.remove(user);
-				
+
 				if (this.paused) return;
 
 				var now = DateTime.local().toMillis();
