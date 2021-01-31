@@ -48,6 +48,8 @@ async function loadModules() {
 	}
 
 	client.enabledModules = await DB.load("core", "modules", {});
+
+	for (var guildID of Object.keys(client.enabledModules)) client.enabledModules[guildID] = client.enabledModules[guildID].filter(e => !client.modulesConstants.core.includes(e));
 	ready = true;
 }
 
