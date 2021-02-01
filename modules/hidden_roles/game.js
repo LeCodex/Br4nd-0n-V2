@@ -52,17 +52,17 @@ class Game {
 			return;
 		}
 
-		for (var player_id of this.order) {
+		for (var playerID of this.order) {
 			var keys = Object.keys(roles);
 			var team = keys[Math.floor(Math.random() * keys.length)];
 			var role = roles[team].splice(Math.floor(Math.random() * roles[team].length), 1)[0];
-			var user = users.get(player_id)
-			this.players[player_id] = {user: user, team: team, role: role};
+			var user = users.get(playerID);
+			this.players[playerID] = {user: user, team: team, role: role};
 
 			if (!roles[team].length) delete roles[team];
 		}
 
-		for (var [player_id, player] of Object.entries(this.players)) {
+		for (var [playerID, player] of Object.entries(this.players)) {
 			player.user.send(
 				new MessageEmbed()
 				.setTitle("[HIDDEN ROLES] Your role and team")
@@ -71,7 +71,7 @@ class Game {
 				.setColor(this.mainclass.color)
 			);
 
-			this.mainclass.userToGame[player_id] = this.channel.id;
+			this.mainclass.userToGame[playerID] = this.channel.id;
 		}
 
 		this.leftovers = roles;

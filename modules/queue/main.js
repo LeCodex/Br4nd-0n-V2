@@ -15,6 +15,7 @@ class MainClass extends Base {
 		}
 		this.commandText = "queue";
 		this.color = 0x4e6c75;
+		this.ready = true;
 
 		this.queues = {};
 	}

@@ -22,6 +22,8 @@ class MainClass extends Base {
 				this.client.error(null, "Roles", e)
 				return {};
 			});
+			
+			this.ready = true;
 		});
 	}
 

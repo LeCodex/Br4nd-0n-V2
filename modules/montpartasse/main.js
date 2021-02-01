@@ -20,15 +20,6 @@ class MainClass extends Base {
 		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
 		this.startDisabled = true;
 
-		this.load("games", { games : {}, debug: false }).then(object => {
-			this.games = {};
-			for (var [channel_id, object] of Object.entries(object.games)) {
-				this.games[channel_id] = new Game(this)
-				this.games[channel_id].reload(object);
-			}
-			this.debug = object.debug;
-		});
-
 		var emojis = this.client.emojis.cache;
 		this.COLOR_EMOJIS = {
 			blue: emojis.get("765264328550383626") || "🔵" ,
@@ -39,6 +30,16 @@ class MainClass extends Base {
 			all: emojis.get("666367471648768029") || "🌈",
 			none: emojis.get("472452900602249216") || "🥛"
 		};
+		
+		this.load("games", { games : {}, debug: false }).then(object => {
+			this.games = {};
+			for (var [channel_id, object] of Object.entries(object.games)) {
+				this.games[channel_id] = new Game(this)
+				this.games[channel_id].reload(object);
+			}
+			this.debug = object.debug;
+			this.ready = true;
+		});
 	}
 
 	getRankEmoji(rank) {

@@ -12,6 +12,7 @@ class MainClass extends Base {
 		}
 		this.commandText = "ping";
 		this.color = 0x00ffff;
+		this.ready = true;
 	}
 
 	command(message, args, kwargs, flags) {

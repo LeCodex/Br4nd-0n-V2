@@ -72,28 +72,28 @@ client.on('ready', () => {
 
 client.on('message', message => {
 	if (!message.author.bot && ready) {
-		client.checkModulesOnMessage(message);
+		client.checkModulesOnInput(message, "on_message");
 	}
-
 });
 
-client.checkModulesOnMessage = function(message) {
+client.checkModulesOnInput = function(input, method) {
 	var modules = [...client.modulesConstants.dm];
-	if (message.guild) {
-		if (!client.enabledModules[message.guild.id]) {
-			client.enabledModules[message.guild.id] = [...client.modulesConstants.default];
+	if (input.guild) {
+		if (!client.enabledModules[input.guild.id]) {
+			client.enabledModules[input.guild.id] = [...client.modulesConstants.default];
 			client.dbSystem.save("core", "modules", client.enabledModules);
 		}
 
-		modules = [...client.enabledModules[message.guild.id]];
+		modules = [...client.enabledModules[input.guild.id]];
 		modules.push(...client.modulesConstants.core);
 	}
 
 	modules.forEach((key) => {
 		var element = client.modules[key];
+		if (!element.ready) return;
 
 		try {
-			element.on_message(message);
+			element[method](input);
 		} catch(e) {
 			client.error(message.channel, element.name, e);
 		}
@@ -101,13 +101,9 @@ client.checkModulesOnMessage = function(message) {
 }
 
 client.on('guildMemberAdd', member => {
-	Object.values(client.modules).forEach((element) => {
-		try {
-			element.on_guildMemberAdd(member);
-		} catch(e) {
-			client.error(null, element.name, e);
-		}
-	});
+	if (!message.author.bot && ready) {
+		client.checkModulesOnInput(member, "on_guildMemberAdd");
+	}
 });
 
 process.on('uncaughtException', function (err) {

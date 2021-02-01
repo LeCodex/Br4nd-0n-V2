@@ -15,8 +15,8 @@ class MainClass extends Base {
 		this.commandText = "stats";
 		this.color = 0x990099;
 
-		this.load("stats", {}).then(e => {this.stats = e;});
 		this.statLogics = [];
+		this.load("stats", {}).then(e => {this.stats = e; this.ready = true;});
 	}
 
 	command(message, args, kwargs, flags) {

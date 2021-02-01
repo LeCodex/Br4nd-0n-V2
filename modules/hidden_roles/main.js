@@ -11,9 +11,9 @@ class MainClass extends Base {
 			"": "Create a game in the channel, or shows all the infos of the current game",
 			"roles <role names>": "Change the roles of all teams.\nUse `team=<team name>` to affect only one team.\nUse `operation=<set/remove>` to change the type of operation on the role list. Defaults to add",
 			"remove <team names>": "Delete the named teams and all their roles",
-			"send <mentions>": "Sends a unique role and team pairing to each mentionned user, and remember them",
+			"send <mentions>": "Sends a unique role and team pairing to each mentionned user, and remembers them",
 			"peek <index>": "*Can be used in DMs.*\nLook at the role and team of the player at that index",
-			"call team=<team name> role=<role name>": "*Can be used in DMs.*\nGet the name of all players with that role and/or team",
+			"call [team=<team name>] [role=<role name>]": "*Can be used in DMs.*\nGet the name of all players with that role and/or team",
 			"swap <index> [second index]": "*Can be used in DMs.*\nSwap role and team with that player. If you precise a second player, instead swap both of them",
 			"end": "Close the game"
 		};
@@ -23,9 +23,10 @@ class MainClass extends Base {
 
 		this.games = {}
 		this.userToGame = {}
+		this.ready = true;
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		if (message.guild) {
 			if (!this.games[message.channel.id]) {
 				this.games[message.channel.id] = new Game(this, message);
@@ -35,7 +36,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_roles(message, args, kwargs) {
+	com_roles(message, args, kwargs, flags) {
 		if (message.guild) {
 			if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];
@@ -57,7 +58,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_remove(message, args, kwargs) {
+	com_remove(message, args, kwargs, flags) {
 		if (message.guild) {
 			if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];
@@ -73,7 +74,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_send(message, args, kwargs) {
+	com_send(message, args, kwargs, flags) {
 		if (message.guild) {
 			if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];
@@ -88,7 +89,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_peek(message, args, kwargs) {
+	com_peek(message, args, kwargs, flags) {
 		var gameID = this.userToGame[message.author.id];
 		if (this.games[gameID]) {
 			var game = this.games[gameID];
@@ -111,7 +112,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_call(message, args, kwargs) {
+	com_call(message, args, kwargs, flags) {
 		var gameID = this.userToGame[message.author.id];
 		if (this.games[gameID]) {
 			var game = this.games[gameID];
@@ -134,7 +135,7 @@ class MainClass extends Base {
 		}
 	}
 
-	com_swap(message, args, kwargs) {
+	com_swap(message, args, kwargs, flags) {
 		var gameID = this.userToGame[message.author.id];
 		if (this.games[gameID]) {
 			var game = this.games[gameID];
@@ -200,7 +201,60 @@ class MainClass extends Base {
 		}
 	}
 
-	com_end(message, args, kwargs) {
+	com_reveal(message, args, kwargs, flags) {
+		var gameID = this.userToGame[message.author.id];
+		if (this.games[gameID]) {
+			var game = this.games[gameID];
+			var self = game.players[message.author.id];
+
+			switch(args[1]) {
+				case "team":
+					game.channel.send(message.author.toString() + " revealed themselves as part of the **" + self.team + "** team!");
+					break;
+
+				case "role":
+					game.channel.send(message.author.toString() + " revealed themselves as **" + self.role + "**!");
+					break;
+
+				case "both":
+					game.channel.send(message.author.toString() + " revealed themselves as **" + self.role + "** and as part of the **" + self.team + "** team!");
+					break;
+			}
+		} else {
+			message.reply("You are not part of a game");
+		}
+	}
+
+	com_tell(message, args, kwargs, flags) {
+		var gameID = this.userToGame[message.author.id];
+		if (this.games[gameID]) {
+			var game = this.games[gameID];
+			var self = game.players[message.author.id];
+			args.shift();
+			var index = Number(args.shift());
+			var mesg = "**[" + self.team + "] " + self.role + ":** " + args.join(" ");
+
+			if (isNaN(index)) {
+				message.reply("Invalid index");
+			} else if (index > 0 && index <= game.order.length) {
+				var player = game.players[game.order[index - 1]];
+				self.user.send("Sent \"" + msg + "\"");
+				player.user.send(msg);
+			} else if (index === 0) {
+				game.channel.send(msg);
+				// Object.keys(game.players).forEach(element => {
+				// 	if (element != message.author.id) game.players[element].user.send(msg)
+				// });
+				self.user.send("Sent \"" + msg + "\"");
+			} else {
+				message.reply("Index out of range");
+			}
+		} else {
+			message.reply("You are not part of a game");
+		}
+	}
+
+	com_end(message, args, kwargs, flags) {
 		if (message.guild) {
 			if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];

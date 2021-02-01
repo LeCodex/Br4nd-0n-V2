@@ -17,16 +17,7 @@ class MainClass extends Base {
 		this.color = 0x144350;
 		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
 		this.startDisabled = true;
-
-		this.games = {};
-		this.load("games", { games : {}, debug: false }).then(object => {
-			for (var [channel_id, object] of Object.entries(object.games)) {
-				this.games[channel_id] = new Game(this)
-				this.games[channel_id].reload(object);
-			}
-			this.debug = object.debug;
-		});
-
+		
 		this.colors = {
 			redSquare: this.client.emojis.cache.get("780049456263069706") || "🟥",
 			blueSquare: this.client.emojis.cache.get("780049455830270002") || "🟦",
@@ -42,6 +33,16 @@ class MainClass extends Base {
 			//orangeCircle: this.client.emojis.cache.get("780488746822533163") || "🟠"
 		};
 		this.pawnEmoji = this.client.emojis.cache.get("497047504043376643") || "📍";
+
+		this.games = {};
+		this.load("games", { games : {}, debug: false }).then(object => {
+			for (var [channel_id, object] of Object.entries(object.games)) {
+				this.games[channel_id] = new Game(this)
+				this.games[channel_id].reload(object);
+			}
+			this.debug = object.debug;
+			this.ready = true;
+		});
 	}
 
 	command(message, args, kwargs, flags) {

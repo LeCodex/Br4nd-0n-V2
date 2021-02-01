@@ -11,6 +11,7 @@ class MainClass extends Base {
 		};
 		this.commandText = "links";
 		this.color = 0xfffffe;
+		this.ready = true;
 	}
 
 	command(message, args, kwargs, flags) {

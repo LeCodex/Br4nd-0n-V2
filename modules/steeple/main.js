@@ -26,6 +26,7 @@ class MainClass extends Base {
 				this.games[channel_id].reload(object);
 			}
 			this.debug = object.debug;
+			this.ready = true;
 		});
 	}
 

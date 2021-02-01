@@ -12,6 +12,7 @@ class MainClass extends Base {
 		this.color = 0xffffff;
 		this.auth = [ process.env.ADMIN ];
 		this.hidden = true;
+		this.ready = true;
 	}
 
 	command(message, args, kwargs, flags) {

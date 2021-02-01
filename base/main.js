@@ -12,7 +12,8 @@ class Base {
 	 * @property {Object} help - Used to create the help message.
 	 * @property {string} commandText - The command the bot will be looking for.
 	 * @property {number} color - The module's description, used for the help command.
-	 * @property {Array<external:Snowflake>} auth - The ID of the users that are authorized to run this command. Authorizes everyone if it's empty.
+	 * @property {boolean} ready - Starts false. Must be set to true for the module to receive inputs.
+	 * @property {Array<external:Snowflake>} auth - The ID of the users that are authorized to run this command. Authorizes everyone if it's empty. Authorizes server owners, roles with the Administrator permission and roles tagged as administrators if it includes the value "Admin". 
 	 * @property {boolean} dmEnabled - Whether or not the command can be run from DMs. Defaults to false.
 	 * @property {boolean} core - Wheter or not this is a core module and it can be disaled or not. Defaults to false.
 	 * @property {boolean} startDisabled - Wheter or not this module will be disabled by default on new servers. Defaults to false.
@@ -27,6 +28,7 @@ class Base {
 		}
 		this.commandText = "";
 		this.color = 0xffffff;
+		this.ready = false;
 		this.auth = [];
 		this.dmEnabled = false;
 		this.core = false;
