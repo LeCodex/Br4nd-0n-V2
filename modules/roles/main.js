@@ -15,7 +15,6 @@ class MainClass extends Base {
 		};
 		this.commandText = "roles";
 		this.color = 0x008800;
-		this.auth = [ process.env.ADMIN, "118399702667493380", "110848467756134400" ];
 		this.auth = [ "Admin" ];
 
 		this.load("data", {}).then(async e => {
@@ -23,7 +22,6 @@ class MainClass extends Base {
 				this.client.error(null, "Roles", e)
 				return {};
 			});
-			
 
 			this.ready = true;
 		});
@@ -58,7 +56,7 @@ class MainClass extends Base {
 		}
 	}
 
-	command(message, args, kwargs) {
+	command(message, args, kwargs, flags) {
 		this.checkIfDataExists(message);
 		var data = this.data[message.guild.id];
 		var role = message.guild.roles.cache.get(data.role);
@@ -66,7 +64,7 @@ class MainClass extends Base {
 		message.reply(role ? "New users will automatically receive the " + role.toString() + " role" : "No roles has been parametered");
 	}
 
-	com_join(message, args, kwargs) {
+	com_join(message, args, kwargs, flags) {
 		this.checkIfDataExists(message);
 
 		if (args[1] == "reset") {
@@ -87,7 +85,7 @@ class MainClass extends Base {
 		this.completeSave();
 	}
 
-	com_menu(message, args, kwargs) {
+	com_menu(message, args, kwargs, flags) {
 		this.checkIfDataExists(message);
 		var data = this.data[message.guild.id];
 
@@ -100,7 +98,7 @@ class MainClass extends Base {
 		message.delete();
 	}
 
-	com_close(message, args, kwargs) {
+	com_close(message, args, kwargs, flags) {
 		this.checkIfDataExists(message);
 		var data = this.data[message.guild.id];
 
