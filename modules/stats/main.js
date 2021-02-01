@@ -27,6 +27,8 @@ class MainClass extends Base {
 				this.openNewScoreboard(message, args, kwargs, flags)
 			}
 		} else {
+			if (!this.stats[message.guild.id]) this.stats[message.guild.id] = {};
+
 			var embed = new MessageEmbed().setTitle("[STATS] Stored Scoreboards").setColor(this.color);
 			var description = [];
 			for (var [key, value] of Object.entries(this.stats[message.guild.id])) {
