@@ -15,9 +15,9 @@ class MainClass extends Base {
 		};
 		this.commandText = "dédale";
 		this.color = 0x144350;
-		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
+		this.pseudo_auth = [ "Admin" ];
 		this.startDisabled = true;
-		
+
 		this.colors = {
 			redSquare: this.client.emojis.cache.get("780049456263069706") || "🟥",
 			blueSquare: this.client.emojis.cache.get("780049455830270002") || "🟦",
@@ -67,7 +67,7 @@ class MainClass extends Base {
 	}
 
 	com_start(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (this.authorize(message, this.pseudo_auth)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].paused = false;
 				//this.games[message.channel.id].setupTimeout(false);
@@ -79,7 +79,7 @@ class MainClass extends Base {
 	}
 
 	com_stop(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (this.authorize(message, this.pseudo_auth)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].paused = true;
 				clearTimeout(this.games[message.channel.id].timeout);
@@ -89,7 +89,7 @@ class MainClass extends Base {
 	}
 
 	com_delete(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (this.authorize(message, this.pseudo_auth)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].delete_save();
 				delete this.games[message.channel.id];
@@ -99,7 +99,7 @@ class MainClass extends Base {
 	}
 
 	com_debug(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (message.author.id === process.env.ADMIN) {
 			this.debug = !this.debug
 			this.load("games").then(object =>{
 				object.debug = this.debug;
@@ -138,7 +138,7 @@ class MainClass extends Base {
 	}
 
 	com_set(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (message.author.id === process.env.ADMIN) {
 			if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];
 				var user = this.client.getUserFromMention(args[1]);

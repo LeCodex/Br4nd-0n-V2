@@ -11,7 +11,7 @@ class MainClass extends Base {
 		};
 		this.commandText = "say";
 		this.color = 0x000000;
-		this.auth = [ process.env.ADMIN ];
+		this.auth = [ "Noone" ];
 		this.ready = true;
 		this.hidden = true;
 	}

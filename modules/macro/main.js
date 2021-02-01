@@ -26,7 +26,7 @@ class MainClass extends Base {
 		};
 		this.commandText = "macro";
 		this.color = 0x222222;
-		this.auth = [ process.env.ADMIN ];
+		this.auth = [ "Admin" ];
 
 		this.load("modules", {}).then(e => {this.moduleList = e; this.ready = true;});
 	}

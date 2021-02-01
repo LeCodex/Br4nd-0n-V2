@@ -17,7 +17,7 @@ class MainClass extends Base {
 		};
 		this.commandText = "rules";
 		this.color = 0xffff00;
-		this.auth = [ process.env.ADMIN ];
+		this.auth = [ "Admin" ];
 
 		this.load("data", {}).then(e => {this.data = e; this.ready = true;});
 	}

@@ -45,16 +45,25 @@ class Base {
 		return ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
 	}
 
-	_testForAuth(message, content) {
-		var auth = this.auth.filter(e => e !== "Admin");
-		auth.push(process.env.ADMIN);
+	authorize(message, originalAuth) {
+		if (message.author.id === process.env.ADMIN) return true;
 
+		var auth = originalAuth.filter(e => e !== "Admin");
 		if (message.guild) {
-			if (this.auth.includes("Admin")) {
+			if (originalAuth.includes("Admin")) {
 				auth.push(...this.client.admins[message.guild.id].users);
 				auth.push(...this.client.admins[message.guild.id].roles);
 			}
-		} else if (!this.dmEnabled) return;
+		}
+
+		var authorized = auth.includes(message.author.id);
+		if (message.member) authorized ||= message.member.permissions.has("ADMINISTRATOR") || message.member.roles.cache.keyArray().some(e => auth.includes(e));
+
+		return authorized;
+	}
+
+	_testForAuth(message, content) {
+		if (!message.guild && !this.dmEnabled) return;
 
 		var content = content.match(/[^\s"]+|"[^"]*"/g).slice(1); //content.split(/\s+/g).slice(1);
 		var args = [], kwargs = {}, flags = [];
@@ -93,10 +102,7 @@ class Base {
 			// }
 		}
 
-		var authorized = this.auth.length === 0 || auth.includes(message.author.id)
-		if (message.member) authorized |= message.member.permissions.has("ADMINISTRATOR") || message.member.roles.cache.keyArray().some(e => auth.includes(e));
-
-		if (authorized) {
+		if (this.authorize(message, this.auth)) {
 			this._executeCommand(message, args, kwargs, flags);
 		} else {
 			message.reply("You are not authorized to run this command.");

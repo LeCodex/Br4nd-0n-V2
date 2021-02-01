@@ -10,7 +10,7 @@ class MainClass extends Base {
 		};
 		this.commandText = "restart";
 		this.color = 0xffffff;
-		this.auth = [ process.env.ADMIN ];
+		this.auth = [ "Noone" ];
 		this.hidden = true;
 		this.ready = true;
 	}

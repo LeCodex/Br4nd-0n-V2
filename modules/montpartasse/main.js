@@ -17,7 +17,7 @@ class MainClass extends Base {
 		};
 		this.commandText = "montpartasse";
 		this.color = 0xFF69B4;
-		this.pseudo_auth = [ process.env.ADMIN, "110467274535616512" ];
+		this.pseudo_auth = [ "Admin" ]
 		this.startDisabled = true;
 
 		var emojis = this.client.emojis.cache;
@@ -30,7 +30,7 @@ class MainClass extends Base {
 			all: emojis.get("666367471648768029") || "🌈",
 			none: emojis.get("472452900602249216") || "🥛"
 		};
-		
+
 		this.load("games", { games : {}, debug: false }).then(object => {
 			this.games = {};
 			for (var [channel_id, object] of Object.entries(object.games)) {
@@ -121,7 +121,7 @@ class MainClass extends Base {
 	}
 
 	com_start(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (this.authorize(message, this.pseudo_auth)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].paused = false;
 				message.reply("Unpaused");
@@ -132,7 +132,7 @@ class MainClass extends Base {
 	}
 
 	com_stop(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (this.authorize(message, this.pseudo_auth)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].paused = true;
 				message.reply("Paused");
@@ -141,7 +141,7 @@ class MainClass extends Base {
 	}
 
 	com_delete(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (this.authorize(message, this.pseudo_auth)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].delete_save();
 				delete this.games[message.channel.id];
@@ -151,7 +151,7 @@ class MainClass extends Base {
 	}
 
 	com_refill(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (this.authorize(message, this.pseudo_auth)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].refill();
 				this.games[message.channel.id].lastTimestamp = DateTime.local().setZone("Europe/Paris");
@@ -161,7 +161,7 @@ class MainClass extends Base {
 	}
 
 	com_enable(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (this.authorize(message, this.pseudo_auth)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].enabled.push(...args.slice(1).filter(e => !this.games[message.channel.id].enabled.includes(e)));
 				this.games[message.channel.id].save();
@@ -171,7 +171,7 @@ class MainClass extends Base {
 	}
 
 	com_newStack(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (this.authorize(message, this.pseudo_auth)) {
 			if (this.games[message.channel.id]) {
 				this.games[message.channel.id].needRefill = true;
 				this.games[message.channel.id].newStack();
@@ -180,7 +180,7 @@ class MainClass extends Base {
 	}
 
 	com_disable(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (this.authorize(message, this.pseudo_auth)) {
 			if (this.games[message.channel.id]) {
 				for (var cup of args.slice(1)) {
 					if (this.games[message.channel.id].enabled.includes(cup)) this.games[message.channel.id].enabled.splice(this.games[message.channel.id].enabled.indexOf(cup), 1);
@@ -192,7 +192,7 @@ class MainClass extends Base {
 	}
 
 	com_set(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (message.author.id === process.env.ADMIN) {
 			if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];
 				var user = this.client.getUserFromMention(args[1])
@@ -214,7 +214,7 @@ class MainClass extends Base {
 	}
 
 	com_gamerules(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (this.authorize(message, this.pseudo_auth)) {
 			if (this.games[message.channel.id]) {
 				var game = this.games[message.channel.id];
 				Object.keys(kwargs).forEach(key => {
@@ -228,7 +228,7 @@ class MainClass extends Base {
 	}
 
 	com_debug(message, args, kwargs, flags) {
-		if (this.pseudo_auth.includes(message.author.id)) {
+		if (message.author.id === process.env.ADMIN) {
 			this.debug = !this.debug
 			this.load("games").then(object =>{
 				object.debug = this.debug;

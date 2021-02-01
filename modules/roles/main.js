@@ -16,6 +16,7 @@ class MainClass extends Base {
 		this.commandText = "roles";
 		this.color = 0x008800;
 		this.auth = [ process.env.ADMIN, "118399702667493380", "110848467756134400" ];
+		this.auth = [ "Admin" ];
 
 		this.load("data", {}).then(async e => {
 			this.data = await this.parse(e).catch(e => {
@@ -23,6 +24,7 @@ class MainClass extends Base {
 				return {};
 			});
 			
+
 			this.ready = true;
 		});
 	}

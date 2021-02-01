@@ -13,7 +13,7 @@ class MainClass extends Base {
 		}
 		this.commandText = "modules";
 		this.color = 0x123456;
-		this.auth = [process.env.ADMIN];
+		this.auth = [ "Admin" ];
 		this.core = true;
 		this.ready = true;
 	}
