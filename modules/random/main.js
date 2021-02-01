@@ -119,7 +119,7 @@ class MainClass extends Base {
 	}
 
 	com_choice(message, args, kwargs, flags) {
-		args.splice();
+		args.shift();
 		this.reply(message, "🔮 I choose **" + args[Math.floor(Math.random() * args.length)] + "**!");
 	}
 
