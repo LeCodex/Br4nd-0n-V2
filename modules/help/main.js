@@ -17,9 +17,13 @@ class MainClass extends Base {
 	}
 
 	command(message, args, kwargs, flags) {
+		var enabled = [...this.client.enabledModules[message.guild.id]];
+		enabled.push(...this.client.modulesConstants.core);
+
 		if (args.length) {
 			var commandText = args.join(" ").toLowerCase();
-			if (Object.keys(this.client.modules).includes(commandText)) {
+
+			if (enabled.includes(commandText)) {
 				var mod = this.client.modules[commandText];
 				var embed = new MessageEmbed().setTitle("[HELP] " + mod.name + " Module").setColor(mod.color).setDescription(mod.description);
 				for (var [key, value] of Object.entries(mod.help)) {
@@ -37,7 +41,8 @@ class MainClass extends Base {
 			}
 		} else {
 			var embed = new MessageEmbed().setTitle("[HELP] Active modules").setColor(this.color);
-			Object.values(this.client.modules).forEach((element) => {
+			enabled.forEach((key) => {
+				var element = this.client.modules[key];
 				embed.addField(element.name + " (" + element.commandText + ")", element.description, true);
 			});
 
