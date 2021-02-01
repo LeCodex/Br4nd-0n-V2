@@ -56,7 +56,7 @@ class Base {
 			}
 		}
 
-		var authorized = auth.includes(message.author.id);
+		var authorized = originalAuth.length === 0 || auth.includes(message.author.id);
 		if (message.member) authorized |= message.member.permissions.has("ADMINISTRATOR") || message.member.roles.cache.keyArray().some(e => auth.includes(e));
 
 		return authorized;
