@@ -13,7 +13,7 @@ class Base {
 	 * @property {string} commandText - The command the bot will be looking for.
 	 * @property {number} color - The module's description, used for the help command.
 	 * @property {boolean} ready - Starts false. Must be set to true for the module to receive inputs.
-	 * @property {Array<external:Snowflake>} auth - The ID of the users that are authorized to run this command. Authorizes everyone if it's empty. Authorizes server owners, roles with the Administrator permission and roles tagged as administrators if it includes the value "Admin". 
+	 * @property {Array<external:Snowflake>} auth - The ID of the users that are authorized to run this command. Authorizes everyone if it's empty. Authorizes server owners, roles with the Administrator permission and roles tagged as administrators if it includes the value "Admin".
 	 * @property {boolean} dmEnabled - Whether or not the command can be run from DMs. Defaults to false.
 	 * @property {boolean} core - Wheter or not this is a core module and it can be disaled or not. Defaults to false.
 	 * @property {boolean} startDisabled - Wheter or not this module will be disabled by default on new servers. Defaults to false.
@@ -46,7 +46,15 @@ class Base {
 	}
 
 	_testForAuth(message, content) {
-		if (!message.guild && !this.dmEnabled) return;
+		var auth = this.auth.filter(e => e !== "Admin");
+		auth.push(process.env.ADMIN);
+
+		if (message.guild) {
+			if (this.auth.includes("Admin")) {
+				auth.push(...this.client.admins[message.guild.id].users);
+				auth.push(...this.client.admins[message.guild.id].roles);
+			}
+		} else if (!this.dmEnabled) return;
 
 		var content = content.match(/[^\s"]+|"[^"]*"/g).slice(1); //content.split(/\s+/g).slice(1);
 		var args = [], kwargs = {}, flags = [];
@@ -85,7 +93,10 @@ class Base {
 			// }
 		}
 
-		if (this.auth.length === 0 || this.auth.includes(message.author.id)) {
+		var authorized = this.auth.length === 0 || auth.includes(message.author.id)
+		if (message.member) authorized |= message.member.permissions.has("ADMINISTRATOR") || message.member.roles.cache.keyArray().some(e => auth.includes(e));
+
+		if (authorized) {
 			this._executeCommand(message, args, kwargs, flags);
 		} else {
 			message.reply("You are not authorized to run this command.");

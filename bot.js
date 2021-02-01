@@ -49,6 +49,7 @@ async function loadModules() {
 	}
 
 	client.enabledModules = await client.dbSystem.load("core", "modules", {});
+	client.admins = await client.dbSystem.load("core", "admins", {});
 
 	for (var guildID of Object.keys(client.enabledModules)) client.enabledModules[guildID] = client.enabledModules[guildID].filter(e => !client.modulesConstants.core.includes(e));
 	ready = true;
@@ -79,6 +80,14 @@ client.on('message', message => {
 client.checkModulesOnInput = function(input, method) {
 	var modules = [...client.modulesConstants.dm];
 	if (input.guild) {
+		if (!client.admins[input.guild.id]) {
+			client.admins[input.guild.id] = {
+				users: [ input.guild.owner.id ],
+				roles: []
+			};
+			client.dbSystem.save("core", "admins", client.admins);
+		}
+
 		if (!client.enabledModules[input.guild.id]) {
 			client.enabledModules[input.guild.id] = [...client.modulesConstants.default];
 			client.dbSystem.save("core", "modules", client.enabledModules);
@@ -95,7 +104,7 @@ client.checkModulesOnInput = function(input, method) {
 		try {
 			element[method](input);
 		} catch(e) {
-			client.error(message.channel, element.name, e);
+			client.error(input.channel, element.name, e);
 		}
 	});
 }
@@ -139,6 +148,20 @@ client.getUserFromMention = function(mention) {
 		}
 
 		return client.users.cache.get(mention);
+	}
+}
+
+client.getRoleFromMention = function(guild, mention) {
+	if (!mention) return;
+
+	if (mention.startsWith('<@') && mention.endsWith('>')) {
+		mention = mention.slice(2, -1);
+
+		if (mention.startsWith('&')) {
+			mention = mention.slice(1);
+		}
+
+		return guild.roles.cache.get(mention);
 	}
 }
 
