@@ -77,6 +77,12 @@ client.on('message', message => {
 	}
 });
 
+client.on('guildMemberAdd', member => {
+	if (!member.bot && ready) {
+		client.checkModulesOnInput(member, "on_guildMemberAdd");
+	}
+});
+
 client.checkModulesOnInput = function(input, method) {
 	var modules = [...client.modulesConstants.dm];
 	if (input.guild) {
@@ -108,12 +114,6 @@ client.checkModulesOnInput = function(input, method) {
 		}
 	});
 }
-
-client.on('guildMemberAdd', member => {
-	if (!message.author.bot && ready) {
-		client.checkModulesOnInput(member, "on_guildMemberAdd");
-	}
-});
 
 process.on('uncaughtException', function (err) {
   client.error(null, "Unknown", err);
