@@ -22,7 +22,7 @@ class MainClass extends Base {
 		this.name = "Dice";
 		this.description = "Throws dice following Roll20 dice throw syntax";
 		this.help = {
-			"XdY": "Throws a X dice with Y faces",
+			"XdY": "Throws a X dice with Y faces. Use --resultOnly to only get the result",
 			"dX + dY": "Throws multiple dices with different face counts"
 		}
 		this.commandText = "roll";
@@ -39,12 +39,13 @@ class MainClass extends Base {
 					lastResult = limitedEvaluate(lastResult);
 					var content = "```" + results.join("\n") + "```";
 
-					message.reply(
-						new MessageEmbed()
+					var embed = new MessageEmbed()
 						.setTitle("🎲 Dice Roll Result: " + lastResult)
-						.setDescription(content.length < 2048 ? content : "The whole calculation is too long to be displayed in this message.")
 						.setColor(this.color)
-					);
+
+					if (!flags.includes("resultOnly")) embed.setDescription(content.length < 2048 ? content : "The whole calculation is too long to be displayed in this message.")
+
+					message.reply(embed);
 				} else {
 					message.reply(
 						new MessageEmbed()
