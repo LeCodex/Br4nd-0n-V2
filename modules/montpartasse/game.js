@@ -161,19 +161,20 @@ class Game {
 
 				if (Object.keys(color_sort).length + rainbow_count === this.COLOR_COUNT) {
 					this.endStack(player, null);
-					return;
+					return true;
 				}
 
 				for (var [key, amount] of Object.entries(color_sort)) {
 					if (amount + rainbow_count === this.COLOR_COUNT) {
 						this.endStack(player, key);
-						return;
+						return true;
 					}
 				}
 			}
 		}
 
 		this.save();
+		return false;
 	}
 
 	endStack(player, victorious_color = null) {
@@ -209,7 +210,12 @@ class Game {
 			"C'est alors qu'un camion arriva en trombe dans le bar, manquant d'écraser tout le monde. Seule la pile n'a pas survé... Ah non, c'était le chat de Venus. Désolé, j'ai lu ce qu'a écrit Booti.",
 			"Je voulais profiter de ce bot pour vous délivrer un message : vous êtes les meilleurs. Non, vraiment, j'insiste. C'est super de vous avoir ici. La pile ? Oui bah non, on peut pas tout avoir.",
 			"En voyant la hauteur de la pile, la Délégation a décidé de faire passer un test anti-dopage aux tasses qui s'y trouvent. Elle les a donc réquisitionnées et emmenées aux toilettes pour... Pardon ?",
-			"La dernière tasse que vous avez posée touche le plafond (vous avez fait comment ?). Alphard est alors arrivée avec une masse pour exploser le plafond. On a bien ri, puis on a flippé. Fin du tour."
+			"La dernière tasse que vous avez posée touche le plafond (vous avez fait comment ?). Alphard est alors arrivée avec une masse pour exploser le plafond. On a bien ri, puis on a flippé. Fin du tour.",
+			"Solstice se mit alors à raconter une histoire impliquant une petite fille, un chaton et une tronçonneuse. Un truc tellement triste qu'on a retrouvé la pile... Complètement effondrée.",
+			"Braxer s'est posé sur la première tasse, pour voir s'il était capable de pondre un œuf. Mais comme il a le vertige et que 30 cm c'est déjà trop haut pour lui, faut qu'on arrête ce tour. Désolé.",
+			"Tolizebra a collé des stickers :slurp: sur toute la pile. Quand Booti est arrivé, ça a été un vrai carnage. La panIIIIIIIIIIIIIIIIK, en quelque sorte. Si vous cherchez Toli, il est aux toilettes.",
+			"Afin de déconcentrer les joueurs, tout le monde a décidé de sauter sur place au même moment... Le bar s'est effondré. La pile, elle, va bien. Vous par contre, si je vous trouve...",
+			"Et là, Nilphesai nous a montré sa dextérité en retirant la nappe sous la pile sans la faire tomber. Mais il n'y avait pas de nappe, il a donc retiré la table. Pas besoin de vous raconter la suite."
 		];
 
 		var description = custom_messages[Math.floor(Math.random() * custom_messages.length)] + "\n\n";

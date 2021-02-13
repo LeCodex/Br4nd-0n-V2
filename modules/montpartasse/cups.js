@@ -1,3 +1,11 @@
+function shuffle(a) {
+	for (let i = a.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[a[i], a[j]] = [a[j], a[i]];
+	}
+	return a;
+}
+
 class Cup {
 	constructor(mainclass, player, id, fallback) {
 		this.emoji = mainclass.client.emojis.cache.get(id) || fallback;
@@ -13,12 +21,14 @@ class Cup {
 			message: effect_return,
 			persistent: persistent
 		});
+
 		var member = await game.channel.guild.members.fetch(game.lastPlayed);
-		game.sendStack("Tasse de " + member.displayName).then(() => {
-			var message = "";
-			if (!this.player.hand.length && game.gamerules.refillEmptyHands) message = this.player.draw(game, 20);
-			this.player.sendHand(game, message).then(() => game.checkStackEnd(game.players[game.lastPlayed])).catch(e => game.client.error(game.channel, "Montpartasse", e));
-		}).catch(e => game.client.error(game.channel, "Montpartasse", e));
+		await game.sendStack("Tasse de " + member.displayName);
+
+		var message = "";
+		if (!this.player.hand.length && game.gamerules.refillEmptyHands) message = this.player.draw(game, 20);
+		await this.player.sendHand(game, message).catch(e => game.client.error(game.channel, "Montpartasse", e));
+		return game.checkStackEnd(game.players[game.lastPlayed]);
 	}
 }
 
@@ -352,5 +362,138 @@ class CarCup extends Cup {
 	}
 }
 
+class ImpostorCup extends Cup {
+	constructor(mainclass, player) {
+		super(mainclass, player, "808686177589788693", "🗡️");
 
-module.exports = exports = {BlueCup, PurpleCup, OrangeCup, GreenCup, CottonCup, BombCup, RainbowCup, GoldenCup, PaintCup, CactusCup, StealCup, GhostCup, FireCup, MagnetCup, ReverseCup, CarCup}
+		this.name = "Tasse Imposteure";
+		this.description = "Assassine violemment la tasse qui la supporte chaque fois qu'une tasse de la même couleur est posée";
+		this.color = "special";
+	}
+
+	effect(game, index) {
+		super.effect(game, index, "👀 Un imposteur est parmi nous... 👀");
+	}
+
+	passive(game, index, cup) {
+		if (game.stack.length - index === 1) return;
+
+		var victim = game.stack[index + 1];
+		if (cup.color === victim.color) {
+			game.stack.splice(index + 1, 1);
+
+			var quotes = [
+				"🗡️ Une " + victim.fullName + " a été poignardée 5 fois dans le dos. Euh, les tasses ont un dos? 🗡️",
+				"🍢 Une " + victim.fullName + " a été empalé comme une brochette. Et pas une belle 🍢",
+				"️🔫 Une " + victim.fullName + " a été jetée au sol et tirée dessus. Le tir n'était pas nécessaire 🔫",
+				"️☢️ Une " + victim.fullName + " a été vaporisée ☢️",
+				"❓ Une " + victim.fullName + " s'est suicidée à l'insu de son plein gré ❓",
+				"💔 Une " + victim.fullName + " se faisait chier, elle s'est cassée 💔",
+				"🧵 Une " + victim.fullName + " a des traces de strangulation sur l'anse 🧵",
+				"☄️ Encore une " + victim.fullName + " victime du trébuchet à tasses ☄️",
+				"🤖 Encore une " + victim.fullName + " victime de la tassling 🤖",
+				"🌫️ Une " + victim.fullName + " a disparu dans des conditions suspectes 🌫️",
+				"👼 Une " + victim.fullName + " est retournée voir son créateur 👼",
+				"🍐 Une " + victim.fullName + " s'est fendue la poire. Et la porcelaine aussi 🍐",
+				"🌊 Une " + victim.fullName + " a bu la tasse 🌊",
+				"🧩 Une " + victim.fullName + " servira de puzzle pour l'anniversaire de Choupy 🧩",
+				"🧯 Une " + victim.fullName + " a été brûlée au quatrième degré par un cappuccino 🧯",
+				"🏷️ Une " + victim.fullName + " s'appelait Adèle. Elle est morte 🏷️",
+				"🏷️ Une " + victim.fullName + " s'appelait Shuman. Elle est morte 🏷️",
+				"🧼 Une " + victim.fullName + " a fait un AVCelle 🧼",
+				"🪓 Booti a tronçonné une " + victim.fullName + " 🪓",
+				"📚 Une " + victim.fullName + " a lu Hara-Kiri 📚",
+				"💥 Une " + victim.fullName + " a trinqué trop fort 💥",
+				"🎲 Une buvette russe a mal tourné pour une " + victim.fullName + " 🎲",
+				"💨 Une " + victim.fullName + " a fait du base jump 💨",
+				"🥚 Braxer s'est assis sur une " + victim.fullName + ". Elle n'a pas supporté 🥚",
+				"☕ Une " + victim.fullName + " a avalé son café de travers ☕",
+				"🚀 Telle une roquette, une " + victim.fullName + " est partie vers d'autres cieux 🚀",
+				"🤫 Une " + victim.fullName + " a perdu au ni oui ni non 🤫",
+				"🍵 Une " + victim.fullName + " a perdu toute contenance 🍵"
+			];
+
+			game.effectStack.push({
+				message: quotes[Math.floor(Math.random() * quotes.length)],
+				permanent: false
+			});
+		}
+	}
+}
+
+class IridiumCup extends Cup {
+	constructor(mainclass, player) {
+		super(mainclass, player, "808686282229678141", "⚫");
+
+		this.name = "Tasse Iridium";
+		this.description = "Devient au hasard une copie d'une autre tasse de la pile";
+		this.color = "special";
+	}
+
+	effect(game, index) {
+		if (game.stack.length === 1) {
+			super.effect(game, index, ":rock: La Tasse Iridium n'a aucune tasse à copier :rock:");
+		} else {
+			var i = Math.floor(Math.random() * game.stack.length);
+			var cup = game.stack[i];
+
+			game.effectStack.push({
+				message: "🧪 La Tasse Iridium s'est métamorphosée en " + cup.fullName + "! 🧪",
+				persistent: false
+			});
+			game.stack[index] = new cup.constructor(game.mainclass, this.player);
+
+			cup.effect(game, index);
+		}
+	}
+}
+
+class DiceCup extends Cup {
+	constructor(mainclass, player) {
+		super(mainclass, player, "808686075139981322", "🎲");
+
+		this.name = "Tasse Dé";
+		this.description = "Mélange toute la pile";
+		this.color = "special";
+	}
+
+	effect(game, index) {
+		game.stack = shuffle(game.stack);
+		super.effect(game, index, "🎲 La pile a été mélangée par le pouvoir du DE! 🎲");
+	}
+}
+
+class DwarfCup extends Cup {
+	constructor(mainclass, player) {
+		super(mainclass, player, "808686325686599740", "✌️");
+
+		this.name = "Tasse Naine";
+		this.description = "S'il y a 3 tasses ou plus de la même couleur que la tasse d'en-dessous, la pile s'effondre";
+		this.color = "special";
+	}
+
+	effect(game, index) {
+		if (game.stack.length - index === 1) {
+			super.effect(game, index, ":rock: La Tasse Iridium n'a aucune tasse à copier :rock:");
+		} else {
+			var count = 0;
+			var color = game.stack[index + 1].color;
+			for (var cup of game.stack) {
+				if (cup.color === color) count++;
+			}
+
+			if (count >= 3) {
+				super.effect(game, index, "✌️ Avec " + count + " tasses " + game.mainclass.COLOR_EMOJIS[color].toString() + ", la pile est tombée! ✌️")
+					.then(done => {
+						console.log("Done? ", done);
+						if (!done) game.endStack(this.player, color);
+					});
+			} else {
+				super.effect(game, index, "👌 Il n'y a pas assez de tasses " + game.mainclass.COLOR_EMOJIS[color].toString() + " pour faire tomber la pile... 👌");
+			}
+		}
+	}
+}
+
+
+module.exports = exports = {BlueCup, PurpleCup, OrangeCup, GreenCup, CottonCup, BombCup, RainbowCup, GoldenCup, PaintCup, CactusCup, StealCup, GhostCup, FireCup, MagnetCup, ReverseCup, CarCup, ImpostorCup, IridiumCup, DiceCup, DwarfCup}

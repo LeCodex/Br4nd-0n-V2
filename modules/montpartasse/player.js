@@ -69,6 +69,11 @@ class Player {
 
 		var cup = this.hand.splice(index - 1, 1)[0];
 		game.stack.unshift(cup);
+
+		for (var i = game.stack.length - 1; i >= 0; i--) {
+			if (game.stack[i].passive) game.stack[i].passive(game, i, cup);
+		}
+
 		cup.effect(game, 0);
 	}
 }
