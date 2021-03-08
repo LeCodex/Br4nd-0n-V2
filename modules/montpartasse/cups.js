@@ -439,7 +439,7 @@ class IridiumCup extends Cup {
 			do {
 				var i = Math.floor(Math.random() * game.stack.length);
 				cup = game.stack[i];
-			} while (cup.name != this.name);
+			} while (cup.name === this.name);
 
 			game.effectStack.push({
 				message: "🧪 La Tasse Iridium s'est métamorphosée en " + cup.fullName + "! 🧪",
