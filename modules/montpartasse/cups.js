@@ -431,11 +431,15 @@ class IridiumCup extends Cup {
 	}
 
 	effect(game, index) {
-		if (game.stack.length === 1) {
+		if (game.stack.length === 1 || game.stack.every(e => e.name === this.name)) {
 			super.effect(game, index, ":rock: La Tasse Iridium n'a aucune tasse à copier :rock:");
 		} else {
-			var i = Math.floor(Math.random() * game.stack.length);
-			var cup = game.stack[i];
+			var cup;
+
+			do {
+				var i = Math.floor(Math.random() * game.stack.length);
+				cup = game.stack[i];
+			} while (cup.name != this.name);
 
 			game.effectStack.push({
 				message: "🧪 La Tasse Iridium s'est métamorphosée en " + cup.fullName + "! 🧪",
