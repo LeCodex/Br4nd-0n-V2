@@ -41,7 +41,7 @@ class Game {
 		var sorted = Object.values(this.players).sort((a, b) => b.score - a.score);
 
 		this.channel.send(
-			"```Longueur attendue: " + this.wordLength + " caractères\n" + sorted.map(e =>
+			"```\nLongueur attendue: " + this.wordLength + " caractères\n" + sorted.map(e =>
 				  e.user.displayName + " ".repeat(maxLength - e.user.displayName.length + 1) + ": "
 				+ this.letters.map(l => e.letters[l] ? "_": l).join("")
 				+ "  (" + e.score + ")"

@@ -12,7 +12,8 @@ class MainClass extends Base {
 		this.description = "Joue au Scrabble avec des peignes";
 		this.help = {
 			"<mot>": "Valide un mot",
-			"show": "Renvoies le message d'info de la partie"
+			"show": "Renvoies le message d'info de la partie",
+			"used": "Envoies la liste des mots qui ont déjà été envoyé"
 		};
 		this.commandText = "tarti";
 		this.color = 0x008000;
@@ -61,6 +62,16 @@ class MainClass extends Base {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
 			game.sendTable();
+		}
+	}
+
+	com_used(message, args, kwargs, flags) {
+		if (this.games[message.channel.id]) {
+			var game = this.games[message.channel.id];
+
+			game.saidWords = game.saidWords.sort();
+
+			message.channel.send("```\n" + game.saidWords.join("\n") + "```");
 		}
 	}
 

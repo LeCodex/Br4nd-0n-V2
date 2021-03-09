@@ -15,14 +15,14 @@ class Player {
 	}
 
 	async playWord(word) {
-		word = word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().split("")
+		var list = word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().split("")
 
-		if (word.every(e => this.letters[e])) {
+		if (list.every(e => this.letters[e])) {
 			this.game.channel.send(this.user.toString() + ", Ce mot ne retirerait aucune lettre de votre peigne");
 			return;
 		}
 
-		for (var char of word) {
+		for (var char of list) {
 			if (!this.letters[char]) {
 				this.letters[char] = true;
 				this.score ++;
@@ -48,7 +48,7 @@ class Player {
 			this.letters[this.taboo] = true;
 		}
 
-		this.user.send("Votre peigne a été remis à zéro");
+		// this.user.send("Votre peigne a été remis à zéro");
 	}
 }
 
