@@ -77,7 +77,8 @@ class Game {
 				score: Number(e.score),
 				user: e.user.id,
 				letters: e.letters,
-				taboo: e.taboo
+				taboo: e.taboo,
+				possibleTaboos: e.possibleTaboos
 			}
 		}
 
@@ -97,6 +98,7 @@ class Game {
 			p.letters = e.letters || {};
 			p.score = e.score || this.letters.filter(e => p.letters[e]).length;
 			p.taboo = e.taboo || null;
+			p.possibleTaboos = e.possibleTaboos || [];
 
 			this.players[k] = p;
 		};

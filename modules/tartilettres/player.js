@@ -7,6 +7,7 @@ class Player {
 		this.score = 0;
 		this.letters = {};
 		this.taboo = null;
+		this.possibleTaboos = [];
 
 		// console.log(user);
 
@@ -32,10 +33,11 @@ class Player {
 		this.letters = {};
 
 		if (withTaboo) {
-			var possibleTaboos = "BCDFGHLMNP";
+			if (!this.possibleTaboos.length) this.possibleTaboos = "BCDFGHLMNP".split("");
+
 			var index = Math.floor(Math.random() * possibleTaboos.length);
 
-			this.taboo = possibleTaboos.charAt(index);
+			this.taboo = possibleTaboos.splice(index, 1)[0];
 			this.letters[this.taboo] = true;
 		}
 
