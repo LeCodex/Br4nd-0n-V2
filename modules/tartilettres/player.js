@@ -15,7 +15,14 @@ class Player {
 	}
 
 	async playWord(word) {
-		for (var char of word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().split("")) {
+		word = word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().split("")
+
+		if (word.every(e => this.letters[e])) {
+			this.game.channel.send(this.user.toString() + ", Ce mot ne retirerai aucune lettre de votre peigne");
+			return;
+		}
+
+		for (var char of word) {
 			if (!this.letters[char]) {
 				this.letters[char] = true;
 				this.score ++;
