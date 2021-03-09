@@ -4,30 +4,30 @@ class Player {
 	constructor(user, game, reload = false) {
 		this.user = user;
 		this.game = game;
-		this.score = 0;
-		this.letters = [];
+		this.completed = -1;
+		this.letters = {};
 
 		// console.log(user);
 
 		if (!reload) this.resetLetters();
 	}
 
+	get score() {
+		return this.completed * this.game.letters.length + Object.keys(this.letters).filter(e => this.game.letters.includes(e)).length;
+	}
+
 	async playWord(word) {
-		for (var char of word.split("").map(e => e.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase())) {
-			var index = this.game.letters.indexOf(char);
+		for (var char of word.split("").map(e => e.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase())) { this.letters[char] = true; }
 
-			if (index !== -1 && this.letters[index]) {
-				this.letters[index] = false;
-				this.score ++;
-			}
-		}
+		if (this.game.letters.every(e => this.letters[e])) this.resetLetters();
 
+		this.game.saidWords.push(word);
 		await this.game.nextTurn(this.user.id);
-		if (this.letters.every(e => !e)) this.resetLetters();
 	}
 
 	resetLetters() {
-		this.letters = this.game.letters.map(e => true);
+		this.completed ++;
+		this.letters = {};
 		this.user.send("Votre peigne a été remis à zéro");
 	}
 }

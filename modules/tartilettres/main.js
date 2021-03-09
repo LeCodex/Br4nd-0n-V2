@@ -41,6 +41,8 @@ class MainClass extends Base {
 				message.reply("Vous avez déjà joué au tour précédent, veuillez attendre");
 			} else if (args.length === 0 || !this.words.includes(args[0])) {
 				message.reply("Veuillez renseigner un mot valide");
+			} else if (game.saidWords.includes(args[0])) {
+				message.reply("Le mot a déjà été proposé");
 			} else if (args[0].length !== game.wordLength) {
 				message.reply("Le mot n'a pas la bonne longueur");
 			} else {

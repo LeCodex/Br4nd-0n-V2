@@ -30,6 +30,7 @@ class Game {
 		this.players = {};
 		this.lastPlayed = "";
 		this.paused = false;
+		this.saidWords = [];
 
 		if (message) {
 			this.channel = message.channel;
@@ -47,11 +48,12 @@ class Game {
 
 	async sendTable() {
 		var maxLength = Object.values(this.players).reduce((acc, e) => Math.max(acc, e.user.displayName.length), 0);
+		var sorted = Object.values(this.players).sort((a, b) => b.score - a.score);
 
 		this.channel.send(
-			"```Longueur attendue: " + this.wordLength + " caractères\n" + Object.values(this.players).map(e =>
-				  e.user.displayName + " ".repeat(maxLength - e.user.displayName.length + 1) + ":"
-				+ this.letters.map((l, i) => e.letters[i] ? l : "_").join("")
+			"```Longueur attendue: " + this.wordLength + " caractères\n" + sorted.map(e =>
+				  e.user.displayName + " ".repeat(maxLength - e.user.displayName.length + 1) + ": "
+				+ this.letters.map(l => e.letters[l] ? "_": l).join("")
 				+ "  (" + e.score + ")"
 			).join("\n") + "```"
 		);
@@ -75,12 +77,13 @@ class Game {
 			players: {},
 			paused: this.paused,
 			lastPlayed: this.lastPlayed,
-			wordLength: this.wordLength
+			wordLength: this.wordLength,
+			saidWords: this.saidWords
 		};
 
 		for (var [k, e] of Object.entries(this.players)) {
 			object.players[k] = {
-				score: Number(e.score),
+				completed: Number(e.completed),
 				user: e.user.id,
 				letters: e.letters
 			}
@@ -94,12 +97,13 @@ class Game {
 		this.players = {};
 		this.paused = object.paused;
 		this.lastPlayed = object.lastPlayed;
-		this.wordLength = object.wordLength;
+		this.wordLength = object.wordLength || 7;
+		this.saidWords = object.saidWords || [];
 
 		for (var [k, e] of Object.entries(object.players)) {
 			var p = new Player(await this.channel.guild.members.fetch(e.user, true, true), this, true);
-			p.score = e.score;
-			p.letters = e.letters;
+			p.completed = e.completed || 0;
+			p.letters = e.letters || {};
 
 			this.players[k] = p;
 		};
