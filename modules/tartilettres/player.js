@@ -18,7 +18,7 @@ class Player {
 		word = word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().split("")
 
 		if (word.every(e => this.letters[e])) {
-			this.game.channel.send(this.user.toString() + ", Ce mot ne retirerai aucune lettre de votre peigne");
+			this.game.channel.send(this.user.toString() + ", Ce mot ne retirerait aucune lettre de votre peigne");
 			return;
 		}
 
@@ -42,9 +42,9 @@ class Player {
 		if (withTaboo) {
 			if (!this.possibleTaboos.length) this.possibleTaboos = "BCDFGHLMNP".split("");
 
-			var index = Math.floor(Math.random() * possibleTaboos.length);
+			var index = Math.floor(Math.random() * this.possibleTaboos.length);
 
-			this.taboo = possibleTaboos.splice(index, 1)[0];
+			this.taboo = this.possibleTaboos.splice(index, 1)[0];
 			this.letters[this.taboo] = true;
 		}
 
