@@ -41,7 +41,7 @@ class MainClass extends Base {
 
 			if (game.lastPlayed === message.author.id) {
 				message.reply("Vous avez déjà joué au tour précédent, veuillez attendre");
-			} else if (player.taboo && args[0].includes(player.taboo)) {
+			} else if (player.taboo && args[0].includes(player.taboo.toLowerCase())) {
 				message.reply("Le mot contient votre lettre interdite");
 			} else if (args.length === 0 || !this.words.includes(args[0])) {
 				message.reply("Veuillez renseigner un mot valide");

@@ -29,14 +29,16 @@ class Player {
 
 	resetLetters(withTaboo = false) {
 		// this.completed ++;
+		this.letters = {};
+
 		if (withTaboo) {
 			var possibleTaboos = "BCDFGHLMNP";
 			var index = Math.floor(Math.random() * possibleTaboos.length);
 
 			this.taboo = possibleTaboos.charAt(index);
+			this.letters[this.taboo] = true;
 		}
 
-		this.letters = {};
 		this.user.send("Votre peigne a été remis à zéro");
 	}
 }
