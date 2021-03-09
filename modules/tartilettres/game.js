@@ -10,16 +10,6 @@ function shuffle(a) {
 	return a;
 }
 
-function getDist(start, end) {
-	//console.log(start.x - end.x, start.y - end.y);
-	return Math.sqrt((start.x - end.x) ** 2 + (start.y - end.y) ** 2);
-}
-
-function getRankEmoji(rank) {
-	if (rank < 4) return ["🥇", "🥈", "🥉"][rank - 1];
-	return "🏅";
-}
-
 
 class Game {
 	constructor(mainclass, message) {
@@ -55,6 +45,7 @@ class Game {
 				  e.user.displayName + " ".repeat(maxLength - e.user.displayName.length + 1) + ": "
 				+ this.letters.map(l => e.letters[l] ? "_": l).join("")
 				+ "  (" + e.score + ")"
+				+ (e.taboo ? "  ❌" + e.taboo : "")
 			).join("\n") + "```"
 		);
 	}
@@ -83,9 +74,10 @@ class Game {
 
 		for (var [k, e] of Object.entries(this.players)) {
 			object.players[k] = {
-				completed: Number(e.completed),
+				score: Number(e.score),
 				user: e.user.id,
-				letters: e.letters
+				letters: e.letters,
+				taboo: e.taboo
 			}
 		}
 
@@ -102,8 +94,9 @@ class Game {
 
 		for (var [k, e] of Object.entries(object.players)) {
 			var p = new Player(await this.channel.guild.members.fetch(e.user, true, true), this, true);
-			p.completed = e.completed || 0;
 			p.letters = e.letters || {};
+			p.score = e.score || this.letters.filter(e => p.letters[e]).length;
+			p.taboo = e.taboo || null;
 
 			this.players[k] = p;
 		};

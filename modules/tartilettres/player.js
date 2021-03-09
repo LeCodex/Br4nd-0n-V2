@@ -4,29 +4,38 @@ class Player {
 	constructor(user, game, reload = false) {
 		this.user = user;
 		this.game = game;
-		this.completed = -1;
+		this.score = 0;
 		this.letters = {};
+		this.taboo = null;
 
 		// console.log(user);
 
 		if (!reload) this.resetLetters();
 	}
 
-	get score() {
-		return this.completed * this.game.letters.length + Object.keys(this.letters).filter(e => this.game.letters.includes(e)).length;
-	}
-
 	async playWord(word) {
-		for (var char of word.split("").map(e => e.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase())) { this.letters[char] = true; }
+		for (var char of word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().split("")) {
+			if (!this.letters[char]) {
+				this.letters[char] = true;
+				this.score ++;
+			}
+		}
 
-		if (this.game.letters.every(e => this.letters[e])) this.resetLetters();
+		if (this.game.letters.every(e => this.letters[e])) this.resetLetters(true);
 
 		this.game.saidWords.push(word);
 		await this.game.nextTurn(this.user.id);
 	}
 
-	resetLetters() {
-		this.completed ++;
+	resetLetters(withTaboo = false) {
+		// this.completed ++;
+		if (withTaboo) {
+			var possibleTaboos = "BCDFGHLMNP";
+			var index = Math.floor(Math.random() * possibleTaboos.length);
+
+			this.taboo = possibleTaboos.charAt(index);
+		}
+
 		this.letters = {};
 		this.user.send("Votre peigne a été remis à zéro");
 	}

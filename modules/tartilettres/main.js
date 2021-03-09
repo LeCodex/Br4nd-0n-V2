@@ -37,8 +37,12 @@ class MainClass extends Base {
 			var game = this.games[message.channel.id];
 			if (!game.players[message.author.id]) { game.players[message.author.id] = new Player(message.member, game); }
 
+			var player = game.players[message.author.id];
+
 			if (game.lastPlayed === message.author.id) {
 				message.reply("Vous avez déjà joué au tour précédent, veuillez attendre");
+			} else if (player.taboo && args[0].includes(player.taboo)) {
+				message.reply("Le mot contient votre lettre interdite");
 			} else if (args.length === 0 || !this.words.includes(args[0])) {
 				message.reply("Veuillez renseigner un mot valide");
 			} else if (game.saidWords.includes(args[0])) {
@@ -46,7 +50,6 @@ class MainClass extends Base {
 			} else if (args[0].length !== game.wordLength) {
 				message.reply("Le mot n'a pas la bonne longueur");
 			} else {
-				var player = game.players[message.author.id];
 				player.playWord(args[0]);
 			}
 		}
