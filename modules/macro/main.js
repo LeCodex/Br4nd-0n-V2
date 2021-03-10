@@ -159,7 +159,7 @@ class MainClass extends Base {
 							return;
 						}
 					} catch(e) {
-						client.error(message.channel, element.name, e);
+						this.client.error(message.channel, element.name, e);
 					}
 				};
 
