@@ -59,13 +59,15 @@ class MainClass extends Base {
 			if (game.lastPlayed === message.author.id) {
 				message.reply("Vous avez déjà joué au tour précédent, veuillez attendre");
 			} else if (player.taboo.some(e => list.some(f => f === e))) {
-				message.reply("Le mot contient une de votre lettres interdites");
-			} else if (args.length === 0 || !this.words.includes(args[0])) {
-				message.reply("Veuillez renseigner un mot valide");
-			} else if (game.saidWords.includes(args[0])) {
-				message.reply("Le mot a déjà été proposé");
+				message.reply("Le mot contient une de vos lettres interdites");
 			} else if (args[0].length !== game.wordLength) {
 				message.reply("Le mot n'a pas la bonne longueur");
+			} else if (game.saidWords.includes(args[0])) {
+				message.reply("Le mot a déjà été proposé");
+			} else if (list.every(e => this.letters[e])) {
+				message.reply("Ce mot ne retirerait aucune lettre de votre peigne");
+			} else if (args.length === 0 || !this.words.includes(args[0])) {
+				message.reply("Veuillez renseigner un mot valide");
 			} else {
 				player.playWord(args[0], list);
 			}

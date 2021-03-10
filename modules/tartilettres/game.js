@@ -45,7 +45,7 @@ class Game {
 				  e.user.displayName + " ".repeat(maxLength - e.user.displayName.length + 1) + ": "
 				+ this.letters.map(l => e.letters[l] ? "_": l).join("")
 				+ "  (" + e.score + ")"
-				+ (e.taboo.length ? "  ❌ " + e.taboo.join(", ") : "")
+				+ (e.taboo.length ? "  ❌ " + e.taboo.join(",") : "")
 			).join("\n") + "```"
 		);
 	}

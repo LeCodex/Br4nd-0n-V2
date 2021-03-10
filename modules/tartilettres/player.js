@@ -15,11 +15,6 @@ class Player {
 	}
 
 	async playWord(word, list) {
-		if (list.every(e => this.letters[e])) {
-			this.game.channel.send(this.user.toString() + ", Ce mot ne retirerait aucune lettre de votre peigne");
-			return;
-		}
-
 		for (var char of list) {
 			if (!this.letters[char]) {
 				this.letters[char] = true;
