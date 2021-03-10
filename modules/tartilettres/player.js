@@ -6,7 +6,7 @@ class Player {
 		this.game = game;
 		this.score = 0;
 		this.letters = {};
-		this.taboo = null;
+		this.taboo = [];
 		this.possibleTaboos = [];
 
 		// console.log(user);
@@ -14,9 +14,7 @@ class Player {
 		if (!reload) this.resetLetters();
 	}
 
-	async playWord(word) {
-		var list = word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().split("")
-
+	async playWord(word, list) {
 		if (list.every(e => this.letters[e])) {
 			this.game.channel.send(this.user.toString() + ", Ce mot ne retirerait aucune lettre de votre peigne");
 			return;
@@ -44,8 +42,10 @@ class Player {
 
 			var index = Math.floor(Math.random() * this.possibleTaboos.length);
 
-			this.taboo = this.possibleTaboos.splice(index, 1)[0];
-			this.letters[this.taboo] = true;
+			this.taboo.push(this.possibleTaboos.splice(index, 1)[0]);
+			if (this.taboo.length > 3) this.taboo.shift();
+
+			for (var letter of this.taboo) this.letters[letter] = true;
 		}
 
 		// this.user.send("Votre peigne a été remis à zéro");

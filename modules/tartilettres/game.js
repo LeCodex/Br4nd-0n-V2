@@ -45,7 +45,7 @@ class Game {
 				  e.user.displayName + " ".repeat(maxLength - e.user.displayName.length + 1) + ": "
 				+ this.letters.map(l => e.letters[l] ? "_": l).join("")
 				+ "  (" + e.score + ")"
-				+ (e.taboo ? "  ❌" + e.taboo : "")
+				+ (e.taboo.length ? "  ❌ " + e.taboo.join(", ") : "")
 			).join("\n") + "```"
 		);
 	}
@@ -97,10 +97,12 @@ class Game {
 			var p = new Player(await this.channel.guild.members.fetch(e.user, true, true), this, true);
 			p.letters = e.letters || {};
 			p.score = e.score || this.letters.filter(e => p.letters[e]).length;
-			p.taboo = e.taboo || null;
+			p.taboo = typeof(e.taboo) === "object" ? (e.taboo ? e.taboo : []) : (e.taboo ? [e.taboo] : []);
 			p.possibleTaboos = e.possibleTaboos || [];
 
 			this.players[k] = p;
+
+			// console.log(p);
 		};
 	}
 

@@ -5,6 +5,21 @@ const Game = require("./game.js");
 const Player = require("./player.js");
 const fs = require('fs');
 
+function replyMultiple(message, sentences) {
+	// var sentences = content.split(", ");
+	var form = sentences.shift();
+
+	for (var sentence of sentences) {
+		if (form.length + sentence.length >= 1990) {
+			message.channel.send("```\n" + form + "```");
+			form = "";
+		}
+		form += ", " + sentence;
+	}
+
+	message.channel.send("```\n" + form + "```");
+}
+
 class MainClass extends Base {
 	constructor(client) {
 		super(client);
@@ -39,11 +54,12 @@ class MainClass extends Base {
 			if (!game.players[message.author.id]) { game.players[message.author.id] = new Player(message.member, game); }
 
 			var player = game.players[message.author.id];
+			var list = args.length ? args[0].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().split("") : [];
 
 			if (game.lastPlayed === message.author.id) {
 				message.reply("Vous avez déjà joué au tour précédent, veuillez attendre");
-			} else if (player.taboo && args[0].includes(player.taboo.toLowerCase())) {
-				message.reply("Le mot contient votre lettre interdite");
+			} else if (player.taboo.some(e => list.some(f => f === e))) {
+				message.reply("Le mot contient une de votre lettres interdites");
 			} else if (args.length === 0 || !this.words.includes(args[0])) {
 				message.reply("Veuillez renseigner un mot valide");
 			} else if (game.saidWords.includes(args[0])) {
@@ -51,7 +67,7 @@ class MainClass extends Base {
 			} else if (args[0].length !== game.wordLength) {
 				message.reply("Le mot n'a pas la bonne longueur");
 			} else {
-				player.playWord(args[0]);
+				player.playWord(args[0], list);
 			}
 		}
 
@@ -71,7 +87,7 @@ class MainClass extends Base {
 
 			game.saidWords = game.saidWords.sort();
 
-			message.channel.send("```\n" + game.saidWords.join("\n") + "```");
+			replyMultiple(message, game.saidWords);
 		}
 	}
 
