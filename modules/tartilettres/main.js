@@ -64,7 +64,7 @@ class MainClass extends Base {
 				message.reply("Le mot n'a pas la bonne longueur");
 			} else if (game.saidWords.includes(args[0])) {
 				message.reply("Le mot a déjà été proposé");
-			} else if (list.every(e => this.letters[e])) {
+			} else if (list.every(e => player.letters[e])) {
 				message.reply("Ce mot ne retirerait aucune lettre de votre peigne");
 			} else if (args.length === 0 || !this.words.includes(args[0])) {
 				message.reply("Veuillez renseigner un mot valide");
