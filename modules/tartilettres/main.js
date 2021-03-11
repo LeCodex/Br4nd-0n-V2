@@ -3,7 +3,8 @@ const {DateTime} = require('luxon');
 const {Base} = require(module.parent.path + "/base/main.js");
 const Game = require("./game.js");
 const Player = require("./player.js");
-const fs = require('fs');
+// const fs = require('fs');
+const https = require('https');
 
 function replyMultiple(message, sentences) {
 	// var sentences = content.split(", ");
@@ -35,7 +36,7 @@ class MainClass extends Base {
 		this.pseudo_auth = [ "Admin" ];
 		this.startDisabled = true;
 
-		this.words = fs.readFileSync(module.path + '/fr.txt').toString().split("\n");
+		// this.words = fs.readFileSync(module.path + '/fr.txt').toString().split("\n");
 
 		this.games = {};
 		this.load("games", { games : {}, debug: false }).then(object => {
@@ -71,10 +72,32 @@ class MainClass extends Base {
 				message.reply("Le mot a déjà été proposé");
 			} else if (list.every(e => player.letters[e])) {
 				message.reply("Ce mot ne retirerait aucune lettre de votre peigne");
-			} else if (!this.words.includes(args[0])) {
-				message.reply("Veuillez renseigner un mot valide");
 			} else {
-				player.playWord(args[0], list);
+				var req = https.get("https://api.dictionaryapi.dev/api/v2/entries/fr/" + args[0], (res) => {
+					var body = "";
+
+					res.on("data", (chunk) => {
+						body += chunk;
+					});
+
+					res.on("end", () => {
+						try {
+							var json = JSON.parse(body);
+
+							if (json.title) {
+								message.reply("Veuillez renseigner un mot valide");
+							} else {
+								player.playWord(args[0], list);
+							}
+						} catch (error) {
+							console.error(error.message);
+						};
+					});
+				}).on("error", (error) => {
+					console.error(error.message);
+				});
+
+				req.end();
 			}
 		}
 
