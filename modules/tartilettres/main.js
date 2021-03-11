@@ -50,6 +50,11 @@ class MainClass extends Base {
 
 	command(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
+			if (args.length === 0) {
+				message.reply("Veuillez renseigner un mot");
+				return;
+			}
+
 			var game = this.games[message.channel.id];
 			if (!game.players[message.author.id]) { game.players[message.author.id] = new Player(message.member, game); }
 
@@ -66,7 +71,7 @@ class MainClass extends Base {
 				message.reply("Le mot a déjà été proposé");
 			} else if (list.every(e => player.letters[e])) {
 				message.reply("Ce mot ne retirerait aucune lettre de votre peigne");
-			} else if (args.length === 0 || !this.words.includes(args[0])) {
+			} else if (!this.words.includes(args[0])) {
 				message.reply("Veuillez renseigner un mot valide");
 			} else {
 				player.playWord(args[0], list);
