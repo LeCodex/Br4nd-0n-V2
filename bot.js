@@ -56,16 +56,21 @@ async function loadModules() {
 }
 
 client.on('ready', () => {
+  console.log("Loading potential database");
 	if (!client.mongo) {
+    console.log("No database");
 		loadModules();
 	} else if (client.mongo.isConnected()) {
+    console.log("Already loaded!");
 		loadModules();
 	} else {
+    console.log("Waiting for connection...");
 		client.mongo.connect(err => {
 			if (err) {
 				console.error(err);
 				return;
 			}
+      console.log("Connected!");
 			loadModules();
 		});
 	}
@@ -165,6 +170,7 @@ client.getRoleFromMention = function(guild, mention) {
 	}
 }
 
+console.log("Starting bot...");
 client.login(process.env.BOT_TOKEN).catch(console.error);
 
 const http = require('http');
