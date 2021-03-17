@@ -36,9 +36,9 @@ class MainClass extends Base {
 
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
-			var player = game.joinGame(message.member);
+			var [player, joined] = game.joinGame(message.member);
 
-			if (args.length === 0) {
+			if (args.length === 0 || joined) {
 				if (player.infoMessage) {
 					player.infoMessage.delete();
 					player.infoMessage = null;
@@ -59,9 +59,37 @@ class MainClass extends Base {
 		}
 	}
 
+	getRankEmoji(rank) {
+		if (rank < 4) return ["🥇", "🥈", "🥉"][rank - 1];
+		return "🏅";
+	}
+
+	com_rank(message, args, kwargs, flags) {
+		if (this.games[message.channel.id]) {
+			var game = this.games[message.channel.id];
+			var sorted = Object.values(game.players).sort((a, b) => b.score - a.score);
+
+			message.reply(
+				new MessageEmbed()
+				.setTitle("[COUP D'JUS] Classement")
+				.setColor(this.color)
+				.addField("Joueurs", sorted.reduce((buffer, e) => {
+					if (e.score < buffer.lastScore) {
+						buffer.lastScore = e.score;
+						buffer.rank++;
+					}
+					buffer.message += this.getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + "\n";
+					return buffer;
+				}, {message: "", rank: 0, lastScore: Infinity}).message, true)
+				.addField("Scores", sorted.map(e => "**" + e.score + "** 📑").join("\n"), true)
+			)
+		}
+	}
+
 	com_show(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
+			if (game.infoMessage) game.deleteStackMessage();
 			game.sendInfo();
 		}
 	}

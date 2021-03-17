@@ -20,6 +20,8 @@ class Game {
 		this.lastPlayed = "";
 		this.paused = false;
 		this.availableFruits = Object.values(Fruits);
+		this.title = "";
+		this.summary = "";
 		this.blenders = [
 			[],
 			[],
@@ -47,8 +49,9 @@ class Game {
 	}
 
 	joinGame(user) {
-		if (!this.players[user.id]) { this.players[user.id] = new Player(user, this); }
-		return this.players[user.id];
+		var joined = false;
+		if (!this.players[user.id]) { this.players[user.id] = new Player(user, this); joined = true; }
+		return [this.players[user.id], joined];
 	}
 
 	tryAndPlayFruit(player, index) {
@@ -59,12 +62,16 @@ class Game {
 		} else if (this.blenders[index].some(e => e.player === player)) {
 			player.user.send("Vous avez déjà joué dans ce mixeur");
 		} else {
+			this.summary = "";
 			player.playFruit(index);
 		}
 	}
 
 	async sendInfo(message = "", summary = "") {
 		var sorted = Object.values(this.players).sort((a, b) => b.score - a.score);
+
+		this.title = message.length ? message : this.title;
+		this.summary = summary.length ? summary : this.summary;
 
 		var rows = [];
 		for (var i = 0; i < this.blenders.length; i ++) {
@@ -103,17 +110,24 @@ class Game {
 
 		var embed =
 			new MessageEmbed()
-			.setTitle("[COUP D'JUS] " + message)
+			.setTitle("[COUP D'JUS] " + this.title)
 			.addField(
 				"Mixeurs",
 				rows.join("\n")
 			)
 			.setColor(this.mainclass.color);
 
-		if (summary.length) embed.addField("Résumé", summary);
+		if (this.summary.length) embed.addField("Résumé", this.summary);
 
 		if (this.infoMessage) {
-			await this.infoMessage.edit(embed);
+			var length = this.channel.messages.cache.keyArray().length
+			if (length - this.channel.messages.cache.keyArray().indexOf(this.infoMessage.id) > 10) {
+				await this.deleteInfoMessage();
+				this.infoMessage = await this.channel.send(embed);
+				this.setupReactionCollector();
+			} else {
+				this.infoMessage.edit(embed);
+			};
 		} else {
 			this.infoMessage = await this.channel.send(embed);
 			this.setupReactionCollector();
@@ -180,8 +194,12 @@ class Game {
 			if (this.paused) return;
 
 			var index = emojis.indexOf(reaction.emoji.toString());
-			var player = this.joinGame(this.channel.guild.members.cache.get(user.id));
-			this.tryAndPlayFruit(player, index);
+			var [player, joined] = this.joinGame(this.channel.guild.members.cache.get(user.id));
+			if (!joined) {
+				this.tryAndPlayFruit(player, index);
+			} else {
+				player.sendInfo();
+			}
 
 			reaction.users.remove(user);
 		});
@@ -190,6 +208,13 @@ class Game {
 	clearReactionCollector() {
 		if (this.collection) this.collection.stop();
 	}
+
+	async deleteInfoMessage() {
+		await this.infoMessage.delete();
+		this.infoMessage = null;
+		this.clearReactionCollector();
+	}
+
 
 	serialize() {
 		var object = {
