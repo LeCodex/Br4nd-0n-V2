@@ -36,7 +36,8 @@ class MainClass extends Base {
 		this.pseudo_auth = [ "Admin" ];
 		this.startDisabled = true;
 
-		this.words = fs.readFileSync(module.path + '/fr.txt').toString().split("\n");
+		const wordList = fs.readFileSync(module.path + '/fr.txt').toString().split("\n");
+		this.words = new Set(wordList);
 
 		this.games = {};
 		this.load("games", { games : {}, debug: false }).then(object => {
@@ -72,7 +73,7 @@ class MainClass extends Base {
 				message.reply("Le mot a déjà été proposé");
 			} else if (list.every(e => player.letters[e])) {
 				message.reply("Ce mot ne retirerait aucune lettre de votre peigne");
-			} else if (!this.words.includes(args[0])) {
+			} else if (!this.words.has(args[0])) {
 				message.reply("Veuillez renseigner un mot valide");
 			} else {
 				player.playWord(args[0], list);
