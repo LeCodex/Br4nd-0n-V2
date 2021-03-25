@@ -15,14 +15,21 @@ class MainClass extends Base {
 		}
 		this.commandText = "queue";
 		this.color = 0x4e6c75;
-		this.ready = true;
 
 		this.queues = {};
+		this.load("queues", {}).then(object => {
+			for (var key in object) {
+				this.queues[key] = object[key].map(e => this.client.users.cache.get(e));
+			}
+			this.ready = true;
+		});
 	}
 
 	checkQueue(message) {
 		if (!this.queues[message.guild.id]) this.queues[message.guild.id] = [];
 		return this.queues[message.guild.id];
+
+		this.save("queues", this.serialize());
 	}
 
 	command(message, args, kwargs, flags) {
@@ -57,6 +64,8 @@ class MainClass extends Base {
 
 		queue.push(user);
 		message.reply(user.username + " was added to the queue at index " + queue.length + ".");
+
+		this.save("queues", this.serialize());
 	}
 
 	com_next(message, args, kwargs, flags) {
@@ -69,6 +78,8 @@ class MainClass extends Base {
 
 		var user = queue.shift();
 		message.channel.send(user.toString() + ", you are next! (" + queue.length + " user(s) left in the queue)");
+
+		this.save("queues", this.serialize());
 	}
 
 	com_remove(message, args, kwargs, flags) {
@@ -104,6 +115,8 @@ class MainClass extends Base {
 		var index = queue.indexOf(user);
 		queue.splice(index, 1);
 		message.reply(user.username + " was removed from the queue.");
+
+		this.save("queues", this.serialize());
 	}
 
 	com_clear(message, args, kwargs, flags) {
@@ -116,6 +129,18 @@ class MainClass extends Base {
 
 		queue.splice(0, queue.length);
 		message.reply("The queue was cleared");
+
+		this.save("queues", this.serialize());
+	}
+
+	serialize() {
+		var object = {};
+
+		for (var key in this.queues) {
+			object[key] = this.queues[key].map(e => e.id);
+		}
+
+		return object;
 	}
 }
 
