@@ -18,7 +18,7 @@ class Player {
 		for (var char of list) {
 			if (!this.letters[char]) {
 				this.letters[char] = true;
-				this.score ++;
+				if (this.game.letters.includes(char)) this.score ++;
 			}
 		}
 
