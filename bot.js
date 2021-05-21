@@ -110,6 +110,7 @@ client.checkModulesOnInput = function(input, method) {
 
 	modules.forEach((key) => {
 		var element = client.modules[key];
+		if (!element) return;
 		if (!element.ready) return;
 
 		try {
