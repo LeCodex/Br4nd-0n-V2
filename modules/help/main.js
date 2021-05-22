@@ -13,7 +13,6 @@ class MainClass extends Base {
 		this.commandText = "help";
 		this.color = 0x00ff00;
 		this.core = true;
-		this.dmEnabled = true;
 		this.ready = true;
 	}
 
