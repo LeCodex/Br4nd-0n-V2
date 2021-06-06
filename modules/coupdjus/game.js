@@ -10,6 +10,11 @@ function shuffle(a) {
 	return a;
 }
 
+function getRankEmoji(rank) {
+	if (rank < 4) return ["🥇", "🥈", "🥉"][rank - 1];
+	return "🏅";
+}
+
 
 class Game {
 	constructor(mainclass, message) {
@@ -45,7 +50,7 @@ class Game {
 	}
 
 	async start() {
-		await this.nextTurn();
+		await this.sendInfo();
 	}
 
 	joinGame(user) {
@@ -59,7 +64,7 @@ class Game {
 			player.user.send("Vous avez déjà joué, veuillez attendre");
 		} else if (index < 0 || index >= this.blenders.length) {
 			player.user.send("Veuillez renseinger un index présent sous un des mixeurs");
-		} else if (this.blenders[index].some(e => e.player === player)) {
+		} else if (this.blenders[index].some(e => e.player === player) && !this.mainclass.debug) {
 			player.user.send("Vous avez déjà joué dans ce mixeur");
 		} else {
 			this.summary = "";
@@ -108,6 +113,7 @@ class Game {
 		// rows.push(this.blenders.map((e, i) => "🍶").join("⬛"));
 		// rows.push(this.blenders.map((e, i) => this.mainclass.NUMBER_EMOJIS[i]).join("⬛"));
 
+		var sorted = Object.values(this.players).sort((a, b) => b.score - a.score);
 		var embed =
 			new MessageEmbed()
 			.setTitle("[COUP D'JUS] " + this.title)
@@ -116,6 +122,19 @@ class Game {
 				rows.join("\n")
 			)
 			.setColor(this.mainclass.color);
+
+		if (sorted.length)
+			embed.addField(
+				"Cuisiniers",
+				sorted.reduce((buffer, e) => {
+					if (e.score < buffer.lastScore) {
+						buffer.lastScore = e.score;
+						buffer.rank++;
+					}
+					buffer.message += getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + ": " + e.fruit.emoji + " (" + e.score + ")" + "\n";
+					return buffer;
+				}, {message: "", rank: 0, lastScore: Infinity}).message
+			)
 
 		if (this.summary.length) embed.addField("Résumé", this.summary);
 
@@ -143,7 +162,7 @@ class Game {
 				gains[blender[0].player.user.id] = 1;
 				gains[blender[1].player.user.id] = gains[blender[1].player.user.id] ? gains[blender[1].player.user.id] + 1 : 1;
 
-				var recipe = blender.map(e => e.emoji);
+				var recipe = blender.map(e => e.emoji).join("");
 				summary.push("La recette " + recipe + " a été complétée!");
 
 				var used = false;
@@ -151,13 +170,13 @@ class Game {
 					if (ply.recipes.includes(recipe)) {
 						gains[ply.user.id] = gains[ply.user.id] ? gains[ply.user.id] + 1 : 1;
 						used = true;
-						summary.push(ply.user.toString() + " avait cette recette!");
+						summary.push(ply.user.toString() + " a cette recette!");
 					}
 				}
 
 				if (!used) {
 					player.recipes.unshift(recipe);
-					if (player.recipes.length > 3) player.recipes.pop();
+					if (player.recipes.length > 4) player.recipes.pop();
 					summary.push("Personne ne l'avait, donc " + player.user.toString() + " l'a récupérée");
 				}
 
@@ -171,11 +190,9 @@ class Game {
 			summary.push(player.user.toString() + " a gagné " + gains[id] + (gains[id] > 1 ? " points" : " point"))
 		}
 
-		if (player) {
-			this.lastPlayed = player.user.id;
-			player.giveNewFruit();
-			player.sendInfo();
-		}
+		this.lastPlayed = player.user.id;
+		player.giveNewFruit();
+		await player.sendInfo();
 
 		await this.sendInfo(message, summary.join("\n"));
 
@@ -210,9 +227,8 @@ class Game {
 	}
 
 	async deleteInfoMessage() {
-		await this.infoMessage.delete();
-		this.infoMessage = null;
 		this.clearReactionCollector();
+		await this.infoMessage.delete();
 	}
 
 

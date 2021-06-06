@@ -59,32 +59,27 @@ class MainClass extends Base {
 		}
 	}
 
-	getRankEmoji(rank) {
-		if (rank < 4) return ["🥇", "🥈", "🥉"][rank - 1];
-		return "🏅";
-	}
-
-	com_rank(message, args, kwargs, flags) {
-		if (this.games[message.channel.id]) {
-			var game = this.games[message.channel.id];
-			var sorted = Object.values(game.players).sort((a, b) => b.score - a.score);
-
-			message.reply(
-				new MessageEmbed()
-				.setTitle("[COUP D'JUS] Classement")
-				.setColor(this.color)
-				.addField("Joueurs", sorted.reduce((buffer, e) => {
-					if (e.score < buffer.lastScore) {
-						buffer.lastScore = e.score;
-						buffer.rank++;
-					}
-					buffer.message += this.getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + "\n";
-					return buffer;
-				}, {message: "", rank: 0, lastScore: Infinity}).message, true)
-				.addField("Scores", sorted.map(e => "**" + e.score + "** 📑").join("\n"), true)
-			)
-		}
-	}
+	// com_rank(message, args, kwargs, flags) {
+	// 	if (this.games[message.channel.id]) {
+	// 		var game = this.games[message.channel.id];
+	// 		var sorted = Object.values(game.players).sort((a, b) => b.score - a.score);
+	//
+	// 		message.reply(
+	// 			new MessageEmbed()
+	// 			.setTitle("[COUP D'JUS] Classement")
+	// 			.setColor(this.color)
+	// 			.addField("Joueurs", sorted.reduce((buffer, e) => {
+	// 				if (e.score < buffer.lastScore) {
+	// 					buffer.lastScore = e.score;
+	// 					buffer.rank++;
+	// 				}
+	// 				buffer.message += this.getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + "\n";
+	// 				return buffer;
+	// 			}, {message: "", rank: 0, lastScore: Infinity}).message, true)
+	// 			.addField("Scores", sorted.map(e => "**" + e.score + "** 📑").join("\n"), true)
+	// 		);
+	// 	}
+	// }
 
 	com_show(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
@@ -129,6 +124,7 @@ class MainClass extends Base {
 	com_debug(message, args, kwargs, flags) {
 		if (message.author.id === process.env.ADMIN) {
 			this.debug = !this.debug
+			message.reply(this.debug)
 			// this.load("games").then(object =>{
 			// 	object.debug = this.debug;
 			// 	this.save("games", object);
