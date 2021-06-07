@@ -185,9 +185,9 @@ class Game {
 		}
 
 		for (var id of Object.keys(gains)) {
-			var player = this.players[id]
-			player.score += gains[id];
-			summary.push(player.user.toString() + " a gagné " + gains[id] + (gains[id] > 1 ? " points" : " point"))
+			var ply = this.players[id]
+			ply.score += gains[id];
+			summary.push(ply.user.toString() + " a gagné " + gains[id] + (gains[id] > 1 ? " points" : " point"))
 		}
 
 		this.lastPlayed = player.user.id;
