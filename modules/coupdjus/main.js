@@ -19,16 +19,14 @@ class MainClass extends Base {
 		this.startDisabled = true;
 
 		this.games = {};
-		this.ready = true;
-		this.debug = false;
-		// this.load("games", { games : {}, debug: false }).then(object => {
-		// 	for (var [channel_id, object] of Object.entries(object.games)) {
-		// 		this.games[channel_id] = new Game(this)
-		// 		this.games[channel_id].reload(object);
-		// 	}
-		// 	this.debug = object.debug;
-		// 	this.ready = true;
-		// });
+		this.load("games", { games : {}, debug: false }).then(object => {
+			for (var [channel_id, object] of Object.entries(object.games)) {
+				this.games[channel_id] = new Game(this)
+				this.games[channel_id].reload(object);
+			}
+			this.debug = object.debug;
+			this.ready = true;
+		});
 	}
 
 	command(message, args, kwargs, flags) {
@@ -84,8 +82,7 @@ class MainClass extends Base {
 	com_show(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
-			if (game.infoMessage) game.deleteStackMessage();
-			game.sendInfo();
+			if (game.infoMessage) { game.deleteInfoMessage().then(() => game.sendInfo()); } else { game.sendInfo(); }
 		}
 	}
 
@@ -123,13 +120,13 @@ class MainClass extends Base {
 
 	com_debug(message, args, kwargs, flags) {
 		if (message.author.id === process.env.ADMIN) {
-			this.debug = !this.debug
-			message.reply(this.debug)
-			// this.load("games").then(object =>{
-			// 	object.debug = this.debug;
-			// 	this.save("games", object);
-			// 	message.reply(this.debug);
-			// });
+			this.debug = !this.debug;
+
+			this.load("games").then(object =>{
+				object.debug = this.debug;
+				this.save("games", object);
+				message.reply(this.debug);
+			});
 		}
 	}
 

@@ -1,4 +1,5 @@
 const {MessageEmbed} = require('discord.js');
+const Fruits = require('./fruits.js');
 
 class Player {
 	constructor(user, game, reload = false) {
@@ -37,10 +38,13 @@ class Player {
 		} else {
 			this.infoMessage = await this.user.send(embed);
 		}
+
+		this.game.save();
 	}
 
 	giveNewFruit() {
-		this.fruit = new this.game.availableFruits[Math.floor(Math.random() * this.game.availableFruits.length)](this);
+		var fruits = this.game.availableFruits.map(e => Fruits[e]);
+		this.fruit = new fruits[Math.floor(Math.random() * this.game.availableFruits.length)](this);
 	}
 }
 

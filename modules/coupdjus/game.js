@@ -24,7 +24,7 @@ class Game {
 		this.players = {};
 		this.lastPlayed = "";
 		this.paused = false;
-		this.availableFruits = Object.values(Fruits);
+		this.availableFruits = Object.keys(Fruits);
 		this.title = "";
 		this.summary = "";
 		this.blenders = [
@@ -151,6 +151,8 @@ class Game {
 			this.infoMessage = await this.channel.send(embed);
 			this.setupReactionCollector();
 		}
+
+		this.save();
 	}
 
 	async nextTurn(player, message) {
@@ -195,8 +197,6 @@ class Game {
 		await player.sendInfo();
 
 		await this.sendInfo(message, summary.join("\n"));
-
-		// this.save();
 	}
 
 	setupReactionCollector() {
@@ -229,26 +229,36 @@ class Game {
 	async deleteInfoMessage() {
 		this.clearReactionCollector();
 		await this.infoMessage.delete();
+		this.infoMessage = null;
 	}
 
 
 	serialize() {
 		var object = {
 			channel: this.channel.id,
+			infoMessage: this.infoMessage ? this.infoMessage.id : null,
 			players: {},
 			paused: this.paused,
 			lastPlayed: this.lastPlayed,
-			wordLength: this.wordLength,
-			saidWords: this.saidWords
+			title: this.title,
+			summary: this.summary,
+			availableFruits: this.availableFruits,
+			blenders: this.blenders.map(e => e.map(f => {
+				return {
+					name: f.constructor.name,
+					player: f.player.user.id
+				};
+			}))
 		};
 
 		for (var [k, e] of Object.entries(this.players)) {
 			object.players[k] = {
 				score: Number(e.score),
 				user: e.user.id,
-				letters: e.letters,
-				taboo: e.taboo,
-				possibleTaboos: e.possibleTaboos
+				fruit: e.fruit.constructor.name,
+				recipes: e.recipes,
+				infoChannel: e.infoMessage.channel.id,
+				infoMessage: e.infoMessage.id
 			}
 		}
 
@@ -260,20 +270,34 @@ class Game {
 		this.players = {};
 		this.paused = object.paused;
 		this.lastPlayed = object.lastPlayed;
-		this.wordLength = object.wordLength || 7;
-		this.saidWords = object.saidWords || [];
+		this.title = object.title;
+		this.summary = object.summary;
+		this.availableFruits = object.availableFruits;
+
+		this.infoMessage = null;
+		if (object.infoMessage) {
+			this.infoMessage = await this.channel.messages.fetch(object.infoMessage);
+			await this.channel.messages.fetch({ after: object.infoMessage });
+			this.setupReactionCollector();
+		}
 
 		for (var [k, e] of Object.entries(object.players)) {
 			var p = new Player(await this.channel.guild.members.fetch(e.user, true, true), this, true);
-			p.letters = e.letters || {};
-			p.score = e.score || this.letters.filter(e => p.letters[e]).length;
-			p.taboo = typeof(e.taboo) === "object" ? (e.taboo ? e.taboo : []) : (e.taboo ? [e.taboo] : []);
-			p.possibleTaboos = e.possibleTaboos || [];
+			p.score = e.score;
+			p.fruit = new Fruits[e.fruit](p);
+			p.recipes = e.recipes;
+			p.infoMessage = null;
+			if (e.infoChannel) {
+				var channel = await this.client.channels.fetch(e.infoChannel);
+				if (e.infoMessage) p.infoMessage = await channel.messages.fetch(e.infoMessage);
+			}
 
 			this.players[k] = p;
 
 			// console.log(p);
 		};
+
+		this.blenders = object.blenders.map(e => e.map(f => new Fruits[f.name](this.players[f.player])));
 	}
 
 	save() {
