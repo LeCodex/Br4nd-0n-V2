@@ -1,5 +1,6 @@
 const { Client, MessageEmbed, Intents } = require('discord.js');
 const client = new Client({ ws: { intents: Intents.ALL } });
+// require('discord-buttons')(client);
 const { MongoClient } = require("mongodb");
 const DB = require("./db.js");
 
