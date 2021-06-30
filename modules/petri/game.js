@@ -116,9 +116,9 @@ class Game {
 	}
 
 	createMap() {
-		for (var y = 0; y <= this.settings.height; y ++) {
+		for (var y = 0; y < this.settings.height; y ++) {
 			this.map.push([])
-			for (var x = 0; x <= this.settings.width; x ++) {
+			for (var x = 0; x < this.settings.width; x ++) {
 				this.map[y].push(-1) // -1 = vide, -2 = mur
 			}
 		}
@@ -278,14 +278,11 @@ class Game {
 						this.nextTurn();
 					}
 
-					reaction.users.remove(user);
 					death_wish[this.players[user.id].index] = true;
 				}
 			}
-		});
 
-		this.collection.on('dispose', (reaction, user) => {
-
+			reaction.users.remove(user);
 		});
 	}
 
