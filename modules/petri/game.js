@@ -65,7 +65,7 @@ class Game {
 				await join_message.react("✅");
 				can_start = true;
 			} else if (can_start) {
-				await join_message.reactions.cache.get("✅")?.remove();
+				await join_message.reactions.cache.get("✅").remove();
 				can_start = false;
 			};
 		}
