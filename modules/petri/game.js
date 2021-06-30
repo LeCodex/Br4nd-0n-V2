@@ -61,8 +61,8 @@ class Game {
 			await join_message.edit("", get_embed());
 
 			var amount = Object.keys(self.players).length
-			if (amount >= 2 && amount <= globals.PLAYER_EMOJIS.length && !can_start) {
-				await join_message.react("✅");
+			if (amount >= 2 && amount <= globals.PLAYER_EMOJIS.length) {
+				if (!can_start) await join_message.react("✅");
 				can_start = true;
 			} else if (can_start) {
 				await join_message.reactions.cache.get("✅").remove();
