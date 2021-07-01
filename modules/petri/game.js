@@ -195,11 +195,11 @@ class Game {
 		if (this.gameMessage) {
 			var length = this.channel.messages.cache.keyArray().length
 			if (length - this.channel.messages.cache.keyArray().indexOf(this.gameMessage.id) > 10) {
-				await this.deleteInfoMessage();
+				await this.gameMessage.delete();
 				this.gameMessage = await this.channel.send(embed);
 				this.setupReactionCollector();
 			} else {
-				this.gameMessage.edit({embed: embed});
+				await this.gameMessage.edit({embed: embed});
 			};
 		} else {
 			this.gameMessage = await this.channel.send(embed);
@@ -256,13 +256,14 @@ class Game {
 
 		this.collection = this.gameMessage.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.toString()) && !user.bot, { dispose: true });
 
-		this.collection.on('collect', (reaction, user) => {
+		this.collection.on('collect', async (reaction, user) => {
+			await reaction.users.remove(user);
+
 			if (this.order[this.turn] === user.id) {
 				var index = emojis.indexOf(reaction.emoji.toString());
 
 				if (index < 4) {
 					this.players[user.id].move(index);
-					reaction.users.remove(user);
 
 					death_wish[this.players[user.id].index] = false;
 
@@ -281,21 +282,13 @@ class Game {
 					death_wish[this.players[user.id].index] = true;
 				}
 			}
-
-			reaction.users.remove(user);
 		});
 	}
 
-
 	clearReactionCollector() {
 		if (this.collection) this.collection.stop();
+		this.collection = null;
 	}
-
-	async deleteInfoMessage() {
-		this.clearReactionCollector();
-		await this.gameMessage.delete();
-	}
-
 
 	serialize() {
 		var object = {
