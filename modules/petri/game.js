@@ -167,7 +167,7 @@ class Game {
 
 				while (new_map[Math.round(this.settings.height/2 - .5 + r * Math.sin(a))][Math.round(this.settings.width/2 - .5 + r * Math.cos(a))] != -1) a += Math.PI / 20
 
-				this.players[id].spawn(new_map, Math.round(this.settings.height/2 + .5 + r * Math.sin(a)), Math.round(this.settings.width/2 + .5 + r * Math.cos(a)))
+				this.players[id].spawn(new_map, Math.round(this.settings.height/2 - .5 + r * Math.sin(a)), Math.round(this.settings.width/2 - .5 + r * Math.cos(a)))
 				a += Math.PI / this.order.length * 2;
 			}
 
