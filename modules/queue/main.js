@@ -17,9 +17,9 @@ class MainClass extends Base {
 		this.color = 0x4e6c75;
 
 		this.queues = {};
-		this.load("queues", {}).then(object => {
+		this.load("queues", {}).then(async (object) => {
 			for (var key in object) {
-				this.queues[key] = object[key].map(e => this.client.users.cache.get(e));
+				this.queues[key] = object[key].map(async (e) => await this.client.users.fetch(e));
 			}
 			this.ready = true;
 		});
