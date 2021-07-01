@@ -19,7 +19,8 @@ class MainClass extends Base {
 		this.queues = {};
 		this.load("queues", {}).then(async (object) => {
 			for (var key in object) {
-				this.queues[key] = object[key].map(async (e) => await this.client.users.fetch(e));
+				this.queues[key] = [];
+				for (var id of object[key]) this.client.users.fetch(id).then(e => this.queues[key].push(e));
 			}
 			this.ready = true;
 		});
