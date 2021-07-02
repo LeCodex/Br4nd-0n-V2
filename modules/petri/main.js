@@ -98,6 +98,19 @@ Pour déterminer qui gagne le combat, il suffit de regarder le nombre de troupes
 		}
 	}
 
+	com_config(message, args, kwargs, flags) {
+		if (this.games[message.channel.id]) {
+			var game = this.games[message.channel.id];
+
+			for (var key in kwargs) {
+				if (game.settings[key] && game.settingsConditions[key](kwargs[key])) {
+					game.settings[key] = Number(kwargs[key]);
+				}
+			}
+			message.reply("Settings: ```" + Object.keys(game.settings).map(e => "- " + e + ": " + game.settings[e]).join("\n") + "```");
+		}
+	}
+
 	com_set(message, args, kwargs, flags) {
 		if (message.author.id === process.env.ADMIN) {
 			if (this.games[message.channel.id]) {

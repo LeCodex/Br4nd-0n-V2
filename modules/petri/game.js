@@ -28,6 +28,11 @@ class Game {
 			width: 10,
 			wallAmount: 2
 		}
+		this.settingsConditions = {
+			height: x => x >= 4 && x % 2 == 0,
+			width: x => x >= 4 && x % 2 == 0,
+			wallAmount: x => x >= 0
+		}
 
 		this.gameMessage = null;
 		this.reactionCollector = null;
