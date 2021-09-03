@@ -52,7 +52,7 @@ class Game {
 			}},
 			big: {name: "Grande suite (40 points)", count: (tray) => tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e).length === 5 ? 40 : 0},
 			yams: {name: "Yams (50 points)", count: (tray) => tray.reduce((a, e) => a === e ? a : false) ? 50 : 0},
-			chance: {name: "Chance (Somme de tous les dés)", count: (tray) => tray.reduce((a, e) => a + e + 1)}
+			chance: {name: "Chance (Somme de tous les dés)", count: (tray) => tray.reduce((a, e) => a + e + 1, 0)}
 		}
 		this.players = {};
 		this.lastPlayed = 0;
@@ -107,7 +107,7 @@ class Game {
 					acc.lastIndex = e.index;
 					acc.rank++;
 				}
-				acc.message.push(getRankEmoji(acc.rank) + " **" + acc.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + ": **" + e.score + "**" + (e.pointsGained !== null ? " (+" + e.pointsGained + ")" : "") + " | " + e.tray.map(e => this.mainclass.faces[e]).join("") + (e.oldTray.length ? " (" + e.oldTray.map(e => this.mainclass.faces[e]).join("") + ")" : ""));
+				acc.message.push(getRankEmoji(acc.rank) + " **" + acc.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + ": **" + e.score + "**" + (e.pointsGained !== null ? " (+" + e.pointsGained + ")" : "") + " | " + e.tray.map(e => this.mainclass.faces[e]).join(""));
 				return acc;
 			}, {message: [], rank: 0, lastScore: Infinity, lastIndex: Infinity}).message;
 
@@ -185,9 +185,9 @@ class Game {
 						}
 					}
 
-					if (max_score > 0) player.gainPoints(max_score, category);
 					player.oldTray = [...player.tray];
 					player.tray = [];
+					if (max_score > 0) player.gainPoints(max_score, category);
 
 					clearTimeout(this.timeout);
 					this.timeout = setTimeout(this.rerollEverything, 1440000);
