@@ -42,7 +42,7 @@ class MainClass extends Base {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
 			if (!game.players[message.author.id]) {
-				game.players[message.author.id] = new Player(message.author, game);
+				game.players[message.author.id] = new Player(message.member, game);
 				game.sendMessage().then(() => { game.save(); });
 			}
 		}
