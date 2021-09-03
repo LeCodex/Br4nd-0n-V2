@@ -6,6 +6,7 @@ class Player {
 		this.game = game;
 		this.sheetMessage = null;
 		this.tray = [];
+		this.oldTray = [];
 		this.points = {};
 		this.score = 0;
 		this.pointsGained = null;

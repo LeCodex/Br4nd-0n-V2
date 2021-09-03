@@ -39,7 +39,7 @@ class Game {
 			}},
 			full: {name: "Full (25 points)", count: (tray) => {
 				var counts = tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]);
-				return counts.filter(e => e === 2).length === counts.filter(e => e === 3).length ? 25 : 0;
+				return counts.filter(e => e === 2).length === counts.filter(e => e === 3).length && counts.filter(e => e === 2).length === 1 ? 25 : 0;
 			}},
 			small: {name: "Petite suite (30 points)", count: (tray) => {
 				var origin = tray.reduce((a, e) => Math.min(e, a));
@@ -98,22 +98,35 @@ class Game {
 
 		if (Object.values(this.players).length) {
 			var sorted = Object.values(this.players).sort((a, b) => b.score - a.score);
+			var value = sorted.reduce((acc, e) => {
+				if (e.score < acc.lastScore) {
+					acc.lastScore = e.score;
+					acc.lastIndex = e.index;
+					acc.rank++;
+				} else if (e.index < acc.lastIndex) {
+					acc.lastIndex = e.index;
+					acc.rank++;
+				}
+				acc.message.push(getRankEmoji(acc.rank) + " **" + acc.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + ": **" + e.score + "**" + (e.pointsGained !== null ? " (+" + e.pointsGained + ")" : "") + " | " + e.tray.map(e => this.mainclass.faces[e]).join("") + (e.oldTray.length ? " (" + e.oldTray.map(e => this.mainclass.faces[e]).join("") + ")" : ""));
+				return acc;
+			}, {message: [], rank: 0, lastScore: Infinity, lastIndex: Infinity}).message;
 
-			embed.addField(
-				"Joueurs",
-				sorted.reduce((acc, e) => {
-					if (e.score < acc.lastScore) {
-						acc.lastScore = e.score;
-						acc.lastIndex = e.index;
-						acc.rank++;
-					} else if (e.index < acc.lastIndex) {
-						acc.lastIndex = e.index;
-						acc.rank++;
-					}
-					acc.message += getRankEmoji(acc.rank) + " **" + acc.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + ": **" + e.score + "**" + (e.pointsGained !== null ? " (+" + e.pointsGained + ")" : "") + " | " + e.tray.map(e => this.mainclass.faces[e]).join("") + "\n";
-					return acc;
-				}, {message: "", rank: 0, lastScore: Infinity, lastIndex: Infinity}).message
-			);
+			var totalLength = 0;
+			var field = {
+				name: "Joueurs",
+				value: ""
+			}
+			value.forEach((element, i) => {
+				totalLength += (element + "\n").length;
+				if (totalLength >= 1024) {
+					embed.addFields(field);
+					field.value = "";
+					field.name = "Suite des joueurs"
+					totalLength = (element + "\n").length;
+				}
+				field.value += element + "\n";
+			});
+			if (field.value.trim().length) embed.addFields(field);
 		}
 
 		if (this.boardMessage) {
@@ -173,6 +186,7 @@ class Game {
 					}
 
 					if (max_score > 0) player.gainPoints(max_score, category);
+					player.oldTray = [...player.tray];
 					player.tray = [];
 
 					clearTimeout(this.timeout);
