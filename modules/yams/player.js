@@ -14,7 +14,7 @@ class Player {
 	}
 
 	gainPoints(amount, category) {
-		var old_score = this.points[category] ?? 0;
+		var old_score = this.points[category] ? this.points[category] : 0;
 		this.points[category] = amount;
 
 		this.pointsGained = amount - old_score;
@@ -25,7 +25,7 @@ class Player {
 	async sendSheet() {
 		var embed = new MessageEmbed()
 			.setTitle("Score et catégories | Total: " + this.score)
-			.setDescription("```" + Object.keys(this.game.scoreCategories).map(e => this.game.scoreCategories[e].name + ": " + (this.points[e] ?? 0)).join("\n") + "```")
+			.setDescription("```" + Object.keys(this.game.scoreCategories).map(e => this.game.scoreCategories[e].name + ": " + (this.points[e] ? this.points[c] : 0)).join("\n") + "```")
 			.setColor(this.game.mainclass.color);
 
 		if (this.sheetMessage) {

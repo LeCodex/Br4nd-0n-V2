@@ -158,7 +158,7 @@ class Game {
 						var category = "";
 
 						for (var [c, o] of Object.entries(this.scoreCategories)) {
-							var new_score = o.count(player.tray) - (player.points[c] ?? 0);
+							var new_score = o.count(player.tray) - (player.points[c] ? player.points[c] : 0);
 							if (new_score > max_score) {
 								max_score = new_score;
 								category = c;
