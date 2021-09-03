@@ -21,7 +21,6 @@ class Game {
 		this.mainclass = mainclass;
 		this.client = mainclass.client;
 
-		this.dice = [];
 		this.scoreCategories = {
 			sum1: {name: "Somme des 1", count: (tray) => tray.filter(e => e === 0).length},
 			sum2: {name: "Somme des 2", count: (tray) => tray.filter(e => e === 1).length * 2},
@@ -52,13 +51,12 @@ class Game {
 				return 30;
 			}},
 			big: {name: "Grande suite (40 points)", count: (tray) => tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e).length === 5 ? 40 : 0},
-			yams: {name: "Yams (50 points)", count: (tray) => tray.reduce((a, e) => a * (a === e ? 1 : 0), 1) * 50},
-			chance: {name: "Chance (Somme de tous les dés)", count: (tray) => tray.reduce((a, e) => a + e)}
+			yams: {name: "Yams (50 points)", count: (tray) => tray.reduce((a, e) => a === e ? a : false) ? 50 : 0},
+			chance: {name: "Chance (Somme de tous les dés)", count: (tray) => tray.reduce((a, e) => a + e + 1)}
 		}
 		this.players = {};
 		this.lastPlayed = 0;
 		this.boardMessage = null;
-		this.timeout = setTimeout(this.rerollEverything, 1440000);
 
 		if (message) {
 			this.channel = message.channel;
@@ -81,9 +79,13 @@ class Game {
 	}
 
 	async rerollEverything() {
+		this.dice = [];
 		for (var i = 0; i < 3; i ++) {
 			this.dice.push(Math.floor(Math.random() * 6));
 		}
+
+		clearTimeout(this.timeout);
+		this.timeout = setTimeout(this.rerollEverything, 1440000);
 
 		await this.resendMessage();
 	}
