@@ -43,15 +43,24 @@ class Game {
 			}},
 			small: {name: "Petite suite (30 points)", count: (tray) => {
 				var origin = tray.reduce((a, e) => Math.min(e, a));
-
 				for (var i = 1; i < 4; i ++) {
 					if (!tray.includes(origin + i)) return 0;
 				}
-
 				return 30;
 			}},
-			big: {name: "Grande suite (40 points)", count: (tray) => tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e).length === 5 ? 40 : 0},
-			yams: {name: "Yams (50 points)", count: (tray) => tray.reduce((a, e) => a === e ? a : false) ? 50 : 0},
+			big: {name: "Grande suite (40 points)", count: (tray) => {
+				var origin = tray.reduce((a, e) => Math.min(e, a));
+				for (var i = 1; i < 5; i ++) {
+					if (!tray.includes(origin + i)) return 0;
+				}
+				return 30;
+			}},
+			yams: {name: "Yams (50 points)", count: (tray) => {
+				for (var i = 1; i < tray.length; i ++) {
+					if (tray[i] !== tray[0]) return 0;
+				}
+				return 50;
+			}},
 			chance: {name: "Chance (Somme de tous les dés)", count: (tray) => tray.reduce((a, e) => a + e + 1, 0)}
 		}
 		this.players = {};
@@ -78,14 +87,18 @@ class Game {
 		// this.save();
 	}
 
+	resetTimeout() {
+		clearTimeout(this.timeout);
+		this.timeout = setTimeout(() => { this.rerollEverything() }, 1440000);
+	}
+
 	async rerollEverything() {
 		this.dice = [];
 		for (var i = 0; i < 3; i ++) {
 			this.dice.push(Math.floor(Math.random() * 6));
 		}
 
-		clearTimeout(this.timeout);
-		this.timeout = setTimeout(this.rerollEverything, 1440000);
+		this.resetTimeout();
 
 		await this.resendMessage();
 	}
@@ -189,8 +202,7 @@ class Game {
 					player.tray = [];
 					if (max_score > 0) player.gainPoints(max_score, category);
 
-					clearTimeout(this.timeout);
-					this.timeout = setTimeout(this.rerollEverything, 1440000);
+					this.resetTimeout();
 				}
 
 				this.sendMessage().then(() => { this.save(); });
