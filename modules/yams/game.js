@@ -38,7 +38,7 @@ class Game {
 				var triple = tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).map((e, i) => [e, i+1]).filter(e => e[0] >= 3)[0];
 				return triple ? triple[1] * 3 : 0;
 			}},
-			four: {name: "Carré", count: (tray) => tray.reduce((a, e) => {
+			four: {name: "Carré", count: (tray) => {
 				var quadruple = tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).map((e, i) => [e, i+1]).filter(e => e[0] >= 4)[0];
 				return quadruple ? quadruple[1] * 4 : 0;
 			}},
