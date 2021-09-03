@@ -22,10 +22,6 @@ class Game {
 		this.client = mainclass.client;
 
 		this.dice = [];
-		for (var i = 0; i < 3; i ++) {
-			this.dice.push(Math.floor(Math.random() * 6));
-		}
-
 		this.scoreCategories = {
 			sum1: {name: "Somme des 1", count: (tray) => tray.filter(e => e === 0).length},
 			sum2: {name: "Somme des 2", count: (tray) => tray.filter(e => e === 1).length * 2},
@@ -61,6 +57,8 @@ class Game {
 		}
 		this.players = {};
 		this.lastPlayed = 0;
+		this.boardMessage = null;
+		this.timeout = setTimeout(this.rerollEverything, 1440000);
 
 		if (message) {
 			this.channel = message.channel;
@@ -78,9 +76,16 @@ class Game {
 	}
 
 	async start() {
-		await this.sendMessage();
-
+		this.rerollEverything();
 		// this.save();
+	}
+
+	async rerollEverything() {
+		for (var i = 0; i < 3; i ++) {
+			this.dice.push(Math.floor(Math.random() * 6));
+		}
+
+		await this.resendMessage();
 	}
 
 	async sendMessage() {
@@ -112,7 +117,7 @@ class Game {
 		if (this.boardMessage) {
 			var length = this.channel.messages.cache.keyArray().length
 			if (length - this.channel.messages.cache.keyArray().indexOf(this.boardMessage.id) > 10) {
-				this.deleteBoardMessage();
+				this.deleteMessage();
 				this.boardMessage = await this.channel.send(embed);
 				this.setupReactionCollector();
 			} else {
@@ -140,37 +145,39 @@ class Game {
 
 				if (this.paused) return;
 
+				if (!this.players[user.id]) this.players[user.id] = new Player(this.channel.guild.members.cache.get(user.id), this);
 				var player = this.players[user.id];
 				var index = emojis.indexOf(reaction.emoji.name);
 				if (index === -1) index = emojis.indexOf(reaction.emoji);
 
-				if (player) {
-					if (this.lastPlayed === user.id && !this.mainclass.debug) return;
-					this.lastPlayed = user.id;
+				if (this.lastPlayed === user.id && !this.mainclass.debug) return;
+				this.lastPlayed = user.id;
 
-					for (var p of Object.values(this.players)) p.pointsGained = null;
+				for (var p of Object.values(this.players)) p.pointsGained = null;
 
-					player.tray.push(this.dice[index]);
-					this.dice[index] = Math.floor(Math.random() * 6);
+				player.tray.push(this.dice[index]);
+				this.dice[index] = Math.floor(Math.random() * 6);
 
-					if (player.tray.length === 5) {
-						var max_score = 0;
-						var category = "";
+				if (player.tray.length === 5) {
+					var max_score = 0;
+					var category = "";
 
-						for (var [c, o] of Object.entries(this.scoreCategories)) {
-							var new_score = o.count(player.tray) - (player.points[c] ? player.points[c] : 0);
-							if (new_score > max_score) {
-								max_score = new_score;
-								category = c;
-							}
+					for (var [c, o] of Object.entries(this.scoreCategories)) {
+						var new_score = o.count(player.tray) - (player.points[c] ? player.points[c] : 0);
+						if (new_score > max_score) {
+							max_score = new_score;
+							category = c;
 						}
-
-						if (max_score > 0) player.gainPoints(max_score, category);
-						player.tray = [];
 					}
 
-					this.sendMessage().then(() => { this.save(); });
+					if (max_score > 0) player.gainPoints(max_score, category);
+					player.tray = [];
+
+					clearTimeout(this.timeout);
+					this.timeout = setTimeout(this.rerollEverything, 1440000);
 				}
+
+				this.sendMessage().then(() => { this.save(); });
 			} catch (e) {
 				this.client.error(this.channel, "Yams", e);
 			}
@@ -182,7 +189,7 @@ class Game {
 		if (this.collector) this.collector.stop();
 	}
 
-	deleteBoardMessage() {
+	deleteMessage() {
 		if (this.boardMessage) {
 			this.boardMessage.delete();
 			this.boardMessage = null;
@@ -191,7 +198,7 @@ class Game {
 	}
 
 	async resendMessage() {
-		this.deleteBoardMessage();
+		this.deleteMessage();
 		await this.sendMessage();
 		this.save();
 	}
