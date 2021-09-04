@@ -22,47 +22,14 @@ class Game {
 		this.client = mainclass.client;
 
 		this.scoreCategories = {
-			sum1: {name: "Somme des 1", count: (tray) => tray.filter(e => e === 0).length},
-			sum2: {name: "Somme des 2", count: (tray) => tray.filter(e => e === 1).length * 2},
-			sum3: {name: "Somme des 3", count: (tray) => tray.filter(e => e === 2).length * 3},
-			sum4: {name: "Somme des 4", count: (tray) => tray.filter(e => e === 3).length * 4},
-			sum5: {name: "Somme des 5", count: (tray) => tray.filter(e => e === 4).length * 5},
-			sum6: {name: "Somme des 6", count: (tray) => tray.filter(e => e === 5).length * 6},
-
-			three: {name: "Brelan (Somme des dés du brelan)", count: (tray) => {
-				var triple = tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).map((e, i) => [e, i+1]).filter(e => e[0] >= 3)[0];
-				return triple ? triple[1] * 3 : 0;
-			}},
-			four: {name: "Carré (Somme des dés du carré)", count: (tray) => {
-				var quadruple = tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).map((e, i) => [e, i+1]).filter(e => e[0] >= 4)[0];
-				return quadruple ? quadruple[1] * 4 : 0;
-			}},
-			full: {name: "Full (25 points)", count: (tray) => {
-				var counts = tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]);
-				return counts.filter(e => e === 2).length === counts.filter(e => e === 3).length && counts.filter(e => e === 2).length === 1 ? 25 : 0;
-			}},
-			small: {name: "Petite suite (30 points)", count: (tray) => {
-				var origin = tray.reduce((a, e) => Math.min(e, a));
-				for (var i = 1; i < 4; i ++) {
-					if (!tray.includes(origin + i)) return 0;
-				}
-				return 30;
-			}},
-			big: {name: "Grande suite (40 points)", count: (tray) => {
-				var origin = tray.reduce((a, e) => Math.min(e, a));
-				for (var i = 1; i < 5; i ++) {
-					if (!tray.includes(origin + i)) return 0;
-				}
-				return 30;
-			}},
-			yams: {name: "Yams (50 points)", count: (tray) => {
-				for (var i = 1; i < tray.length; i ++) {
-					if (tray[i] !== tray[0]) return 0;
-				}
-				return 50;
-			}},
-			chance: {name: "Chance (Somme de tous les dés)", count: (tray) => tray.reduce((a, e) => a + e + 1, 0)}
+			sum1: {name: "Somme des 1", count: (player) => player.tray.filter(e => e === 0).length},
+			sum2: {name: "Somme des 2", count: (player) => player.tray.filter(e => e === 1).length * 2},
+			sum3: {name: "Somme des 3", count: (player) => player.tray.filter(e => e === 2).length * 3},
+			sum4: {name: "Somme des 4", count: (player) => player.tray.filter(e => e === 3).length * 4},
+			sum5: {name: "Somme des 5", count: (player) => player.tray.filter(e => e === 4).length * 5},
+			sum6: {name: "Somme des 6", count: (player) => player.tray.filter(e => e === 5).length * 6}
 		}
+
 		this.players = {};
 		this.lastPlayed = 0;
 		this.boardMessage = null;
@@ -84,6 +51,98 @@ class Game {
 
 	async start() {
 		this.rerollEverything();
+
+		var figures = {
+			triple: {name: "Brelan (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 3).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
+			quadruple: {name: "Carré (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 4).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
+			doublePairs: {name: "Double paire (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 2).length >= 2 ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
+			full: {name: "Full (25 points)", count: (player) => {
+				var counts = player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]);
+				return counts.filter(e => e === 2).length === counts.filter(e => e === 3).length && counts.filter(e => e === 2).length === 1 ? 25 : 0;
+			}},
+
+			palindrome: {name: "Palindrome (Somme des dés)", count: (player) => player.tray[0] === player.tray[4] && player.tray[1] === player.tray[3] ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
+			increasing: {name: "Séquence croissante (Somme des dés de la séquence)", count: (player) => {
+				var sequences = [], sequence= [];
+				var max_number = -1;
+				for (var number of player.tray) {
+					if (number > max_number) {
+						sequence.push(number);
+						max_number = number;
+					} else {
+						sequences.push(sequence);
+						sequence = [];
+						max_number = -1;
+					}
+				}
+
+				var totals = sequences.map(e => e.reduce((a, f) => a + f + 1, 0));
+				totals.sort();
+				return totals[0];
+			}},
+			decreasing: {name: "Séquence décroissante (Somme des dés de la séquence)", count: (player) => {
+				var sequences = [], sequence= [];
+				var min_number = 6;
+				for (var number of player.tray) {
+					if (number < min_number) {
+						sequence.push(number);
+						min_number = number;
+					} else {
+						sequences.push(sequence);
+						sequence = [];
+						min_number = -1;
+					}
+				}
+
+				var totals = sequences.map(e => e.reduce((a, f) => a + f + 1, 0));
+				totals.sort();
+				return totals[0];
+			}},
+			fifteen: {name: "15 pile", count: (player) => player.tray.reduce((a, e) => a + e + 1, 0) === 15 ? 15 : 0},
+
+			even: {name: "Somme des pairs", count: (player) => player.tray.reduce((a, e) => a + (e + 1) * (e % 2), 0)},
+			odd: {name: "Somme des pairs", count: (player) => player.tray.reduce((a, e) => a + (e + 1) * ((e + 1) % 2), 0)},
+			petals: {name: "Pétales (2pts par 3, 4pts par 5, si que des impairs)", count: (player) => player.tray.filter(e => e % 2).length === 5 ? player.tray.reduce((a, e) => a + [0, 0, 2, 0, 4, 0][e], 0) : 0},
+			price_is_right: {name: "Multiplication (40 ou moins)", count: (player) => player.tray.reduce((a, e) => a * e, 1) <= 40 ? player.tray.reduce((a, e) => a * e, 1) : 0},
+			repetition: {name: "Répétition (30 points)", count: (player) => player.tray === player.oldTray ? 30 : 0},
+
+			mini: {name: "Mini suite (25 points)", count: (player) => {
+				var origin = player.tray.reduce((a, e) => Math.min(e, a));
+				for (var i = 1; i < 3; i ++) {
+					if (!player.tray.includes(origin + i)) return 0;
+				}
+				return 25;
+			}},
+			small: {name: "Petite suite (30 points)", count: (player) => {
+				var origin = player.tray.reduce((a, e) => Math.min(e, a));
+				for (var i = 1; i < 4; i ++) {
+					if (!player.tray.includes(origin + i)) return 0;
+				}
+				return 30;
+			}},
+			big: {name: "Grande suite (40 points)", count: (player) => {
+				var origin = player.tray.reduce((a, e) => Math.min(e, a));
+				for (var i = 1; i < 5; i ++) {
+					if (!player.tray.includes(origin + i)) return 0;
+				}
+				return 40;
+			}},
+
+			yams: {name: "Yams (50 points)", count: (player) => {
+				for (var i = 1; i < player.tray.length; i ++) {
+					if (player.tray[i] !== player.tray[0]) return 0;
+				}
+				return 50;
+			}},
+			quinte: {name: "Quinte Flush (60 points)", count: (player) => player.tray.reduce((a, e) => [e, e === a + 1], [player.tray[0]-1, true])[1] ? 60 : 0}
+		};
+		var keys = Object.keys(figures);
+
+		for (var i = 0; i < 6; i ++) {
+			var key = keys.splice(Math.floor(Math.random() * keys.length), 1)[0];
+			this.scoreCategories[key] = figures[key];
+		}
+		this.scoreCategories.chance = {name: "Chance (Somme de tous les dés)", count: (player) => player.tray.reduce((a, e) => a + e + 1, 0)}
 		// this.save();
 	}
 
@@ -191,7 +250,7 @@ class Game {
 					var category = "";
 
 					for (var [c, o] of Object.entries(this.scoreCategories)) {
-						var new_score = o.count(player.tray) - (player.points[c] ? player.points[c] : 0);
+						var new_score = o.count(player) - (player.points[c] ? player.points[c] : 0);
 						if (new_score > max_score) {
 							max_score = new_score;
 							category = c;
@@ -201,7 +260,6 @@ class Game {
 					player.oldTray = [...player.tray];
 					player.tray = [];
 					if (max_score > 0) player.gainPoints(max_score, category);
-
 				}
 
 				this.resetTimeout();
