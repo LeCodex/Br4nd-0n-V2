@@ -202,9 +202,9 @@ class Game {
 					player.tray = [];
 					if (max_score > 0) player.gainPoints(max_score, category);
 
-					this.resetTimeout();
 				}
 
+				this.resetTimeout();
 				this.sendMessage().then(() => { this.save(); });
 			} catch (e) {
 				this.client.error(this.channel, "Yams", e);

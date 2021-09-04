@@ -26,7 +26,7 @@ class Player {
 	async sendSheet() {
 		var embed = new MessageEmbed()
 			.setTitle("Score et catégories | Total: " + this.score + (this.oldTray.length ? " | Dernière combinaison: " + this.oldTray.map(e => this.game.mainclass.faces[e]).join("") : ""))
-			.setDescription("```" + Object.keys(this.game.scoreCategories).map(e => this.game.scoreCategories[e].name + ": " + (this.points[e] ? this.points[e] : 0)).join("\n") + "```")
+			.setDescription("```\n" + Object.keys(this.game.scoreCategories).map(e => this.game.scoreCategories[e].name + ": " + (this.points[e] ? this.points[e] : 0)).join("\n") + "```")
 			.setColor(this.game.mainclass.color);
 
 		if (this.sheetMessage) {
