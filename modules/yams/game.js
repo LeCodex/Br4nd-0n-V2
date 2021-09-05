@@ -55,16 +55,16 @@ class Game {
 
 	get allFigures() {
 		return {
-			triple: {name: "Brelan (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 3).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
-			quadruple: {name: "Carré (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 4).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
-			doublePairs: {name: "Double paire (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 2).length >= 2 ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
-			full: {name: "Full (25 points)", count: (player) => {
+			triple: {name: "3️⃣ Brelan (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 3).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
+			quadruple: {name: "4️⃣ Carré (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 4).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
+			doublePairs: {name: "2️⃣ Double paire (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 2).length >= 2 ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
+			full: {name: "🏠 Full (25 points)", count: (player) => {
 				var counts = player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]);
 				return counts.filter(e => e === 2).length === counts.filter(e => e === 3).length && counts.filter(e => e === 2).length === 1 ? 25 : 0;
 			}},
 
-			palindrome: {name: "Palindrome (Somme des dés)", count: (player) => player.tray[0] === player.tray[4] && player.tray[1] === player.tray[3] ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
-			increasing: {name: "Séquence croissante (Somme des dés de la séquence)", count: (player) => {
+			palindrome: {name: "🔀 Palindrome (Somme des dés)", count: (player) => player.tray[0] === player.tray[4] && player.tray[1] === player.tray[3] ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
+			increasing: {name: "📈 Séquence croissante (Somme des dés de la séquence)", count: (player) => {
 				var sequences = [], sequence= [];
 				var max_number = -1;
 				for (var number of player.tray) {
@@ -82,7 +82,7 @@ class Game {
 				totals.sort();
 				return totals[0];
 			}},
-			decreasing: {name: "Séquence décroissante (Somme des dés de la séquence)", count: (player) => {
+			decreasing: {name: "📉 Séquence décroissante (Somme des dés de la séquence)", count: (player) => {
 				var sequences = [], sequence= [];
 				var min_number = 6;
 				for (var number of player.tray) {
@@ -100,29 +100,29 @@ class Game {
 				totals.sort();
 				return totals[0];
 			}},
-			fifteen: {name: "15 pile", count: (player) => player.tray.reduce((a, e) => a + e + 1, 0) === 15 ? 15 : 0},
+			fifteen: {name: "🎯 15 pile", count: (player) => player.tray.reduce((a, e) => a + e + 1, 0) === 15 ? 15 : 0},
 
-			even: {name: "Somme des pairs", count: (player) => player.tray.reduce((a, e) => a + (e + 1) * (e % 2), 0)},
-			odd: {name: "Somme des pairs", count: (player) => player.tray.reduce((a, e) => a + (e + 1) * ((e + 1) % 2), 0)},
-			petals: {name: "Pétales (2pts par 3, 4pts par 5, si que des impairs)", count: (player) => player.tray.filter(e => e % 2).length === 5 ? player.tray.reduce((a, e) => a + [0, 0, 2, 0, 4, 0][e], 0) : 0},
-			price_is_right: {name: "Multiplication (40 ou moins)", count: (player) => player.tray.reduce((a, e) => a * e, 1) <= 40 ? player.tray.reduce((a, e) => a * e, 1) : 0},
-			repetition: {name: "Répétition (30 points)", count: (player) => player.tray === player.oldTray ? 30 : 0},
+			even: {name: "✌️ Somme des pairs", count: (player) => player.tray.reduce((a, e) => a + (e + 1) * (e % 2), 0)},
+			odd: {name: "☝️ Somme des impairs", count: (player) => player.tray.reduce((a, e) => a + (e + 1) * ((e + 1) % 2), 0)},
+			petals: {name: "🌹 Pétales (2pts par 3, 4pts par 5, si que des impairs)", count: (player) => player.tray.filter(e => e % 2).length === 5 ? player.tray.reduce((a, e) => a + [0, 0, 2, 0, 4, 0][e], 0) : 0},
+			price_is_right: {name: "*️⃣ Multiplication (40 ou moins)", count: (player) => player.tray.reduce((a, e) => a * e, 1) <= 40 ? player.tray.reduce((a, e) => a * e, 1) : 0},
+			repetition: {name: "🔁 Répétition (30 points)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]) === player.oldTray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]) ? 30 : 0},
 
-			mini: {name: "Mini suite (25 points)", count: (player) => {
+			mini: {name: "🦠 Mini suite (25 points)", count: (player) => {
 				var origin = player.tray.reduce((a, e) => Math.min(e, a));
 				for (var i = 1; i < 3; i ++) {
 					if (!player.tray.includes(origin + i)) return 0;
 				}
 				return 25;
 			}},
-			small: {name: "Petite suite (30 points)", count: (player) => {
+			small: {name: "🐛 Petite suite (30 points)", count: (player) => {
 				var origin = player.tray.reduce((a, e) => Math.min(e, a));
 				for (var i = 1; i < 4; i ++) {
 					if (!player.tray.includes(origin + i)) return 0;
 				}
 				return 30;
 			}},
-			big: {name: "Grande suite (40 points)", count: (player) => {
+			big: {name: "🐍 Grande suite (40 points)", count: (player) => {
 				var origin = player.tray.reduce((a, e) => Math.min(e, a));
 				for (var i = 1; i < 5; i ++) {
 					if (!player.tray.includes(origin + i)) return 0;
@@ -130,13 +130,13 @@ class Game {
 				return 40;
 			}},
 
-			yams: {name: "Yams (50 points)", count: (player) => {
+			yams: {name: "🎲 Yams (50 points)", count: (player) => {
 				for (var i = 1; i < player.tray.length; i ++) {
 					if (player.tray[i] !== player.tray[0]) return 0;
 				}
 				return 50;
 			}},
-			quinte: {name: "Quinte Flush (Grande suite dans l'ordre croissant, 60 points)", count: (player) => player.tray.reduce((a, e) => [e, e === a + 1], [player.tray[0]-1, true])[1] ? 60 : 0}
+			quinte: {name: "🃏 Quinte Flush (Grande suite dans l'ordre croissant, 60 points)", count: (player) => player.tray.reduce((a, e) => [e, e === a + 1], [player.tray[0]-1, true])[1] ? 60 : 0}
 		};
 	}
 
