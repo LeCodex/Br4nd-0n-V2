@@ -30,9 +30,12 @@ class Game {
 			sum6: {name: "Somme des 6", count: (player) => player.tray.filter(e => e === 5).length * 6}
 		}
 
+		this.paused = false;
 		this.players = {};
 		this.lastPlayed = 0;
+		this.lastTimestamp = 0;
 		this.boardMessage = null;
+		this.collector = null;
 
 		if (message) {
 			this.channel = message.channel;
@@ -44,15 +47,14 @@ class Game {
 		await this.parse(object);
 		if (!this.boardMessage) {
 			await this.sendMessage();
-			// this.save();
+			this.save();
 		}
-		this.setupTimeout(false);
+
+		this.resetTimeout();
 	}
 
-	async start() {
-		this.rerollEverything();
-
-		var figures = {
+	get allFigures() {
+		return {
 			triple: {name: "Brelan (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 3).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
 			quadruple: {name: "Carré (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 4).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
 			doublePairs: {name: "Double paire (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 2).length >= 2 ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
@@ -134,21 +136,28 @@ class Game {
 				}
 				return 50;
 			}},
-			quinte: {name: "Quinte Flush (60 points)", count: (player) => player.tray.reduce((a, e) => [e, e === a + 1], [player.tray[0]-1, true])[1] ? 60 : 0}
+			quinte: {name: "Quinte Flush (Grande suite dans l'ordre croissant, 60 points)", count: (player) => player.tray.reduce((a, e) => [e, e === a + 1], [player.tray[0]-1, true])[1] ? 60 : 0}
 		};
+	}
+
+	async start() {
+		this.rerollEverything();
+
+		var figures = this.allFigures;
 		var keys = Object.keys(figures);
 
 		for (var i = 0; i < 6; i ++) {
 			var key = keys.splice(Math.floor(Math.random() * keys.length), 1)[0];
 			this.scoreCategories[key] = figures[key];
 		}
-		this.scoreCategories.chance = {name: "Chance (Somme de tous les dés)", count: (player) => player.tray.reduce((a, e) => a + e + 1, 0)}
-		// this.save();
+		this.scoreCategories.chance = {name: "Chance (Somme des dés)", count: (player) => player.tray.reduce((a, e) => a + e + 1, 0)}
+
+		this.save();
 	}
 
 	resetTimeout() {
 		clearTimeout(this.timeout);
-		this.timeout = setTimeout(() => { this.rerollEverything() }, 1440000);
+		this.timeout = setTimeout(() => { this.rerollEverything() }, this.lastTimestamp - Date.now() + 1440000);
 	}
 
 	async rerollEverything() {
@@ -157,6 +166,7 @@ class Game {
 			this.dice.push(Math.floor(Math.random() * 6));
 		}
 
+		this.lastTimestamp = Date.now();
 		this.resetTimeout();
 
 		await this.resendMessage();
@@ -179,7 +189,7 @@ class Game {
 					acc.lastIndex = e.index;
 					acc.rank++;
 				}
-				acc.message.push(getRankEmoji(acc.rank) + " **" + acc.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + ": **" + e.score + "**" + (e.pointsGained !== null ? " (+" + e.pointsGained + ")" : "") + " | " + e.tray.map(e => this.mainclass.faces[e]).join(""));
+				acc.message.push(getRankEmoji(acc.rank) + " **" + acc.rank + ".** " + (this.lastPlayed === e.user.id ? "__" : "") + (e.user ? e.user.toString() : "Joueur non trouvé") + (this.lastPlayed === e.user.id ? "__" : "") + ": **" + e.score + "**" + (e.pointsGained !== null ? " (+" + e.pointsGained + ")" : "") + " | " + e.tray.map(e => this.mainclass.faces[e]).join(""));
 				return acc;
 			}, {message: [], rank: 0, lastScore: Infinity, lastIndex: Infinity}).message;
 
@@ -216,13 +226,15 @@ class Game {
 		}
 	}
 
-	async setupReactionCollector() {
+	async setupReactionCollector(skip_reacting = false) {
 		this.clearReactionCollector();
 
 		var emojis = this.mainclass.NUMBER_EMOJIS.slice(0, this.dice.length);
-		for (var e of emojis) {
-			await this.boardMessage.react(e);
-		};
+		if (!skip_reacting) {
+			for (var e of emojis) {
+				await this.boardMessage.react(e);
+			};
+		}
 
 		this.collector = this.boardMessage.createReactionCollector((reaction, user) => (emojis.includes(reaction.emoji.name) || emojis.includes(reaction.emoji)) && !user.bot);
 
@@ -239,6 +251,7 @@ class Game {
 
 				if (this.lastPlayed === user.id && !this.mainclass.debug) return;
 				this.lastPlayed = user.id;
+				this.lastTimestamp = Date.now();
 
 				for (var p of Object.values(this.players)) p.pointsGained = null;
 
@@ -271,7 +284,6 @@ class Game {
 	}
 
 	clearReactionCollector() {
-		//if (this.boardMessage) this.boardMessage.reactions.removeAll();
 		if (this.collector) this.collector.stop();
 	}
 
@@ -295,29 +307,22 @@ class Game {
 			players: {},
 			boardMessage: this.boardMessage ? this.boardMessage.id : null,
 			paused: this.paused,
-			nextTimestamp: this.nextTimestamp.toMillis(),
-			gamerules: this.gamerules,
-			enabled: this.enabled,
-			turn: this.turn,
-			waitDuration: this.waitDuration,
-			walls: this.walls,
-			path: this.path,
-			pickedUp: this.pickedUp,
-			clockwiseRotation: this.clockwiseRotation,
-			pawn: this.pawn,
-			goal: this.goal,
-			items: this.items
+			dice: this.dice,
+			lastPlayed: this.lastPlayed,
+			lastTimestamp: this.lastTimestamp,
+			scoreCategories: Object.keys(this.scoreCategories)
 		};
 
 		for (var [k, e] of Object.entries(this.players)) {
 			object.players[k] = {
 				score: Number(e.score),
 				user: e.user.id,
-				turnedOnce: e.turnedOnce,
-				item: e.item,
-				gainedOnePoint: e.gainedOnePoint,
-				itemChannel: e.itemMessage ? e.itemMessage.channel.id : null,
-				itemMessage: e.itemMessage ? e.itemMessage.id : null
+				tray: e.tray,
+				oldTray: e.oldTray,
+				points: e.points,
+				pointsGained: e.pointsGained,
+				sheetChannel: e.sheetMessage ? e.sheetMessage.channel.id : null,
+				sheetMessage: e.sheetMessage ? e.sheetMessage.id : null
 			}
 		}
 
@@ -327,47 +332,42 @@ class Game {
 	async parse(object) {
 		this.channel = await this.client.channels.fetch(object.channel);
 		this.players = {};
+		this.dice = object.dice;
 		this.paused = object.paused;
-		this.enabled = object.enabled;
-		this.gamerules = object.gamerules;
-		this.waitDuration = object.waitDuration;
-		this.turn = object.turn;
-		this.walls = object.walls;
-		this.path = object.path;
-		this.pickedUp = object.pickedUp;
-		this.clockwiseRotation = object.clockwiseRotation;
-		this.pawn = object.pawn;
-		this.goal = object.goal;
-		this.items = object.items;
-		this.nextTimestamp = object.nextTimestamp ? DateTime.fromMillis(object.nextTimestamp) : this.nextTimestamp;
+		this.lastPlayed = object.lastPlayed;
+		this.lastTimestamp = object.lastTimestamp;
+
+		var scoreCategoriesKeys = object.scoreCategories;
+		var figures = this.allFigures;
+		for (var key of scoreCategoriesKeys) {
+			if (figures[key]) this.scoreCategories[key] = figures[key];
+		}
+		this.scoreCategories.chance = {name: "Chance (Somme des dés)", count: (player) => player.tray.reduce((a, e) => a + e + 1, 0)}
+
 		this.boardMessage = null;
 		if (object.boardMessage) {
 			this.boardMessage = await this.channel.messages.fetch(object.boardMessage);
 			await this.channel.messages.fetch({ after: object.boardMessage });
-			this.setupReactionCollector();
+			this.setupReactionCollector(true);
 		}
 
 		for (var [k, e] of Object.entries(object.players)) {
-			var p = new Player(await this.client.users.fetch(e.user, true, true), this, true);
+			var p = new Player(await this.channel.guild.members.fetch(e.user, true, true), this, true);
 			p.score = e.score;
-			p.turnedOnce = e.turnedOnce;
-			p.item = e.item;
-			p.itemMessage = null;
-			p.gainedOnePoint = e.gainedOnePoint;
-			if (e.itemChannel) {
-				var channel = await this.client.channels.fetch(e.itemChannel);
-				if (e.itemMessage) p.itemMessage = await channel.messages.fetch(e.itemMessage);
+			p.tray = e.tray;
+			p.oldTray = e.oldTray;
+			p.points = e.points;
+			p.sheetMessage = null;
+			if (e.sheetChannel) {
+				var channel = await this.client.channels.fetch(e.sheetChannel);
+				if (e.sheetMessage) p.sheetMessage = await channel.messages.fetch(e.sheetMessage);
 			}
 
 			this.players[k] = p;
-		};
-
-		this.generateBoard();
+		}
 	}
 
 	save() {
-		return;
-
 		this.mainclass.load("games").then(object => {
 			object.games[this.channel.id] = this.serialize();
 			this.mainclass.save("games", object);
