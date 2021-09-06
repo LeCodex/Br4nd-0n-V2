@@ -16,9 +16,9 @@ class Player {
 
 	gainPoints(amount, category) {
 		var old_score = this.points[category] ? this.points[category] : 0;
-		this.points[category] = amount;
+		this.points[category] = old_score + amount;
 
-		this.pointsGained = amount - old_score;
+		this.pointsGained = amount;
 		this.score += this.pointsGained;
 		this.sendSheet();
 	}

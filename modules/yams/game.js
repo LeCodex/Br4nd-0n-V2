@@ -55,9 +55,9 @@ class Game {
 
 	get allFigures() {
 		return {
-			triple: {name: "3️⃣ Brelan (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 3).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
-			quadruple: {name: "4️⃣ Carré (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 4).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
-			doublePairs: {name: "2️⃣ Double paire (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e[0] >= 2).length >= 2 ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
+			triple: {name: "3️⃣ Brelan (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e >= 3).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
+			quadruple: {name: "4️⃣ Carré (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e >= 4).length ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
+			doublePairs: {name: "2️⃣ Double paire (Somme des dés)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]).filter(e => e >= 2).length >= 2 ? player.tray.reduce((a, e) => a + e + 1, 0) : 0},
 			full: {name: "🏠 Full (25 points)", count: (player) => {
 				var counts = player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]);
 				return counts.filter(e => e === 2).length === counts.filter(e => e === 3).length && counts.filter(e => e === 2).length === 1 ? 25 : 0;
@@ -106,28 +106,67 @@ class Game {
 			odd: {name: "☝️ Somme des impairs", count: (player) => player.tray.reduce((a, e) => a + (e + 1) * ((e + 1) % 2), 0)},
 			petals: {name: "🌹 Pétales (2pts par 3, 4pts par 5, si que des impairs)", count: (player) => player.tray.filter(e => e % 2).length === 5 ? player.tray.reduce((a, e) => a + [0, 0, 2, 0, 4, 0][e], 0) : 0},
 			price_is_right: {name: "*️⃣ Multiplication (40 ou moins)", count: (player) => player.tray.reduce((a, e) => a * e, 1) <= 40 ? player.tray.reduce((a, e) => a * e, 1) : 0},
-			repetition: {name: "🔁 Répétition (30 points)", count: (player) => player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]) === player.oldTray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0]) ? 30 : 0},
+			repetition: {name: "🔁 Répétition (30 points)", count: (player) => JSON.stringify(player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0])) === JSON.stringify(player.oldTray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0])) ? 30 : 0},
 
-			mini: {name: "🦠 Mini suite (25 points)", count: (player) => {
-				var origin = player.tray.reduce((a, e) => Math.min(e, a));
-				for (var i = 1; i < 3; i ++) {
-					if (!player.tray.includes(origin + i)) return 0;
+			mini: {name: "🦠 Mini suite (20 points)", count: (player) => {
+				var copy = [...player.tray];
+				var min = copy.reduce((a, e) => Math.min(a, e), Infinity);
+				var size = 1;
+
+				while (copy.length) {
+					copy.splice(copy.indexOf(min), 1);
+					min ++;
+					if (copy.includes(min)) {
+						size ++;
+					} else {
+						size = 1;
+						min = copy.reduce((a, e) => Math.min(a, e), Infinity);
+					}
+
+					if (size >= 3) return 20;
 				}
-				return 25;
+
+				return 0;
 			}},
 			small: {name: "🐛 Petite suite (30 points)", count: (player) => {
-				var origin = player.tray.reduce((a, e) => Math.min(e, a));
-				for (var i = 1; i < 4; i ++) {
-					if (!player.tray.includes(origin + i)) return 0;
+				var copy = [...player.tray];
+				var min = copy.reduce((a, e) => Math.min(a, e), Infinity);
+				var size = 1;
+
+				while (copy.length) {
+					copy.splice(copy.indexOf(min), 1);
+					min ++;
+					if (copy.includes(min)) {
+						size ++;
+					} else {
+						size = 1;
+						min = copy.reduce((a, e) => Math.min(a, e), Infinity);
+					}
+
+					if (size >= 4) return 30;
 				}
-				return 30;
+
+				return 0;
 			}},
 			big: {name: "🐍 Grande suite (40 points)", count: (player) => {
-				var origin = player.tray.reduce((a, e) => Math.min(e, a));
-				for (var i = 1; i < 5; i ++) {
-					if (!player.tray.includes(origin + i)) return 0;
+				var copy = [...player.tray];
+				var min = copy.reduce((a, e) => Math.min(a, e), Infinity);
+				var size = 1;
+
+				while (copy.length) {
+					copy.splice(copy.indexOf(min), 1);
+					min ++;
+					if (copy.includes(min)) {
+						size ++;
+					} else {
+						size = 1;
+						min = copy.reduce((a, e) => Math.min(a, e), Infinity);
+					}
+
+					if (size >= 5) return 40;
 				}
-				return 40;
+
+				return 0;
 			}},
 
 			yams: {name: "🎲 Yams (50 points)", count: (player) => {
@@ -136,7 +175,7 @@ class Game {
 				}
 				return 50;
 			}},
-			quinte: {name: "🃏 Quinte Flush (Grande suite dans l'ordre croissant, 60 points)", count: (player) => player.tray.reduce((a, e) => [e, e === a + 1], [player.tray[0]-1, true])[1] ? 60 : 0}
+			quinte: {name: "🃏 Quinte Flush (60 points)", count: (player) => player.tray.reduce((a, e) => [e, e === a + 1], [player.tray[0]-1, true])[1] ? 60 : 0}
 		};
 	}
 
@@ -264,6 +303,7 @@ class Game {
 
 					for (var [c, o] of Object.entries(this.scoreCategories)) {
 						var new_score = o.count(player) - (player.points[c] ? player.points[c] : 0);
+						console.log(c, new_score);
 						if (new_score > max_score) {
 							max_score = new_score;
 							category = c;
