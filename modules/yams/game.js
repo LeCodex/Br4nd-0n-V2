@@ -104,8 +104,8 @@ class Game {
 
 			even: {name: "✌️ Somme des pairs", count: (player) => player.tray.reduce((a, e) => a + (e + 1) * (e % 2), 0)},
 			odd: {name: "☝️ Somme des impairs", count: (player) => player.tray.reduce((a, e) => a + (e + 1) * ((e + 1) % 2), 0)},
-			petals: {name: "🌹 Pétales (2pts par 3, 4pts par 5, si que des impairs)", count: (player) => player.tray.filter(e => e % 2).length === 5 ? player.tray.reduce((a, e) => a + [0, 0, 2, 0, 4, 0][e], 0) : 0},
-			price_is_right: {name: "*️⃣ Multiplication (40 ou moins)", count: (player) => player.tray.reduce((a, e) => a * e, 1) <= 40 ? player.tray.reduce((a, e) => a * e, 1) : 0},
+			petals: {name: "💐 Pétales (2pts par 3, 4pts par 5)", count: (player) => player.tray.filter(e => (e + 1) % 2).length === 5 ? player.tray.reduce((a, e) => a + [0, 0, 2, 0, 4, 0][e], 0) : 0},
+			price_is_right: {name: "*️⃣ Multiplication (40 ou moins)", count: (player) => player.tray.reduce((a, e) => a * (e + 1), 1) <= 40 ? player.tray.reduce((a, e) => a * (e + 1), 1) : 0},
 			repetition: {name: "🔁 Répétition (30 points)", count: (player) => JSON.stringify(player.tray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0])) === JSON.stringify(player.oldTray.reduce((a, e) => { a[e] += 1; return a }, [0, 0, 0, 0, 0, 0])) ? 30 : 0},
 
 			mini: {name: "🦠 Mini suite (20 points)", count: (player) => {
@@ -175,7 +175,7 @@ class Game {
 				}
 				return 50;
 			}},
-			quinte: {name: "🃏 Quinte Flush (60 points)", count: (player) => player.tray.reduce((a, e) => [e, e === a + 1], [player.tray[0]-1, true])[1] ? 60 : 0}
+			quinte: {name: "🃏 Quinte Flush (60 points)", count: (player) => player.tray.reduce((a, e) => [e, e === a[0] + 1 && a[1]], [player.tray[0] - 1, true])[1] ? 60 : 0}
 		};
 	}
 
@@ -303,7 +303,6 @@ class Game {
 
 					for (var [c, o] of Object.entries(this.scoreCategories)) {
 						var new_score = o.count(player) - (player.points[c] ? player.points[c] : 0);
-						console.log(c, new_score);
 						if (new_score > max_score) {
 							max_score = new_score;
 							category = c;
