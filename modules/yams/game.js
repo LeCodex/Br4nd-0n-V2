@@ -77,6 +77,7 @@ class Game {
 						max_number = -1;
 					}
 				}
+				if (min_number != -1) sequences.push(sequence);
 
 				var totals = sequences.map(e => e.reduce((a, f) => a + f + 1, 0));
 				totals.sort();
@@ -95,6 +96,7 @@ class Game {
 						min_number = -1;
 					}
 				}
+				if (min_number != -1) sequences.push(sequence);
 
 				var totals = sequences.map(e => e.reduce((a, f) => a + f + 1, 0));
 				totals.sort();
