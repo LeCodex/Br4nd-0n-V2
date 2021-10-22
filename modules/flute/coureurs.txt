@@ -1,0 +1,70 @@
+🏎 Show-off: A une chance de partir en arrière
+🐌 Bave: Tous les coureurs derrière sont plus lents
+🛒 Vide: A une chance de faire avancer les coureurs qu'il passe
+🏃 Coureur: Ne peut pas perdre d'Endurance
+🎳 Roulant: Avance toujours à la même vitesse durant une course
+🦋 Perdu: Commence à un endroit aléatoire de la course
+🎈 Vent: Préfère une direction durant chaque course
+🛷 Accélération: Va de plus en plus vite
+⛷ Pente douce: Va de moins en moins vite
+🏇 Saut: Ignore le premier obstacle
+🚴 Peloton: Va plus vite si entouré d'autres coureurs
+🚓 Arrêt: A une chance de stopper les autres coureurs
+🦽 Aspiration: Copie la vitesse minimale du coureur juste devant
+🛹 Incontrôlable: A une chance de changer de file chaque tour
+🏍 Essence: Un fan doit posséder un baril 🛢
+🚂 Rails: Ne peut pas changer de file
+🪂 Visée: Atterrit à côté du premier joueur a franchir la moitié
+🛸 Abduction: Inverse de place avec le premier s'il est dernier
+🧳 Contenu: Tous les fans peuvent avoir un objet supplémentaire
+🥏 Boomerang: Alterne de direction
+🔮 Prédiction: Peut avancer un tour tout seul
+🚗 Famille: Avance plus vite avec le nombre de votes
+🚁 Photographe: Avance plus vite avec le nombre de coureurs devant lui
+🧻 Déroulement: Récupère tous les objets jetés
+🚤 Docks: Est le seul à pouvoir être dans l'eau
+🚀 Mission lunaire: Doit compléter 3 tours
+👻 Incorporel: Ne doit pas changer de file pour dépasser un coureur
+🐩 Nonos: N'importe qui peut bouger l'os
+🌪️ Destrcteur: A une chance d'abimer les cases qu'il quitte
+
+🧲 Copie un effet aléatoire chaque course
+🎲 Le coureur avance avec avantage
+🎣 +2 au lancer si dans de l'eau
+👑 Double points s'il est premier
+🎱 Avance quand quelqu'un recule
+🪔 +1 au lancer pour chaque course arrivée dans les 3 dernières places
+🎵 Avance toujours en multiple en 2
+🍌 A une chance d'inverser la direction des autres coureurs
+🧊 A une chance de doubler son lancer
+🎨 Gagne les bonus d'une autre file
+💡 Cache sa file de départ
+💊 +3 au lancer mais chance de ne pas avancer deux tours de suite
+🔧 Peut échanger de véhicule avec un autre coureur en le dépassant
+🧰 Peut aller sur les cases abîmées mais plus lentement
+📕 Commence devant
+🌵 Abîme la file derière lui quand il change de file
+🧶 Les changements de file ne coûte pas de déplacement
+
+🧩 +2 points pour chaque joueur qui en a
+💎 +10 pièces
+🎫 Vote +1
+🧧 +1 pièce pour chaque joueur de l'équipe, +1 pièce pour toi pour chaque
+🧮 +10 points quand l'équipe gagne
+🎩 -10% prix des objets
+🧿 +3 points quand une équipe perd un rang
+🎒 +2 capacité d'objets
+🪀 Alterne tes gains de points entre x2 et x-1
+🔒 Empêche la prochaine perte de points ou de pièces
+📷 +1 point quand ton coureur double un autre joueur
+🔑 +2 pièces quand le magasin se rafraichît
+
+🎁 La première équipe à faire un tour recule du surplus et change de file
+🍩 Partir en arrière compte comme 0.5 tour
+🗿 Un changement de file permet seulement d'avancer d'une case
+🧵 L'équipe avec le plus d'objets subit un malus de -1 au lancer
+📞 Les gains de pièces sont doublés
+
+🧨
+🏹
+🥜

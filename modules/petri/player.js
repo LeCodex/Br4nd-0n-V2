@@ -2,10 +2,14 @@ const {MessageEmbed} = require('discord.js');
 const globals = require('./globals.js')
 
 class Player {
+	name = "Sans Pouvoir"
+	emoji = "🚫"
+	description = "Aucun pouvoir spécial"
+	score = 0
+
 	constructor(game, user, reload = false) {
 		this.game = game;
 		this.user = user;
-		this.score = 0;
 	}
 
 	spawn(map, y, x) {
@@ -72,6 +76,28 @@ class Player {
 
 	onDefense(attack, defense, attacker) {
 		return 0;
+	}
+}
+
+
+class Defender extends Player {
+	name = "Défenseur"
+	emoji = "🛡️"
+	description = "A +1 en défense"
+
+	onDefense(attack, defense, attacker) {
+		return -1;
+	}
+}
+
+
+class Attacker extends Player {
+	name = "Attaquant"
+	emoji = "🗡️"
+	description = "A +1 en attaque"
+
+	onAttack(attack, defense, defender) {
+		return 1;
 	}
 }
 

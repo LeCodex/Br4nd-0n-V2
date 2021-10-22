@@ -10,7 +10,7 @@ class MainClass extends Base {
 		this.help = {
 			"": "Sends a list of all created scoreboards",
 			"<scoreboard>": "Sends the requested scoreboard. Use sort=<criteria> to get a sorted list",
-			"<scoreboard> edit=true": "Opens the scoreboard in edit mode"
+			"<scoreboard> --edit": "Opens the scoreboard in edit mode"
 		};
 		this.commandText = "stats";
 		this.color = 0x990099;
@@ -22,9 +22,9 @@ class MainClass extends Base {
 	command(message, args, kwargs, flags) {
 		if (args.length) {
 			if (this.statLogics[message.author.id]) {
-				this.statLogics[message.author.id].close().then(() => this.openNewScoreboard(message, args, kwargs, flags))
+				this.statLogics[message.author.id].close().then(() => this.openNewScoreboard(message, args, kwargs, flags));
 			} else {
-				this.openNewScoreboard(message, args, kwargs, flags)
+				this.openNewScoreboard(message, args, kwargs, flags);
 			}
 		} else {
 			if (!this.stats[message.guild.id]) this.stats[message.guild.id] = {};
@@ -35,7 +35,7 @@ class MainClass extends Base {
 				description.push(value.emoji + " " + key);
 			}
 
-			if (!description.length) description = ["❌ No scoreboards created"]
+			if (!description.length) description = ["❌ No scoreboards created"];
 			embed.description = description.join("\n");
 			message.reply(embed);
 		}
@@ -47,13 +47,13 @@ class MainClass extends Base {
 		if (!this.stats[message.guild.id][name]) {
 			this.stats[message.guild.id][name] = {name: name, emoji : "🚫", criterias: [], scores: {}};
 			this.save("stats", this.stats);
-			kwargs.edit = true;
+			flags.push("edit");
 		}
 
 		var scoreboard = this.stats[message.guild.id][name];
 		var embed = new MessageEmbed().setTitle("[STATS] " + name).setColor(this.color);
 
-		this.statLogics[message.author.id] = new StatLogic(this, message.author, scoreboard, message, embed, !kwargs.edit);
+		this.statLogics[message.author.id] = new StatLogic(this, message.author, scoreboard, message, embed, !flags.includes("edit"));
 	}
 }
 

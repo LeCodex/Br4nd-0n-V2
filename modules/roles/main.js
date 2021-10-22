@@ -10,8 +10,8 @@ class MainClass extends Base {
 		this.help = {
 			"": "Shows current parameters",
 			"join <role mention>": "Sets the role to be attributed when someone joins the server",
-			"menu": "Starts the setup of a reaction menu",
-			"close": "Closes the menu in the channel"
+			"menu <message id>": "Starts the setup of a reaction menu. If a message id is provided, this message will be used as the menu instead of creating a new one",
+			"close": "Closes the menu in the channel. Use delete=true if you want the message used as the menu to be deleted as well"
 		};
 		this.commandText = "roles";
 		this.color = 0x008800;
@@ -67,7 +67,7 @@ class MainClass extends Base {
 	com_join(message, args, kwargs, flags) {
 		this.checkIfDataExists(message);
 
-		if (args[1] == "reset") {
+		if (args[1] === "reset") {
 			this.data[message.guild.id].role = undefined;
 			message.reply("Reset");
 			this.save("data", this.data);
@@ -79,8 +79,8 @@ class MainClass extends Base {
 			return;
 		}
 
-		this.data[message.guild.id].role = message.mentions.roles.first().id;
-		message.reply("New users will now receive the " + message.mentions.roles.first().toString() + " role");
+		this.data[message.guild.id].roles = message.mentions.roles.array().map(e => e.id);
+		message.reply("New users will now receive the " + message.mentions.roles.array().map(e => e.toString()).join(", ") + " role(s)");
 
 		this.completeSave();
 	}
@@ -88,13 +88,14 @@ class MainClass extends Base {
 	com_menu(message, args, kwargs, flags) {
 		this.checkIfDataExists(message);
 		var data = this.data[message.guild.id];
+		var parentMessage = args.length > 1 ? args[1] : null;
 
 		if (data.menus[message.channel.id]) {
 			message.delete();
 			return;
 		}
 
-		data.menus[message.channel.id] = new Menu(this, message);
+		data.menus[message.channel.id] = new Menu(this, message, parentMessage);
 		message.delete();
 	}
 
@@ -105,7 +106,7 @@ class MainClass extends Base {
 		if (data.menus[message.channel.id]) {
 			var menu = data.menus[message.channel.id];
 			if (menu.admin.id === message.author.id) {
-				menu.close()
+				menu.close(kwargs.delete);
 				delete data.menus[message.channel.id];
 			}
 			message.delete();

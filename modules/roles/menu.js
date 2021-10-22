@@ -1,7 +1,7 @@
 const {MessageEmbed} = require('discord.js');
 
 class Menu {
-	constructor(mainclass, message) {
+	constructor(mainclass, message, parentMessageID = null) {
 		this.mainclass = mainclass;
 		this.client = mainclass.client;
 
@@ -11,6 +11,7 @@ class Menu {
 			"🔄": {value: false, message: "Replaces the default role new users get. It will be given back if no roles are selected"}
 		}
 		this.message = null;
+		this.parentMessage = null;
 		this.collector = null;
 		this.endTrigger = null;
 		this.mentionBuffer = [];
@@ -18,6 +19,9 @@ class Menu {
 		if (message) {
 			this.channel = message.channel;
 			this.admin = message.author;
+
+			if (parentMessageID) this.channel.messages.fetch(parentMessageID).then(m => this.parentMessage = m);
+
 			this.create();
 		}
 	}
@@ -113,13 +117,17 @@ class Menu {
 		this.collector.stop();
 		this.message.delete();
 
-		this.message = await this.channel.send(
-			new MessageEmbed()
-			.setTitle("Role Menu")
-			.setDescription("React with one of the emojis to get the role.\nRemove your reaction to remove it\n\n"
-			 	+ Object.keys(this.choices).map(e => e + " - " + this.choices[e].mention.toString()).join("\n"))
-			.setColor(this.mainclass.color)
-		)
+		if (this.parentMessage) {
+			this.message = this.parentMessage;
+		} else {
+			this.message = await this.channel.send(
+				new MessageEmbed()
+				.setTitle("Role Menu")
+				.setDescription("React with one of the emojis to get the role.\nRemove your reaction to remove it\n\n"
+				+ Object.keys(this.choices).map(e => e + " - " + this.choices[e].mention.toString()).join("\n"))
+				.setColor(this.mainclass.color)
+			)
+		}
 
 		for (var value of Object.values(this.choices)) await this.message.react(value.emoji);
 		this.setupReactionCollector();
@@ -194,10 +202,10 @@ class Menu {
 		this.message.edit(embed);
 	}
 
-	close() {
+	close(mustDelete) {
 		if (this.collector) this.collector.stop();
 		if (this.endTrigger) this.endTrigger.stop();
-		this.message.delete();
+		if (mustDelete) this.message.delete();
 	}
 
 	serialize() {

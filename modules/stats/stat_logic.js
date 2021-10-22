@@ -62,7 +62,7 @@ class StatLogic {
 		var emojiList = ["📄", "🖋", "📩", "🗑️"];
 		this.message.reactions.removeAll()
 			.then(async () => {for (var r of emojiList) await this.message.react(r)})
-			.then(() => this.message.awaitReactions((reaction, user) => emojiList.includes(reaction.emoji.name) && user.id === this.author.id, { max: 1 }))
+			.then(() => this.message.awaitReactions((reaction, user) => emojiList.includes(reaction.emoji.name) && user.id === this.author.id, { max: 1, time: 60000 }))
 			.then(c => this.processScoreboardChoice(c))
 			.catch(e => this.mainclass.client.error(this.message.channel, "Stats", e));
 	}
@@ -178,7 +178,7 @@ class StatLogic {
 	choosePlayers(criteria, players) {
 		var embed = this.message.embeds[0];
 
-		embed.setDescription("📩 Choosen criteria: **" + criteria + "**\n🏅 Choosen players: **" + players.map(e => this.message.guild.members.cache.get(e).toString()).join(", ") + "**\n🔢 __Type the amount to add the the scores (number)__");
+		embed.setDescription("📩 Choosen criteria: **" + criteria + "**\n🏅 Choosen players: **" + players.map(e => this.message.guild.members.cache.get(e).toString()).join(", ") + "**\n🔢 __Type the amount to add to the scores (number)__");
 		this.message.edit(embed)
 			.then(m => m.channel.awaitMessages(m => m.author.id === this.author.id, { max:1 }))
 			.then(mc => {

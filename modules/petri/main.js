@@ -10,7 +10,8 @@ class MainClass extends Base {
 		this.help = {
 			"create": "Creates a new game",
 			"show": "Sends the game message again",
-			"rules": "Sends the rules"
+			"rules": "Sends the rules",
+			"config": "Changes the settings of the game with arguments <name of setting>=<new value>. Each setting will have conditions for its accepted values"
 		};
 		this.commandText = "petri";
 		this.color = 0x00FFBF;
@@ -44,7 +45,10 @@ class MainClass extends Base {
 	com_show(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
-			if (game.infoMessage) game.deleteStackMessage();
+			if (game.gameMessage) {
+				this.gameMessage.delete();
+				this.gameMessage = null;
+			}
 			game.sendInfo();
 		}
 	}
@@ -101,6 +105,8 @@ Pour déterminer qui gagne le combat, il suffit de regarder le nombre de troupes
 	com_config(message, args, kwargs, flags) {
 		if (this.games[message.channel.id]) {
 			var game = this.games[message.channel.id];
+
+			if (!game.players[message.author.id]) return;
 
 			for (var key in kwargs) {
 				if (game.settings[key] && game.settingsConditions[key](kwargs[key])) {
