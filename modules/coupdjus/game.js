@@ -171,6 +171,7 @@ class Game {
 				for (var ply of Object.values(this.players)) {
 					if (ply.recipes.includes(recipe)) {
 						gains[ply.user.id] = gains[ply.user.id] ? gains[ply.user.id] + 1 : 1;
+						gains[blender[2].player.user.id] = 1;
 						used = true;
 						summary.push(ply.user.toString() + " a cette recette!");
 					}
