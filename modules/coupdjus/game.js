@@ -282,7 +282,7 @@ class Game {
 			infoMessage: this.infoMessage ? this.infoMessage.id : null,
 			players: {},
 			paused: this.paused,
-			nextTimestamp: this.nextTimestamp?.toMillis(),
+			nextTimestamp: this.nextTimestamp ? this.nextTimestamp.toMillis() : null,
 			waitDuration: this.waitDuration,
 			maxActions: this.maxActions,
 			lastPlayed: this.lastPlayed,
