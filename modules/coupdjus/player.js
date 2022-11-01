@@ -9,6 +9,7 @@ class Player {
 		this.fruit = null;
 		this.recipes = [];
 		this.infoMessage = null;
+		this.actions = game.maxActions;
 
 		// console.log(user);
 
@@ -22,6 +23,7 @@ class Player {
 		// for (var i = game.stack.length - 1; i >= 0; i--) {
 		// 	if (game.stack[i].passive) game.stack[i].passive(game, i, cup);
 		// }
+		this.actions--;
 		this.game.blenders[index].push(this.fruit);
 
 		this.fruit.effect();

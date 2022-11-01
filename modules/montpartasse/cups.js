@@ -85,7 +85,7 @@ class CottonCup extends Cup {
 
 class BombCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "472452844470009876", "💣");
+		super(mainclass, player, "1036946231236231200", "💣");
 
 		this.name = "Tasse Bombe";
 		this.description = "Explose toutes les tasses de la même couleur que celle d'en-dessous";
@@ -141,7 +141,7 @@ class RainbowCup extends Cup {
 
 class GoldenCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "472452835242541076", "📀");
+		super(mainclass, player, "1036945667668574218", "📀");
 
 		this.name = "Tasse Dorée";
 		this.description = "Pioche une tasse";
@@ -159,7 +159,7 @@ class GoldenCup extends Cup {
 
 class PaintCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "472452972744409108", "🎨");
+		super(mainclass, player, "1036947158504575007", "🎨");
 
 		this.name = "Tasse de Peinture";
 		this.description = "Change la dernière tasse en une tasse d'une couleur aléatoire";
@@ -183,7 +183,7 @@ class PaintCup extends Cup {
 
 class CactusCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "472452982081060864", "🌵");
+		super(mainclass, player, "1036947411374977064", "🌵");
 
 		this.name = "Tasse Cactus";
 		this.description = "Enlève la couleur de la tasse d'en-dessous";
@@ -204,7 +204,7 @@ class CactusCup extends Cup {
 
 class StealCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "472453023969312772", "🕵");
+		super(mainclass, player, "1036947721493417995", "🕵");
 
 		this.name = "Tasse Vol";
 		this.description = "Prend le contrôle de la tasse d'en-dessous";
@@ -225,7 +225,7 @@ class StealCup extends Cup {
 
 class GhostCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "659705735105740811", "👻");
+		super(mainclass, player, "1036959580778930267", "👻");
 
 		this.name = "Tasse Fantôme";
 		this.description = "N'est d'aucune couleur, mais rapporte 1 point bonus si tu finis la pile";
@@ -244,7 +244,7 @@ class GhostCup extends Cup {
 
 class FireCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "658794574206074889", "🔥");
+		super(mainclass, player, "1036959283423756379", "🔥");
 
 		this.name = "Tasse de Feu";
 		this.description = "Ré-active l'effet de la dernière tasse avec un effet";
@@ -267,7 +267,7 @@ class FireCup extends Cup {
 			super.effect(game, index, "💧 Il n'y a pas d'autre tasse avec un effet dans la pile 💧");
 		} else {
 			game.effectStack.push({
-				message: "🔥 ️La Tasse de Feu est brûlante! Au point qu'elle a déclenchée de nouveau l'effet de la " + first_effect_cup.fullName + "! 🔥",
+				message: "🔥 La Tasse de Feu est brûlante! Au point qu'elle a déclenchée de nouveau l'effet de la " + first_effect_cup.fullName + "! 🔥",
 				persistent: false
 			});
 			first_effect_cup.effect(game, new_index);
@@ -278,7 +278,7 @@ class FireCup extends Cup {
 
 class MagnetCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "472452853714386956", "🧲");
+		super(mainclass, player, "1036946320121921536", "🧲");
 
 		this.name = "Tasse Aimant";
 		this.description = "Force le joueur qui a joué la tasse d'en-dessous à jouer une tasse au hasard de sa main";
@@ -314,7 +314,7 @@ class MagnetCup extends Cup {
 
 class ReverseCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "666755013485527044", "🔄");
+		super(mainclass, player, "1036960562275438642", "🔄");
 
 		this.name = "Tasse Essat";
 		this.description = "Inverse toute la pile";
@@ -330,7 +330,7 @@ class ReverseCup extends Cup {
 
 class CarCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "472452992822542338", "🚚");
+		super(mainclass, player, "1036947513703399436", "🚚");
 
 		this.name = "Tasse Voiture";
 		this.description = "Défausse toutes les tasses de ta main de la même couleur que celle d'en-dessous, puis pioches-en autant";
@@ -364,7 +364,7 @@ class CarCup extends Cup {
 
 class ImpostorCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "808686177589788693", "🗡️");
+		super(mainclass, player, "1036962112351772693", "🗡️");
 
 		this.name = "Tasse Imposteure";
 		this.description = "Assassine violemment la tasse qui la supporte chaque fois qu'une tasse de la même couleur est posée";

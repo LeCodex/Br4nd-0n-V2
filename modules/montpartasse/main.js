@@ -22,13 +22,13 @@ class MainClass extends Base {
 
 		var emojis = this.client.emojis.cache;
 		this.COLOR_EMOJIS = {
-			blue: emojis.get("765264328550383626") || "🔵" ,
-			green: emojis.get("765264398037680129") || "🟢",
-			orange: emojis.get("765264363237933096") || "🟠",
-			purple: emojis.get("765264431050653696") || "🟣",
-			special: emojis.get("472452927802310676") || "⚪",
-			all: emojis.get("666367471648768029") || "🌈",
-			none: emojis.get("472452900602249216") || "🥛"
+			blue: emojis.get("1036960888206413854") || "🔵" ,
+			green: emojis.get("1036961284312285225") || "🟢",
+			orange: emojis.get("1036961077323382814") || "🟠",
+			purple: emojis.get("1036961538428379166") || "🟣",
+			special: emojis.get("1036946995568459826") || "⚪",
+			all: emojis.get("1036959911722111046") || "🌈",
+			none: emojis.get("1036946684678262824") || "🥛"
 		};
 
 		this.load("games", { games : {}, debug: false }).then(object => {

@@ -1,4 +1,5 @@
 const {MessageEmbed} = require('discord.js');
+const {DateTime} = require('luxon');
 const Player = require('./player.js');
 const Fruits = require('./fruits.js');
 
@@ -36,6 +37,14 @@ class Game {
 			[]
 		];
 
+		this.timeout = null;
+		this.nextTimestamp = null;
+		this.waitDuration = {
+			minutes: 30,
+			hours: 0
+		};
+		this.maxActions = 3;
+
 		this.infoMessage = null;
 		this.reactionCollector = null;
 
@@ -47,10 +56,27 @@ class Game {
 
 	async reload(object) {
 		await this.parse(object);
+		this.setupTimeout(false);
 	}
 
 	async start() {
 		await this.sendInfo();
+		this.setupTimeout();
+	}
+
+	setupTimeout(newTurn = true) {
+		if (this.timeout) clearTimeout(this.timeout);
+
+		var now = DateTime.local();
+		if (newTurn) {
+			if (!this.nextTimestamp) this.nextTimestamp = DateTime.local();
+			this.nextTimestamp = this.nextTimestamp.plus(this.waitDuration).set({ second: 0 });
+			if (!this.waitDuration.minutes) this.nextTimestamp = this.nextTimestamp.set({ minute: 0 });
+		}
+		var time = this.nextTimestamp.toMillis() - now.toMillis();
+
+		// console.log(this.nextTimestamp, now, this.waitDuration, time);
+		this.timeout = setTimeout(() => {this.recharge()}, time);
 	}
 
 	joinGame(user) {
@@ -62,6 +88,8 @@ class Game {
 	tryAndPlayFruit(player, index) {
 		if (this.lastPlayed === player.user.id && !this.mainclass.debug) {
 			player.user.send("Vous avez déjà joué, veuillez attendre");
+		} else if (player.actions == 0) {
+			player.user.send("Vous n'avez plus d'actions, veuillez attendre");
 		} else if (index < 0 || index >= this.blenders.length) {
 			player.user.send("Veuillez renseinger un index présent sous un des mixeurs");
 		} else if (this.blenders[index].some(e => e.player === player) && !this.mainclass.debug) {
@@ -131,7 +159,10 @@ class Game {
 						buffer.lastScore = e.score;
 						buffer.rank++;
 					}
-					buffer.message += getRankEmoji(buffer.rank) + " **" + buffer.rank + ".** " + (e.user ? e.user.toString() : "Joueur non trouvé") + ": " + e.fruit.emoji + " (" + e.score + ")" + "\n";
+					buffer.message += getRankEmoji(buffer.rank)
+									+ " **" + buffer.rank + ".** "
+									+ (e.user ? e.user.toString() : "Joueur non trouvé") + ": "
+									+ e.fruit.emoji + " (" + e.score + " pts, " + e.actions + "/" + this.maxActions + ")\n";
 					return buffer;
 				}, {message: "", rank: 0, lastScore: Infinity}).message
 			)
@@ -200,6 +231,17 @@ class Game {
 		await this.sendInfo(message, summary.join("\n"));
 	}
 
+	async recharge() {
+		for (var player of this.players) {
+			player.actions = this.maxActions;
+		}
+
+		await this.sendInfo(message, summary.join("\n"));
+
+		this.setupTimeout(true);
+		this.save();
+	}
+
 	setupReactionCollector() {
 		this.clearReactionCollector();
 
@@ -240,6 +282,9 @@ class Game {
 			infoMessage: this.infoMessage ? this.infoMessage.id : null,
 			players: {},
 			paused: this.paused,
+			nextTimestamp: this.nextTimestamp?.toMillis(),
+			waitDuration: this.waitDuration,
+			maxActions: this.maxActions,
 			lastPlayed: this.lastPlayed,
 			title: this.title,
 			summary: this.summary,
@@ -256,6 +301,7 @@ class Game {
 			object.players[k] = {
 				score: Number(e.score),
 				user: e.user.id,
+				actions: e.actions,
 				fruit: e.fruit.constructor.name,
 				recipes: e.recipes,
 				infoChannel: e.infoMessage.channel.id,
@@ -274,6 +320,9 @@ class Game {
 		this.title = object.title;
 		this.summary = object.summary;
 		this.availableFruits = object.availableFruits;
+		this.waitDuration = object.waitDuration;
+		this.maxActions = object.maxActions;
+		this.nextTimestamp = object.nextTimestamp ? DateTime.fromMillis(object.nextTimestamp) : this.nextTimestamp;
 
 		this.infoMessage = null;
 		if (object.infoMessage) {
@@ -285,6 +334,7 @@ class Game {
 		for (var [k, e] of Object.entries(object.players)) {
 			var p = new Player(await this.channel.guild.members.fetch(e.user, true, true), this, true);
 			p.score = e.score;
+			p.actions = e.actions;
 			p.fruit = new Fruits[e.fruit](p);
 			p.recipes = e.recipes;
 			p.infoMessage = null;

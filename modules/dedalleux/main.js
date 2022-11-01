@@ -32,7 +32,7 @@ class MainClass extends Base {
 			purpleCircle: this.client.emojis.cache.get("780049455935914014") || "🟣",
 			//orangeCircle: this.client.emojis.cache.get("780488746822533163") || "🟠"
 		};
-		this.pawnEmoji = this.client.emojis.cache.get("497047504043376643") || "📍";
+		this.pawnEmoji = this.client.emojis.cache.get("1036956874446221403") || "📍";
 
 		this.games = {};
 		this.load("games", { games : {}, debug: false }).then(object => {
