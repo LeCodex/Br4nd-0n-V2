@@ -232,11 +232,11 @@ class Game {
 	}
 
 	async recharge() {
-		for (var player of this.players) {
+		for (var player of Object.values(this.players)) {
 			player.actions = this.maxActions;
 		}
 
-		await this.sendInfo(message, summary.join("\n"));
+		await this.sendInfo("🔄 Recharge des actions");
 
 		this.setupTimeout(true);
 		this.save();
@@ -304,8 +304,8 @@ class Game {
 				actions: e.actions,
 				fruit: e.fruit.constructor.name,
 				recipes: e.recipes,
-				infoChannel: e.infoMessage.channel.id,
-				infoMessage: e.infoMessage.id
+				infoChannel: e.infoMessage ? e.infoMessage.channel.id : None,
+				infoMessage: e.infoMessage ? e.infoMessage.id : None
 			}
 		}
 
