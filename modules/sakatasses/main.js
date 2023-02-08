@@ -13,10 +13,14 @@ class MainClass extends Base {
 		}
 		this.commandText = "sak";
 		this.color = 0xffff66;
+		this.startDisabled = true;
 
 		this.cupEmoji = (this.client.emojis.cache.get("472452819127894047") || "☕").toString();
 
-		this.load("sakatasses", {}).then(e => {this.sak = e;});
+		this.load("sakatasses", {}).then(e => {
+			this.sak = e; 
+			this.ready = true;
+		});
 	}
 
 	getRankEmoji(rank) {
