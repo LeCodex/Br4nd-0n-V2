@@ -148,6 +148,24 @@ class MainClass extends Base {
 		this.save("sakatasses", this.sak);
 	}
 
+	com_clear(message, args, kwargs, flags) {
+		if (!this.validate(message.member)) {
+			this.command(message, args, kwargs, flags);
+			return;
+		}
+
+		if (message.guild.id in this.sak) delete this.sak[message.guild.id];
+
+		message.reply(
+			new MessageEmbed()
+			.setTitle(this.cupEmoji + " Suppression totale")
+			.setDescription("Tous les scores du serveur ont été réinitialisés")
+			.setColor(this.color)
+		);
+
+		this.save("sakatasses", this.sak);
+	}
+
 	com_rank(message, args, kwargs, flags) {
 		if (!this.validate(message.member)) {
 			this.command(message, args, kwargs, flags);
@@ -155,7 +173,7 @@ class MainClass extends Base {
 		}
 
 		this.checkExistence(message.guild);
-		var sorted = Object.keys(this.sak[message.guild.id]).sort((a, b) => this.sak[a] - this.sak[b]);
+		var sorted = Object.keys(this.sak[message.guild.id]).sort((a, b) => this.sak[message.guild.id][a] - this.sak[message.guild.id][b]);
 		if (!sorted.length) {
 			message.reply(
 				new MessageEmbed()
