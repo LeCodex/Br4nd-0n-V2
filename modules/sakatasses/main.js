@@ -173,7 +173,7 @@ class MainClass extends Base {
 		}
 
 		this.checkExistence(message.guild);
-		var sorted = Object.keys(this.sak[message.guild.id]).sort((a, b) => this.sak[message.guild.id][a] - this.sak[message.guild.id][b]);
+		var sorted = Object.keys(this.sak[message.guild.id]).sort((a, b) => this.sak[message.guild.id][b] - this.sak[message.guild.id][a]);
 		if (!sorted.length) {
 			message.reply(
 				new MessageEmbed()
