@@ -86,9 +86,7 @@ class Game {
 	}
 
 	tryAndPlayFruit(player, index) {
-		if (this.lastPlayed === player.user.id && !this.mainclass.debug) {
-			player.user.send("Vous avez déjà joué, veuillez attendre");
-		} else if (player.actions == 0) {
+		if (player.actions == 0) {
 			player.user.send("Vous n'avez plus d'actions, veuillez attendre");
 		} else if (index < 0 || index >= this.blenders.length) {
 			player.user.send("Veuillez renseinger un index présent sous un des mixeurs");
@@ -162,7 +160,7 @@ class Game {
 					buffer.message += getRankEmoji(buffer.rank)
 									+ " **" + buffer.rank + ".** "
 									+ (e.user ? e.user.toString() : "Joueur non trouvé") + ": "
-									+ e.fruit.emoji + " (" + e.score + " pts, " + e.actions + "/" + this.maxActions + ")\n";
+									+ e.fruit.emoji + " (**" + e.score + " pts**, " + e.actions + "/" + this.maxActions + ")\n";
 					return buffer;
 				}, {message: "", rank: 0, lastScore: Infinity}).message
 			)
