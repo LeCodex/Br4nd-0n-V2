@@ -423,7 +423,7 @@ class ImpostorCup extends Cup {
 
 class IridiumCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "808686282229678141", "⚫");
+		super(mainclass, player, "1036962421207744562", "⚫");
 
 		this.name = "Tasse Iridium";
 		this.description = "Devient au hasard une copie d'une autre tasse de la pile";
@@ -454,7 +454,7 @@ class IridiumCup extends Cup {
 
 class DiceCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "808686075139981322", "🎲");
+		super(mainclass, player, "1036961885704163358", "🎲");
 
 		this.name = "Tasse Dé";
 		this.description = "Mélange toute la pile";
@@ -469,7 +469,7 @@ class DiceCup extends Cup {
 
 class DwarfCup extends Cup {
 	constructor(mainclass, player) {
-		super(mainclass, player, "808686325686599740", "✌️");
+		super(mainclass, player, "1036962538019110913", "✌️");
 
 		this.name = "Tasse Naine";
 		this.description = "S'il y a 3 tasses ou plus de la même couleur que la tasse d'en-dessous, la pile s'effondre";
