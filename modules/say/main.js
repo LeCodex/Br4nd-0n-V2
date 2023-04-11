@@ -19,7 +19,10 @@ class MainClass extends Base {
 	command(message, args, kwargs, flags) {
 		var id = args.shift();
 
-		this.client.channels.cache.get(id).send(args.join(" "));
+		var channel = this.client.channels.cache.get(id)
+		if (!channel) return;
+
+		channel.send(args.join(" "));
 		if (message.channel.id === id) message.delete();
 	}
 }
