@@ -50,10 +50,10 @@ class MainClass extends Base {
 		this.save("sakatasses", this.sak);
 	}
 
-	getUsersAndAmount(message, args, kwargs, flags) {
+	getUsers(message, args, kwargs, flags) {
 		if (!this.validate(message.member)) {
 			this.command(message, args, kwargs, flags);
-			return [null, null];
+			return null;
 		}
 
 		args.shift();
@@ -72,18 +72,8 @@ class MainClass extends Base {
 					.setDescription("Mention inconnue ou invalide: " + args[0])
 					.setColor(this.color)
 				);
-				return [null, null];
+				return null;
 			}
-		}
-
-		if (!args.length) {
-			message.reply(
-				new MessageEmbed()
-				.setTitle("❌ Erreur lors de l'ajout des tasses")
-				.setDescription("Aucune quantité de tasse renseignée")
-				.setColor(this.color)
-			);
-			return [null, null];
 		}
 
 		if (!users.length) {
@@ -91,6 +81,23 @@ class MainClass extends Base {
 				new MessageEmbed()
 				.setTitle("❌ Erreur lors de l'ajout des tasses")
 				.setDescription("Aucune mention reconnue")
+				.setColor(this.color)
+			);
+			return null;
+		}
+
+		return users;
+	}
+
+	getUsersAndAmount(message, args, kwargs, flags) {
+		var users = this.getUsers(message, args, kwargs, flags);
+		if (!users) return [null, null];
+
+		if (!args.length) {
+			message.reply(
+				new MessageEmbed()
+				.setTitle("❌ Erreur lors de l'ajout des tasses")
+				.setDescription("Aucune quantité de tasse renseignée")
 				.setColor(this.color)
 			);
 			return [null, null];
@@ -142,6 +149,25 @@ class MainClass extends Base {
 			new MessageEmbed()
 			.setTitle(this.cupEmoji + " Remplacement des tasses")
 			.setDescription(users.map(e => e.toString()).join(", ") + (users.length > 1 ? " ont " : " a ") + "maintenant " + Math.abs(amount) + " tasse" + (Math.abs(amount) > 1 ? "s" : "") + "!")
+			.setColor(this.color)
+		);
+
+		this.save("sakatasses", this.sak);
+	}
+
+	com_reset(message, args, kwargs, flags) {
+		var users = this.getUsers(message, args, kwargs, flags);
+		if (!users) return;
+
+		for (var user of users) {
+			this.checkExistence(message.guild, user);
+			delete this.sak[message.guild.id][user.id];
+		}
+
+		message.reply(
+			new MessageEmbed()
+			.setTitle(this.cupEmoji + " Effacement des tasses")
+			.setDescription(users.map(e => e.toString()).join(", ") + (users.length > 1 ? " ont eu leur score effacé" : " a eu son score effacé") + ".")
 			.setColor(this.color)
 		);
 
