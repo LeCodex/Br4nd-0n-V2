@@ -9,11 +9,12 @@ class Player {
 
 	rollDice() {
 		if (this.game.previousPlayers.includes(this.user.id) && !this.game.mainclass.debug) {
-			this.game.channel.send("Veuiilez attendre que les autres joueurs jouent");
+			this.game.channel.send("Veuillez attendre que les autres joueurs jouent");
 			return;
 		}
 
 		let result = Math.floor(Math.random() * this.game.chairs.length);
+		this.game.channel.send(`${this} a lancé un ${result}!`);
 		this.game.markChair(result, this);
 	}
 

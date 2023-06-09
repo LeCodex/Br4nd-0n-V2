@@ -86,17 +86,18 @@ class Game {
 		message += this.previousPlayers.map(e => this.players[e].toString()).join(", ");
 
 		message = "```\n" + message + "```";
-		if (this.boardMessage) {
-			var length = this.channel.messages.cache.keyArray().length;
-			if (length - this.channel.messages.cache.keyArray().indexOf(this.boardMessage.id) > 10) {
-				this.deleteBoardMessage();
-				this.boardMessage = await this.channel.send(message);
-			} else {
-				await this.boardMessage.edit(message);
-			};
-		} else {
-			this.boardMessage = await this.channel.send(message);
-		}
+		this.boardMessage = await this.channel.send(message);
+		// if (this.boardMessage) {
+		// 	var length = this.channel.messages.cache.keyArray().length;
+		// 	if (length - this.channel.messages.cache.keyArray().indexOf(this.boardMessage.id) > 10) {
+		// 		this.deleteBoardMessage();
+		// 		this.boardMessage = await this.channel.send(message);
+		// 	} else {
+		// 		await this.boardMessage.edit(message);
+		// 	};
+		// } else {
+		// 	this.boardMessage = await this.channel.send(message);
+		// }
 	}
 
 	async markChair(index, player) {

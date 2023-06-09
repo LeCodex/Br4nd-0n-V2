@@ -8,7 +8,7 @@ class MainClass extends Base {
 	constructor(client) {
 		super(client);
 		this.name = "Tasses musicales";
-		this.description = "TOUT LE MONDE VEUT PRENDDRE?";
+		this.description = "TOUT LE MONDE VEUT PRENDRE?";
 		this.help = {
 			"": "Rejoins la partie et lances le dé",
 			"show": "Redescends le message d'info de la partie"
