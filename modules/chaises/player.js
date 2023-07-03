@@ -14,7 +14,7 @@ class Player {
 		}
 
 		let result = Math.floor(Math.random() * this.game.chairs.length);
-		this.game.channel.send(`${this} a lancé un ${result}!`);
+		this.game.channel.send(`${this} a lancé un ${result+1}!`);
 		this.game.markChair(result, this);
 	}
 
