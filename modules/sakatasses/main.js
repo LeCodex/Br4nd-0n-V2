@@ -15,7 +15,7 @@ class MainClass extends Base {
 		this.color = 0xffff66;
 		this.startDisabled = true;
 
-		this.cupEmoji = (this.client.emojis.cache.get("472452819127894047") || "☕").toString();
+		this.cupEmoji = (this.client.emojis.cache.get("1036945586290708622") || "☕").toString();
 
 		this.load("sakatasses", {}).then(e => {
 			this.sak = e; 
@@ -210,23 +210,45 @@ class MainClass extends Base {
 			return;
 		}
 
+		var [users, sak] = this.getRankFields(message.guild.id, sorted);
+
 		message.reply(
 			new MessageEmbed()
 			.setTitle("[SAKATASSES] Classement")
 			.setColor(this.color)
-			.addField("Utilisateurs", sorted.reduce((acc, e) => {
-				var user = this.client.users.cache.get(e);
-				if (this.sak[message.guild.id][e] < acc.lastScore) {
-					acc.lastScore = this.sak[message.guild.id][e];
-					acc.rank++;
-				}
-				acc.message += this.getRankEmoji(acc.rank) + " **" + acc.rank + ".** " + (user ? user.toString() : "Utilisateur non trouvé") + "\n";
-				return acc;
-			}, {message: "", rank: 0, lastScore: Infinity}).message, true)
-			.addField("Sakatasses", sorted.map(e => "**" + this.sak[message.guild.id][e] + "** " + this.cupEmoji).join("\n"), true)
+			.addField("Utilisateurs", users, true)
+			.addField("Sakatasses", sak, true)
 		);
 
 		this.save("sakatasses", this.sak);
+	}
+
+	getRankFields(guild, sorted) {
+		var message = "";
+		var sakMessage = "";
+		var rank = 0;
+		var lastScore = Infinity;
+
+		for (var e of sorted) {
+			var user = this.client.users.cache.get(e);
+			var sak = this.sak[guild][e];
+
+			if (sak < lastScore) {
+				lastScore = sak;
+				rank++;
+			}
+			
+			var userText = this.getRankEmoji(rank) + " **" + rank + ".** " + (user ? user.toString() : "Utilisateur non trouvé") + "\n";
+			if (message.length + userText.length > 1024) break;
+
+			var sakText =  "**" + sak + "** " + this.cupEmoji + "\n";
+			if (sakMessage.length + sakText.length > 1024) break;
+
+			message += userText;
+			sakMessage += sakText;
+		}
+
+		return [message, sakMessage];
 	}
 }
 
