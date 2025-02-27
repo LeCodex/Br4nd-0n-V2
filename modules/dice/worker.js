@@ -39,7 +39,7 @@ function parse(expression, results = []) {
 
 	var result = expression.replace(/([^\s()\[\]\,]+)(d[^\s()\[\]\,]+)/g, (m, p1, p2) => {
 		p1 = Number(p1);
-		if (isNaN(p1) || !Number.isInteger(p1) || p1 <= 0 || p1 > 65535) return "Invalid";
+		if (isNaN(p1) || !Number.isInteger(p1) || p1 <= 0 || p1 > 999999) return "Invalid";
 		if (p1 == 1) return p2;
 
 		return "(" + Array(p1).fill(p2).join(" + ") + ")";
@@ -65,7 +65,7 @@ function parseDice(expression) {
 	var match = expression.match(/d([^\s()\[\]\,]+)/); //(![!(>\d+)(<\d+)\d+]?)?
 	var faceCount = Number(match[1]);
 
-	if (isNaN(faceCount) || !Number.isInteger(faceCount) || faceCount <= 0 || faceCount > 65535) return "Invalid";
+	if (isNaN(faceCount) || !Number.isInteger(faceCount) || faceCount <= 0 || faceCount > 999999) return "Invalid";
 
 	// console.log("Dice: " + expression, match, faceCount);
 
@@ -73,5 +73,5 @@ function parseDice(expression) {
 }
 
 workerpool.worker({
-  parse: parse
+  parse
 });
