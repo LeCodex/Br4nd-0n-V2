@@ -39,7 +39,7 @@ class Comfortable extends Effect {
 
 	tryToMove(game, player, index) {
 		game.summary.push({
-			message: "💤 ️Le canapé est trop confortable pour que " + player.user.toString() + " en parte..."
+			message: "💤 ️Le canapé est trop confortable pour que " + player.toString() + " en parte..."
 		});
 		this.used = true;
 
@@ -59,7 +59,7 @@ class Prepared extends Effect {
 		this.used = true;
 
 		game.summary.push({
-			message: "⏩ ️Zoom! " + player.user.toString() + " est allé deux fois plus loin grâce au caddie!"
+			message: "⏩ ️Zoom! " + player.toString() + " est allé deux fois plus loin grâce au caddie!"
 		});
 
 		return 2 * amount;
@@ -80,14 +80,14 @@ class Pressured extends Effect {
 
 			if (index === this.data.index) {
 				game.summary.push({
-					message: "💥 BOUM! " + player.user.toString() + " est resté trop longtemps au même endroit!"
+					message: "💥 BOUM! " + player.toString() + " est resté trop longtemps au même endroit!"
 				});
 
 				var amount = -Math.floor(Math.random() * 11 + 2);
 				player.move(game, amount);
 			} else {
 				game.summary.push({
-					message: "🧨 " + player.user.toString() + " a bougé à temps"
+					message: "🧨 " + player.toString() + " a bougé à temps"
 				});
 			}
 		}
@@ -109,7 +109,7 @@ class Clean extends Effect {
 	postMove(game, player, index) {
 		if (game.board[index].effect) {
 			game.summary.push({
-				message: "🧼 " + player.user.toString() + " n'active pas l'effet grâce à sa douche"
+				message: "🧼 " + player.toString() + " n'active pas l'effet grâce à sa douche"
 			});
 			this.used = true;
 

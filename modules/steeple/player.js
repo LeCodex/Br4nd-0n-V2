@@ -16,7 +16,7 @@ class Player {
 	move(game, amount) {
 		if (!amount) {
 			game.summary.push({
-				message: "⏺️ " + this.user.toString() + " a fait du sur-place"
+				message: "⏺️ " + this.toString() + " a fait du sur-place"
 			});
 			return;
 		}
@@ -33,7 +33,7 @@ class Player {
 		this.index += amount;
 
 		game.summary.push({
-			message: (amount > 0 ? "▶️" : "◀️") + " " + this.user.toString() + " a " + (amount > 0 ? "avancé" : "reculé") + " de " + Math.abs(amount) + (Math.abs(amount) > 1 ? " cases" : " case")
+			message: (amount > 0 ? "▶️" : "◀️") + " " + this.toString() + " a " + (amount > 0 ? "avancé" : "reculé") + " de " + Math.abs(amount) + (Math.abs(amount) > 1 ? " cases" : " case")
 		});
 
 		this.effects.forEach(element => {
@@ -60,7 +60,7 @@ class Player {
 			this.score ++;
 
 			game.summary.push({
-				message: "🏅 **" + this.user.toString() + " a gagné 1 point!**"
+				message: "🏅 **" + this.toString() + " a gagné 1 point!**"
 			});
 		} else if (this.index < 0) {
 			if (this.score) {
@@ -68,13 +68,13 @@ class Player {
 				this.score --;
 
 				game.summary.push({
-					message: "❌ **" + this.user.toString() + " a perdu 1 point!**"
+					message: "❌ **" + this.toString() + " a perdu 1 point!**"
 				});
 			} else {
 				this.index = 0;
 
 				game.summary.push({
-					message: "↪ **" + this.user.toString() + " ne peut pas descendre en dessous de 0 point**"
+					message: "↪ **" + this.toString() + " ne peut pas descendre en dessous de 0 point**"
 				});
 			}
 		}
@@ -94,8 +94,12 @@ class Player {
 		this.effects.push(effect);
 
 		game.summary.push({
-			message: "✨ " + this.user.toString() + " a gagné l'effet " + effect.name
+			message: "✨ " + this.toString() + " a gagné l'effet " + effect.name
 		})
+	}
+
+	toString() {
+		return this.emoji + " " + this.user.toString()
 	}
 }
 

@@ -113,7 +113,7 @@ class Game {
 		}
 
 		// var board = this.board.map((e, index) =>
-		// 	e.emoji.toString() + " " + Object.values(this.players).filter(f => f.index === index).map(f => f.user.toString()).join(" ")
+		// 	e.emoji.toString() + " " + Object.values(this.players).filter(f => f.index === index).map(f => f.toString()).join(" ")
 		// ).join("\n")
 
 		var embed = new MessageEmbed()
@@ -140,7 +140,7 @@ class Game {
 			if (field.value.trim().length) embed.addFields(field);
 		}
 
-		var activeEffects = Object.values(this.players).filter(e => e.effects.length).map(e => e.user.toString() + ": " + e.effects.map(f => f.name).join(", ")).join("\n")
+		var activeEffects = Object.values(this.players).filter(e => e.effects.length).map(e => e.toString() + ": " + e.effects.map(f => f.name).join(", ")).join("\n")
 		if (activeEffects.length) {
 			embed.addField(
 				"Effets actifs",
@@ -155,7 +155,7 @@ class Game {
 				value: ""
 			}
 			this.order.forEach((e, i) => {
-				var string = (i + 1) + ". " + (this.players[e].pushedBackUpOnce ? "" : "__") + this.players[e].user.toString() + (this.players[e].pushedBackUpOnce ? "" : "__")  + ": " + this.players[e].emoji.toString() + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")
+				var string = (i + 1) + "․ " + (this.players[e].pushedBackUpOnce ? "" : "__") + this.players[e].toString() + (this.players[e].pushedBackUpOnce ? "" : "__") + ((i + 1) % nbPlayersPerLine === 0 ? "\n" : " | ")
 
 				if (field.value.length + string.length >= 1024) {
 					embed.addFields(field);

@@ -34,7 +34,7 @@ class Cactus extends Tile {
 
 	effect(game, player, index, amount) {
 		game.summary.push({
-			message: "🌵" + player.user.toString() + " a refusé d'aller s'asseoir sur un cactus et est revenu en arrière."
+			message: "🌵" + player.toString() + " a refusé d'aller s'asseoir sur un cactus et est revenu en arrière."
 		});
 
 		player.index -= amount;
@@ -52,7 +52,7 @@ class Fountain extends Tile {
 
 	effect(game, player, index, amount) {
 		game.summary.push({
-			message: "💦 ️Splash! " + player.user.toString() + " est tombé dans la fontaine!"
+			message: "💦 ️Splash! " + player.toString() + " est tombé dans la fontaine!"
 		});
 
 		var rndAmount = -Math.floor(Math.random() * 6 + 1);
@@ -71,7 +71,7 @@ class Couch extends Tile {
 
 	effect(game, player, index, amount) {
 		game.summary.push({
-			message: "🛋️" + player.user.toString() + " est arrivé sur un canapé, et va vouloir y rester..️."
+			message: "🛋️" + player.toString() + " est arrivé sur un canapé, et va vouloir y rester..️."
 		});
 
 		player.addEffect(game, new Effects.Comfortable());
@@ -89,7 +89,7 @@ class Cart extends Tile {
 
 	effect(game, player, index, amount) {
 		game.summary.push({
-			message: "🛒" + player.user.toString() + " s'est installé dans le caddie"
+			message: "🛒" + player.toString() + " s'est installé dans le caddie"
 		});
 
 		player.addEffect(game, new Effects.Prepared());
@@ -117,7 +117,7 @@ class Carousel extends Tile {
 
 		if (target) {
 			game.summary.push({
-				message: "🎠" + player.user.toString() + " a pris le carrousel pour inverser de place avec " + target.user.toString() + "!"
+				message: "🎠" + player.toString() + " a pris le carrousel pour inverser de place avec " + target.toString() + "!"
 			});
 
 			var index = target.index;
@@ -125,7 +125,7 @@ class Carousel extends Tile {
 			player.index = index;
 		} else {
 			game.summary.push({
-				message: "🎠" + player.user.toString() + " n'avait personne avec qui échanger de place..."
+				message: "🎠" + player.toString() + " n'avait personne avec qui échanger de place..."
 			});
 		}
 	}
@@ -149,13 +149,13 @@ class BusStop extends Tile {
 			var distance = stopIndex - player.index;
 
 			game.summary.push({
-				message: "🚏" + player.user.toString() + " a pris le bus sur " + Math.abs(distance) + (Math.abs(distance) > 1 ? " cases" : " case") + (distance > 0 ? " en avant" : " en arrière")
+				message: "🚏" + player.toString() + " a pris le bus sur " + Math.abs(distance) + (Math.abs(distance) > 1 ? " cases" : " case") + (distance > 0 ? " en avant" : " en arrière")
 			});
 
 			player.index = stopIndex;
 		} else {
 			game.summary.push({
-				message: "🚏" + player.user.toString() + " a attendu longtemps à l'arrêt de bus..."
+				message: "🚏" + player.toString() + " a attendu longtemps à l'arrêt de bus..."
 			});
 		}
 	}
