@@ -99,7 +99,7 @@ class Player {
 	}
 
 	toString() {
-		return this.emoji + " " + this.user.toString()
+		return this.emoji.toString() + " " + this.user.toString()
 	}
 }
 
